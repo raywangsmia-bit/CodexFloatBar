@@ -1,0 +1,5 @@
+# Synthetic contract fixture. It contains no user configuration.
+MODEL = "gpt-fixture-config"
+model_reasoning_effort = 'high'
+model_service_tier = "priority"
+model = "ignored-duplicate"

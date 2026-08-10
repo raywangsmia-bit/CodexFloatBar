@@ -1,0 +1,21 @@
+* text=auto
+
+*.go    text eol=lf
+*.mod   text eol=lf
+*.sum   text eol=lf
+*.md    text eol=lf
+*.txt   text eol=lf
+*.json  text eol=lf
+*.jsonl text eol=lf
+*.html  text eol=lf
+*.css   text eol=lf
+*.js    text eol=lf
+*.ps1   text eol=crlf
+*.psd1  text eol=crlf
+*.nsi   text eol=crlf
+
+*.png    binary
+*.ico    binary
+*.sqlite binary
+*.exe    binary
+*.syso   binary

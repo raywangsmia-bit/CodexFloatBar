@@ -1,0 +1,20 @@
+@{
+    SchemaVersion         = 1
+    Channel               = "Beta"
+    Version               = "0.1.0-beta.2"
+    VersionQuad           = "0.1.0.1"
+    AppId                 = "CodexFloatingBar.Next"
+    ProductName           = "CodexFloatingBar Next Beta"
+    FileDescription       = "CodexFloatingBar Next Beta floating status bar"
+    Publisher             = "CodexFloatingBar"
+    Website               = "https://github.com/raywangsmia-bit/CodexFloatBar"
+    ExecutableName        = "CodexFloatingBar.Next.exe"
+    PortableDirectoryName = "CodexFloatingBar.Next"
+    InstallDirectoryName  = "CodexFloatingBar.Next"
+    StartMenuFolder       = "CodexFloatingBar Next Beta"
+    StartupValueName      = "CodexFloatingBar.Next"
+    UninstallKey          = "CodexFloatingBar.Next"
+    WindowClass           = "CodexFloatingBar.Next.Window"
+    WindowTitle           = "CodexFloatingBar Next Beta"
+    Architecture          = "win-x64"
+}

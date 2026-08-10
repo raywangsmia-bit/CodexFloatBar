@@ -1,0 +1,9 @@
+/.cache/
+.tools/
+bin/
+build/
+work/
+runtime-data/
+release/
+resource_windows_amd64.syso
+ui/dist/*.tmp

@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CodexFloatingBar UI 工作台</title>
+    <link rel="stylesheet" href="/assets/styles.css?v={{STATIC_VERSION}}" />
+    <script>
+      window.__PAGE_VERSION__ = {{PAGE_VERSION_JSON}};
+      window.__WORKBENCH_TOKEN__ = {{WORKBENCH_TOKEN_JSON}};
+    </script>
+    <script defer src="/assets/app.js?v={{STATIC_VERSION}}"></script>
+  </head>
+  <body>
+    <header class="workbench-header">
+      <div>
+        <h1>CodexFloatingBar UI 工作台</h1>
+        <div class="page-version" aria-label="页面版本">
+          <span>更新 {{UPDATE}}</span>
+          <span>BUILD {{BUILD}}</span>
+        </div>
+      </div>
+      <span class="fingerprint">{{STATIC_VERSION}}</span>
+    </header>
+
+    <section class="controls" aria-label="预览控制">
+      <label>
+        主题
+        <select id="themeSelect">
+          <option value="dark">深色</option>
+          <option value="light">浅色</option>
+        </select>
+      </label>
+      <label>
+        布局
+        <select id="layoutSelect">
+          <option value="horizontal">横版</option>
+          <option value="vertical">竖版</option>
+        </select>
+      </label>
+      <label>
+        场景
+        <select id="scenarioSelect">
+          <option value="normal">正常</option>
+          <option value="warning">警告</option>
+          <option value="danger">危险</option>
+          <option value="loading">加载中</option>
+          <option value="empty">无数据</option>
+          <option value="error">读取错误</option>
+          <option value="offline">Codex 未运行</option>
+          <option value="long-text">超长文本</option>
+        </select>
+      </label>
+      <label>
+        预览缩放
+        <select id="scaleSelect">
+          <option value="0.9">90%</option>
+          <option value="1" selected>100%</option>
+          <option value="1.1">110%</option>
+        </select>
+      </label>
+      <label class="toggle-control"><input id="collapseToggle" type="checkbox" /> 模拟收起</label>
+      <label class="toggle-control"><input id="statisticsToggle" type="checkbox" checked /> 统计面板</label>
+      <label class="toggle-control"><input id="toastToggle" type="checkbox" checked /> 额度提醒</label>
+      <label class="toggle-control"><input id="trayToggle" type="checkbox" checked /> 托盘示意</label>
+      <label class="toggle-control"><input id="boundaryToggle" type="checkbox" /> 槽边界</label>
+      <label class="toggle-control"><input id="nativePreviewToggle" type="checkbox" /> 原生合成预览</label>
+      <button id="exportButton" type="button">导出到 Go 程序</button>
+      <span id="exportStatus" role="status">修改 HTML/CSS 后刷新即可预览</span>
+    </section>
+
+    <main class="stage">
+      <section class="surface-preview main-surface-preview" aria-label="主悬浮条预览">
+        <div class="preview-caption">主悬浮条</div>
+        <div id="exportSurface" class="floating-bar horizontal theme-dark" data-surface="main">
+          <section class="runtime" aria-label="运行状态">
+            <div class="status-chip">
+              <span>模型</span>
+              <strong id="modelValue" data-bind="runtime.model">gpt-5.6-codex</strong>
+            </div>
+            <div class="status-chip">
+              <span>推理</span>
+              <strong id="effortValue" data-bind="runtime.effort">高</strong>
+            </div>
+            <div class="status-chip">
+              <span>速率</span>
+              <strong id="speedValue" data-bind="runtime.speed">快速</strong>
+            </div>
+          </section>
+
+          <section id="usagePanel" class="usage good" data-tone-bind="quota">
+            <div class="usage-heading">
+              <span>一周额度</span>
+              <strong id="usageValue" data-bind="quota.remaining" data-tone-color>72%</strong>
+            </div>
+            <span id="usageReset" class="usage-reset" data-bind="quota.reset">8/14 09:30 重置</span>
+            <div class="progress"><span id="usageFill" data-progress-bind="quota.progress" data-tone-color style="width: 72%"></span></div>
+          </section>
+
+          <nav class="bar-actions" aria-label="窗口操作">
+            <button type="button" title="切换主题" data-action="toggle-theme">◐</button>
+            <button type="button" title="统计" data-action="toggle-statistics">▦</button>
+            <button type="button" title="显示或隐藏额度提醒" data-action="toggle-toast">!</button>
+            <button type="button" title="横竖布局" data-action="toggle-layout">↕</button>
+            <button type="button" title="隐藏" data-action="hide">−</button>
+          </nav>
+        </div>
+      </section>
+
+      <div class="auxiliary-previews">
+        <section id="statisticsPreview" class="surface-preview" aria-label="统计窗口预览">
+          <div class="preview-caption">统计窗口</div>
+          <article id="statisticsSurface" class="statistics-surface theme-dark" data-surface="statistics">
+            <section class="metric-grid" aria-label="统计摘要">
+              <div><strong data-bind="statistics.total" data-bind-box="parent" data-align="center">18.4M</strong><span>累计 Token</span></div>
+              <div><strong data-bind="statistics.peak" data-bind-box="parent" data-align="center">892K</strong><span>峰值会话</span></div>
+              <div><strong data-bind="statistics.duration" data-bind-box="parent" data-align="center">4h 26m</strong><span>最长聊天</span></div>
+              <div><strong data-bind="statistics.currentStreak" data-bind-box="parent" data-align="center">12 天</strong><span>当前连续</span></div>
+              <div><strong data-bind="statistics.longestStreak" data-bind-box="parent" data-align="center">31 天</strong><span>最长连续</span></div>
+            </section>
+
+            <section class="activity-card" aria-label="月度 Token 热图">
+              <div class="activity-heading">
+                <div class="statistics-period-navigation">
+                  <button type="button"
+                          title="上一个月"
+                          data-action="statistics-previous-month"
+                          data-bind="statistics.previousMonth"
+                          data-align="center"
+                          data-statistics-navigation>‹</button>
+                  <strong data-bind="statistics.month" data-align="center">2026 年 8 月</strong>
+                  <button type="button"
+                          title="下一个月"
+                          data-action="statistics-next-month"
+                          data-bind="statistics.nextMonth"
+                          data-align="center"
+                          data-statistics-navigation>›</button>
+                </div>
+                <div class="activity-tabs" aria-label="统计视图">
+                  <button type="button"
+                          class="active"
+                          data-statistics-view="month"
+                          data-statistics-tab
+                          data-action="statistics-view-month"
+                          data-bind="statistics.viewMonth"
+                          data-align="center">月热图</button>
+                  <button type="button"
+                          data-statistics-view="week"
+                          data-statistics-tab
+                          data-action="statistics-view-week"
+                          data-bind="statistics.viewWeek"
+                          data-align="center">每周</button>
+                  <button type="button"
+                          data-statistics-view="cumulative"
+                          data-statistics-tab
+                          data-action="statistics-view-cumulative"
+                          data-bind="statistics.viewCumulative"
+                          data-align="center">累计</button>
+                  <button type="button"
+                          data-statistics-view="detail"
+                          data-statistics-tab
+                          data-action="statistics-view-detail"
+                          data-bind="statistics.viewDetail"
+                          data-align="center">详细</button>
+                </div>
+              </div>
+              <div id="statisticsMonthView" class="statistics-view active" data-statistics-view-panel="month">
+                <div class="heatmap-weekdays" aria-hidden="true">
+                  <span>一</span><span>二</span><span>三</span><span>四</span>
+                  <span>五</span><span>六</span><span>日</span>
+                </div>
+                <div class="heatmap" aria-hidden="true" data-cells-bind="statistics.monthCells">
+                  <i></i><i></i><i class="l1"></i><i class="l2"></i><i></i><i class="l1"></i><i></i>
+                  <i class="l2"></i><i class="l3"></i><i class="l1"></i><i></i><i class="l4"></i><i class="l2"></i><i></i>
+                  <i></i><i class="l1"></i><i class="l3"></i><i class="l2"></i><i class="l1"></i><i></i><i class="l2"></i>
+                  <i class="l1"></i><i class="l4"></i><i class="l3"></i><i class="l1"></i><i></i><i class="l2"></i><i class="l1"></i>
+                  <i class="l3"></i><i class="l2"></i><i></i><i class="l1"></i><i class="l4"></i><i class="l2"></i><i class="l3"></i>
+                  <i></i><i class="l1"></i><i class="l2"></i><i></i><i class="l3"></i><i class="l1"></i><i></i>
+                </div>
+              </div>
+              <div id="statisticsWeekView"
+                   class="statistics-view statistics-chart weekly-chart"
+                   data-statistics-view-panel="week"
+                   aria-hidden="true">
+                <i style="--value:.18"></i><i style="--value:.42"></i><i style="--value:.28"></i>
+                <i style="--value:.62"></i><i style="--value:.34"></i><i style="--value:.74"></i>
+                <i style="--value:.52"></i><i style="--value:.86"></i><i style="--value:.48"></i>
+                <i style="--value:.68"></i><i style="--value:.55"></i><i style="--value:1"></i>
+                <i style="--value:.78"></i>
+              </div>
+              <svg id="statisticsCumulativeView"
+                   class="statistics-view statistics-chart cumulative-chart"
+                   data-statistics-view-panel="cumulative"
+                   aria-hidden="true"
+                   viewBox="0 0 230 70"
+                   preserveAspectRatio="none">
+                <polyline points="3,65 23,61 43,58 63,51 83,46 103,39 123,34 143,27 163,23 183,15 203,10 227,4"></polyline>
+              </svg>
+              <div id="statisticsDetailView"
+                   class="statistics-view statistics-detail"
+                   data-statistics-view-panel="detail"
+                   aria-hidden="true">
+                <div><strong data-bind="statistics.detailInput" data-align="center">18.8M</strong><span data-bind="statistics.labelInput" data-align="center">输入 Token</span></div>
+                <div><strong data-bind="statistics.detailOutput" data-align="center">1.8M</strong><span data-bind="statistics.labelOutput" data-align="center">输出 Token</span></div>
+                <div><strong data-bind="statistics.detailTotal" data-align="center">20.6M</strong><span data-bind="statistics.labelTotal" data-align="center">总 Token</span></div>
+                <div><strong data-bind="statistics.detailCached" data-align="center">17.9M</strong><span data-bind="statistics.labelCached" data-align="center">缓存 Token</span></div>
+                <div><strong data-bind="statistics.detailReasoning" data-align="center">684K</strong><span data-bind="statistics.labelReasoning" data-align="center">推理 Token</span></div>
+                <div><strong data-bind="statistics.detailCacheHit" data-align="center">95%</strong><span data-bind="statistics.labelCacheHit" data-align="center">Cache Hit</span></div>
+                <div class="statistics-detail-cost"><strong data-bind="statistics.detailCost" data-align="center">--</strong><span data-bind="statistics.labelCost" data-align="center">等价成本</span></div>
+              </div>
+            </section>
+          </article>
+        </section>
+
+        <section id="toastPreview" class="surface-preview" aria-label="额度提醒窗口预览">
+          <div class="preview-caption">额度提醒窗口</div>
+          <article id="usageToastSurface" class="usage-toast-surface warn theme-dark" data-surface="usage-toast" data-tone-bind="quota">
+            <div class="usage-toast-card">
+              <span class="toast-accent" aria-hidden="true"></span>
+              <div class="toast-copy">
+                <strong id="toastTitle" data-bind="toast.title" data-bind-box="parent">一周额度不高于 60%</strong>
+                <span id="toastMessage" data-bind="toast.message" data-bind-box="parent">当前剩余 34%，用量进入提醒区间。</span>
+              </div>
+              <button type="button" title="隐藏额度提醒" data-action="hide">
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+          </article>
+        </section>
+      </div>
+
+      <section id="trayPreview" class="surface-preview tray-preview-section" aria-label="托盘菜单预览">
+        <div class="preview-caption">托盘菜单示意（仅预览）</div>
+        <aside id="trayMenuPreview" class="tray-menu-preview theme-dark">
+          <button type="button">刷新状态</button>
+          <button type="button">复制当前状态</button>
+          <button type="button">显示/隐藏窗口 <span>已显示 ✓</span></button>
+          <button type="button">打开配置文件</button>
+          <button type="button">打开 ChatGPT 账户页</button>
+          <button type="button">打开 Billing 页面</button>
+          <button type="button">打开 API 用量页面</button>
+          <button type="button">打开 API Keys 页面</button>
+          <button type="button">打开 GitHub 仓库</button>
+          <hr />
+          <button type="button">配色 <span id="trayThemeValue">深色 ✓</span></button>
+          <button type="button">布局 <span id="trayLayoutValue">横版 ✓</span></button>
+          <button type="button">缩放 <span id="trayScaleValue">100% ✓</span></button>
+          <button type="button">自动收起 <span id="trayCollapseValue">关闭</span></button>
+		  <button type="button">开机自启动</button>
+		  <hr />
+		  <div class="tray-menu-version">{{TRAY_BUILD}}</div>
+		  <button type="button">退出</button>
+        </aside>
+      </section>
+    </main>
+
+    <aside class="editing-note">
+      正式程序不解析 HTML。保存 <code>ui/workbench/index.html</code> 或
+      <code>styles.css</code> 后页面会自动刷新；点击导出即可让运行中的 Go 窗口热加载。
+    </aside>
+  </body>
+</html>

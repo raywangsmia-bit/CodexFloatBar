@@ -1,0 +1,1 @@
+synthetic binary-like prefix {"type":"codex.rate_limits","timestamp":"2026-08-01T00:00:00Z","rate_limits":{"primary":{"used_percent":99,"window_minutes":300,"reset_at":1786251600}}} suffix

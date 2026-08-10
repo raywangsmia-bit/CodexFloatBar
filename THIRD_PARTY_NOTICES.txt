@@ -1,0 +1,59 @@
+CodexFloatBar third-party notices
+=================================
+
+This distribution includes software and assets from the projects listed below.
+The notices and license texts must remain with source and binary distributions.
+
+
+1. CodexFloatingBar legacy project assets and behavior contract
+---------------------------------------------------------------
+
+Source project: https://github.com/liuguoqiang0730-svg/CodexFloatingBar
+License: MIT License
+Copyright: Copyright (c) 2026 CodexFloatingBar contributors
+
+The current project is a Go/Win32 rewrite of CodexFloatingBar. It retains the
+legacy project license, the application/tray icon, and compatibility behavior
+used to migrate settings and validate data parsing. The complete MIT license is
+provided in the accompanying LICENSE file.
+
+Retained icon provenance:
+  Original path: src/CodexFloatingBar/Assets/app-icon.ico
+  Current path:  resources/app-icon.ico
+  Introduced by: commit 2d1c91486682d11602310b83196a23fa1fa72615
+  SHA-256:       400194ff1fe659694b53fa2e5c9821082145c8a3d63bc25b2bdaa3ebc6029cc7
+
+
+2. golang.org/x/sys v0.43.0
+--------------------------------
+
+Project: https://pkg.go.dev/golang.org/x/sys
+License: BSD 3-Clause License
+
+Copyright 2009 The Go Authors.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+   * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+   * Neither the name of Google LLC nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.

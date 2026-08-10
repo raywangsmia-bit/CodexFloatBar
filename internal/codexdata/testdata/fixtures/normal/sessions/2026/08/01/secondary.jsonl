@@ -1,0 +1,2 @@
+{"timestamp":"2026-07-31T23:50:00+08:00","type":"event_msg","payload":{"type":"token_count","info":{"total_token_usage":{"total_tokens":400}}}}
+{"timestamp":"2026-08-01T00:05:00+08:00","type":"event_msg","payload":{"type":"token_count","info":{"total_token_usage":{"total_tokens":500}}}}

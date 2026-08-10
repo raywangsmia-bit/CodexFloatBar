@@ -1,0 +1,31 @@
+1 24 "app.manifest"
+101 ICON "@@ICON_PATH@@"
+
+1 VERSIONINFO
+FILEVERSION @@VERSION_COMMA@@
+PRODUCTVERSION @@VERSION_COMMA@@
+FILEFLAGSMASK 0x3fL
+FILEFLAGS 0x0L
+FILEOS 0x40004L
+FILETYPE 0x1L
+FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "CompanyName", "@@PUBLISHER@@\0"
+            VALUE "FileDescription", "@@FILE_DESCRIPTION@@\0"
+            VALUE "FileVersion", "@@DISPLAY_VERSION@@\0"
+            VALUE "InternalName", "@@APP_ID@@\0"
+            VALUE "OriginalFilename", "@@EXECUTABLE_NAME@@\0"
+            VALUE "ProductName", "@@PRODUCT_NAME@@\0"
+            VALUE "ProductVersion", "@@DISPLAY_VERSION@@\0"
+            VALUE "ReleaseChannel", "@@CHANNEL@@\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0409, 1200
+    END
+END

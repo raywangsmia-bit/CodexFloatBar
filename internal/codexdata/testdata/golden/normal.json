@@ -1,0 +1,156 @@
+{
+  "account": {
+    "authMode": "chatgpt",
+    "displayText": "Codex: Fixture User \u003cfixture@example.invalid\u003e"
+  },
+  "config": {
+    "state": "available",
+    "model": "gpt-fixture-config",
+    "reasoningEffort": "high",
+    "speedTier": "priority",
+    "message": ""
+  },
+  "runtime": {
+    "model": "gpt-fixture-session",
+    "reasoningEffort": "xhigh",
+    "speedTier": "fast"
+  },
+  "rateLimit": {
+    "state": "available",
+    "message": "5小时 80% 8/9 13:00 | 1周 72% 8/14 09:30 | Plus",
+    "planType": "Plus",
+    "primary": {
+      "usedPercent": 20,
+      "remainingPercent": 80,
+      "windowMinutes": 300,
+      "resetAt": 1786251600
+    },
+    "secondary": {
+      "usedPercent": 28,
+      "remainingPercent": 72,
+      "windowMinutes": 10080,
+      "resetAt": 1786671000
+    }
+  },
+  "statistics": {
+    "totalTokens": 830,
+    "peakSessionTokens": 500,
+    "longestActiveSeconds": 3000,
+    "currentStreakDays": 3,
+    "longestStreakDays": 3,
+    "dailyTokens": {
+      "2026-07-31": 400,
+      "2026-08-01": 100,
+      "2026-08-07": 200,
+      "2026-08-08": 80,
+      "2026-08-09": 50
+    },
+    "weekly": [
+      {
+        "startDate": "2026-05-11",
+        "tokens": 0
+      },
+      {
+        "startDate": "2026-05-18",
+        "tokens": 0
+      },
+      {
+        "startDate": "2026-05-25",
+        "tokens": 0
+      },
+      {
+        "startDate": "2026-06-01",
+        "tokens": 0
+      },
+      {
+        "startDate": "2026-06-08",
+        "tokens": 0
+      },
+      {
+        "startDate": "2026-06-15",
+        "tokens": 0
+      },
+      {
+        "startDate": "2026-06-22",
+        "tokens": 0
+      },
+      {
+        "startDate": "2026-06-29",
+        "tokens": 0
+      },
+      {
+        "startDate": "2026-07-06",
+        "tokens": 0
+      },
+      {
+        "startDate": "2026-07-13",
+        "tokens": 0
+      },
+      {
+        "startDate": "2026-07-20",
+        "tokens": 0
+      },
+      {
+        "startDate": "2026-07-27",
+        "tokens": 500
+      },
+      {
+        "startDate": "2026-08-03",
+        "tokens": 330
+      }
+    ],
+    "monthly": [
+      {
+        "month": "2025-09",
+        "cumulativeTokens": 0
+      },
+      {
+        "month": "2025-10",
+        "cumulativeTokens": 0
+      },
+      {
+        "month": "2025-11",
+        "cumulativeTokens": 0
+      },
+      {
+        "month": "2025-12",
+        "cumulativeTokens": 0
+      },
+      {
+        "month": "2026-01",
+        "cumulativeTokens": 0
+      },
+      {
+        "month": "2026-02",
+        "cumulativeTokens": 0
+      },
+      {
+        "month": "2026-03",
+        "cumulativeTokens": 0
+      },
+      {
+        "month": "2026-04",
+        "cumulativeTokens": 0
+      },
+      {
+        "month": "2026-05",
+        "cumulativeTokens": 0
+      },
+      {
+        "month": "2026-06",
+        "cumulativeTokens": 0
+      },
+      {
+        "month": "2026-07",
+        "cumulativeTokens": 400
+      },
+      {
+        "month": "2026-08",
+        "cumulativeTokens": 830
+      }
+    ],
+    "earliestActiveDate": "2026-07-31",
+    "refreshedAt": "2026-08-09T12:00:00+08:00"
+  },
+  "refreshedAt": "2026-08-09T12:00:00+08:00"
+}

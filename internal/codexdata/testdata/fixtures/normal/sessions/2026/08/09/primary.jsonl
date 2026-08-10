@@ -1,0 +1,14 @@
+{"timestamp":"2026-08-07T10:00:00+08:00","type":"event_msg","payload":{"type":"token_count","info":{"total_token_usage":{"total_tokens":100}}}}
+{"timestamp":"2026-08-07T10:10:00+08:00","type":"event_msg","payload":{"type":"token_count","info":{"total_token_usage":{"total_tokens":150}}}}
+{"timestamp":"2026-08-07T10:20:00+08:00","type":"event_msg","payload":{"type":"token_count","info":{"total_token_usage":{"total_tokens":150}}}}
+{"timestamp":"2026-08-07T10:45:00+08:00","type":"event_msg","payload":{"type":"token_count","info":{"total_token_usage":{"total_tokens":200}}}}
+{"timestamp":"2026-08-08T11:00:00+08:00","type":"event_msg","payload":{"type":"token_count","info":{"total_token_usage":{"total_tokens":20}}}}
+{"timestamp":"2026-08-08T11:20:00+08:00","type":"event_msg","payload":{"type":"token_count","info":{"total_token_usage":{"total_tokens":50}}}}
+{"timestamp":"2026-08-08T11:50:00+08:00","type":"event_msg","payload":{"type":"token_count","info":{"total_token_usage":{"total_tokens":70}}}}
+{"timestamp":"2026-08-08T12:21:00+08:00","type":"event_msg","payload":{"type":"token_count","info":{"total_token_usage":{"total_tokens":80}}}}
+{"timestamp":"2026-08-09T00:05:00+08:00","type":"event_msg","payload":{"type":"token_count","info":{"total_token_usage":{"total_tokens":130}}}}
+{"timestamp":"2026-08-09T02:00:00+08:00","type":"turn_context","payload":{"model":"payload-model","reasoning_effort":"low","service_tier":"standard","collaboration_mode":{"settings":{"model":"gpt-fixture-session","reasoning_effort":"XHIGH","service_tier":"priority"}}}}
+{"timestamp":"2026-08-09T03:00:00Z","type":"event_msg","payload":{"plan_type":"plus","rate_limits":{"limit_id":"codex","primary":{"used_percent":20,"window_minutes":300,"reset_at":1786251600,"reset_after_seconds":7200},"secondary":{"used_percent":28,"window_minutes":10080,"reset_at":1786671000,"reset_after_seconds":432000}}}}
+{"timestamp":"2026-08-09T03:01:00Z","type":"event_msg","payload":null,"note":"token_count"}
+{bad-json
+{"type":"event_msg","payload":{"type":"token_count"

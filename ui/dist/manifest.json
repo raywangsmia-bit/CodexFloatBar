@@ -1,0 +1,4058 @@
+{
+  "schema": 2,
+  "project": "codexfloatingbar",
+  "defaultSurface": "main-horizontal",
+  "version": {
+    "update": "2026-08-11",
+    "build": "2026-08-11 00:05:24",
+    "staticVersion": "codexfloatingbar-6a00038f8b95"
+  },
+  "surfaces": [
+    {
+      "id": "main-horizontal",
+      "logicalWidth": 460,
+      "logicalHeight": 50,
+      "hitRegions": [
+        {
+          "action": "toggle-theme",
+          "x": 333,
+          "y": 14,
+          "width": 22,
+          "height": 22
+        },
+        {
+          "action": "toggle-statistics",
+          "x": 358,
+          "y": 14,
+          "width": 22,
+          "height": 22
+        },
+        {
+          "action": "toggle-toast",
+          "x": 383,
+          "y": 14,
+          "width": 22,
+          "height": 22
+        },
+        {
+          "action": "toggle-layout",
+          "x": 408,
+          "y": 14,
+          "width": 22,
+          "height": 22
+        },
+        {
+          "action": "hide",
+          "x": 433,
+          "y": 14,
+          "width": 22,
+          "height": 22
+        }
+      ],
+      "dynamic": {
+        "text": [
+          {
+            "bind": "runtime.model",
+            "rect": {
+              "x": 11,
+              "y": 22.5,
+              "width": 88,
+              "height": 13
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 10,
+            "fontWeight": 700,
+            "color": "#ffffffff",
+            "align": "left",
+            "toneColors": {}
+          },
+          {
+            "bind": "runtime.effort",
+            "rect": {
+              "x": 115,
+              "y": 22.5,
+              "width": 30,
+              "height": 13
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 10,
+            "fontWeight": 700,
+            "color": "#ffffffff",
+            "align": "left",
+            "toneColors": {}
+          },
+          {
+            "bind": "runtime.speed",
+            "rect": {
+              "x": 161,
+              "y": 22.5,
+              "width": 34,
+              "height": 13
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 10,
+            "fontWeight": 700,
+            "color": "#ffffffff",
+            "align": "left",
+            "toneColors": {}
+          },
+          {
+            "bind": "quota.remaining",
+            "rect": {
+              "x": 293.015625,
+              "y": 8,
+              "width": 25.984375,
+              "height": 15
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 12,
+            "fontWeight": 700,
+            "color": "#77e0adff",
+            "align": "left",
+            "toneColors": {
+              "good": "#77e0adff",
+              "warn": "#e2b744ff",
+              "danger": "#ff7272ff",
+              "offline": "#71808eff"
+            }
+          },
+          {
+            "bind": "quota.reset",
+            "rect": {
+              "x": 215,
+              "y": 24,
+              "width": 104,
+              "height": 10
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 8,
+            "fontWeight": 400,
+            "color": "#98a7b5ff",
+            "align": "left",
+            "toneColors": {}
+          }
+        ],
+        "progress": [
+          {
+            "bind": "quota.progress",
+            "rect": {
+              "x": 215,
+              "y": 37,
+              "width": 104,
+              "height": 3
+            },
+            "color": "#36a370ff",
+            "toneColors": {
+              "good": "#36a370ff",
+              "warn": "#c79522ff",
+              "danger": "#d84a4aff",
+              "offline": "#53616dff"
+            }
+          }
+        ]
+      },
+      "variants": [
+        {
+          "scale": 1,
+          "file": "assets/431ecec88a3dc850/main-horizontal@100.png",
+          "width": 460,
+          "height": 50,
+          "sourceHash": "180f2880d93245556ec44de71951e0b7869fab66256ff4a39e3487d0e5e6c84d"
+        },
+        {
+          "scale": 1.25,
+          "file": "assets/431ecec88a3dc850/main-horizontal@125.png",
+          "width": 575,
+          "height": 63,
+          "sourceHash": "2b60c2df64188b2978cbe9fb790cd4658098106d3600a41d4e2c88dd997b8a8a"
+        },
+        {
+          "scale": 1.5,
+          "file": "assets/431ecec88a3dc850/main-horizontal@150.png",
+          "width": 690,
+          "height": 75,
+          "sourceHash": "57b42fe18632ec7ad2218cccf4bea160fb95b269fe7b433fc9a2f01f46597d5c"
+        },
+        {
+          "scale": 2,
+          "file": "assets/431ecec88a3dc850/main-horizontal@200.png",
+          "width": 920,
+          "height": 100,
+          "sourceHash": "28b76791f78c2aaa1a60046005aa531c61fa3b2fcb316d11b2a9c0d74af952cd"
+        }
+      ]
+    },
+    {
+      "id": "main-vertical",
+      "logicalWidth": 130,
+      "logicalHeight": 180,
+      "hitRegions": [
+        {
+          "action": "toggle-theme",
+          "x": 6,
+          "y": 153,
+          "width": 22,
+          "height": 22
+        },
+        {
+          "action": "toggle-statistics",
+          "x": 30,
+          "y": 153,
+          "width": 22,
+          "height": 22
+        },
+        {
+          "action": "toggle-toast",
+          "x": 54,
+          "y": 153,
+          "width": 22,
+          "height": 22
+        },
+        {
+          "action": "toggle-layout",
+          "x": 78,
+          "y": 153,
+          "width": 22,
+          "height": 22
+        },
+        {
+          "action": "hide",
+          "x": 102,
+          "y": 153,
+          "width": 22,
+          "height": 22
+        }
+      ],
+      "dynamic": {
+        "text": [
+          {
+            "bind": "runtime.model",
+            "rect": {
+              "x": 11,
+              "y": 19,
+              "width": 108,
+              "height": 12
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 10,
+            "fontWeight": 700,
+            "color": "#ffffffff",
+            "align": "left",
+            "toneColors": {}
+          },
+          {
+            "bind": "runtime.effort",
+            "rect": {
+              "x": 11,
+              "y": 52,
+              "width": 108,
+              "height": 12
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 10,
+            "fontWeight": 700,
+            "color": "#ffffffff",
+            "align": "left",
+            "toneColors": {}
+          },
+          {
+            "bind": "runtime.speed",
+            "rect": {
+              "x": 11,
+              "y": 85,
+              "width": 108,
+              "height": 12
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 10,
+            "fontWeight": 700,
+            "color": "#ffffffff",
+            "align": "left",
+            "toneColors": {}
+          },
+          {
+            "bind": "quota.remaining",
+            "rect": {
+              "x": 92.015625,
+              "y": 109,
+              "width": 25.984375,
+              "height": 15
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 12,
+            "fontWeight": 700,
+            "color": "#77e0adff",
+            "align": "left",
+            "toneColors": {
+              "good": "#77e0adff",
+              "warn": "#e2b744ff",
+              "danger": "#ff7272ff",
+              "offline": "#71808eff"
+            }
+          },
+          {
+            "bind": "quota.reset",
+            "rect": {
+              "x": 12,
+              "y": 125,
+              "width": 106,
+              "height": 10
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 8,
+            "fontWeight": 400,
+            "color": "#98a7b5ff",
+            "align": "left",
+            "toneColors": {}
+          }
+        ],
+        "progress": [
+          {
+            "bind": "quota.progress",
+            "rect": {
+              "x": 12,
+              "y": 138,
+              "width": 106,
+              "height": 3
+            },
+            "color": "#36a370ff",
+            "toneColors": {
+              "good": "#36a370ff",
+              "warn": "#c79522ff",
+              "danger": "#d84a4aff",
+              "offline": "#53616dff"
+            }
+          }
+        ]
+      },
+      "variants": [
+        {
+          "scale": 1,
+          "file": "assets/431ecec88a3dc850/main-vertical@100.png",
+          "width": 130,
+          "height": 180,
+          "sourceHash": "ad52171d794fe3bf1ee107c669ddd1c0f2f77d857c12b3072d8660fd61dab351"
+        },
+        {
+          "scale": 1.25,
+          "file": "assets/431ecec88a3dc850/main-vertical@125.png",
+          "width": 163,
+          "height": 225,
+          "sourceHash": "82d400df5ca27c03ab9b6964651ec2a090322b6bdb747c87aa36304fe15f030c"
+        },
+        {
+          "scale": 1.5,
+          "file": "assets/431ecec88a3dc850/main-vertical@150.png",
+          "width": 195,
+          "height": 270,
+          "sourceHash": "fddc76a933cc0546c7428b9fa30945c3285d4c1820ce8536fd68d85225a3400a"
+        },
+        {
+          "scale": 2,
+          "file": "assets/431ecec88a3dc850/main-vertical@200.png",
+          "width": 260,
+          "height": 360,
+          "sourceHash": "29be1f4b9804bc702017bdde34b0b0a2e220e7dcdbd5fd91a7fa7e98d17b47ce"
+        }
+      ]
+    },
+    {
+      "id": "statistics",
+      "logicalWidth": 360,
+      "logicalHeight": 220,
+      "hitRegions": [
+        {
+          "action": "statistics-previous-month",
+          "x": 15,
+          "y": 72,
+          "width": 22,
+          "height": 22
+        },
+        {
+          "action": "statistics-next-month",
+          "x": 111,
+          "y": 72,
+          "width": 22,
+          "height": 22
+        },
+        {
+          "action": "statistics-view-month",
+          "x": 195,
+          "y": 75,
+          "width": 42,
+          "height": 16
+        },
+        {
+          "action": "statistics-view-week",
+          "x": 241,
+          "y": 75,
+          "width": 32,
+          "height": 16
+        },
+        {
+          "action": "statistics-view-cumulative",
+          "x": 277,
+          "y": 75,
+          "width": 32,
+          "height": 16
+        },
+        {
+          "action": "statistics-view-detail",
+          "x": 313,
+          "y": 75,
+          "width": 32,
+          "height": 16
+        },
+        {
+          "action": "statistics-select-day-00",
+          "x": 15,
+          "y": 110,
+          "width": 44.5625,
+          "height": 13.65625
+        },
+        {
+          "action": "statistics-select-day-01",
+          "x": 62.5625,
+          "y": 110,
+          "width": 44.578125,
+          "height": 13.65625
+        },
+        {
+          "action": "statistics-select-day-02",
+          "x": 110.140625,
+          "y": 110,
+          "width": 44.5625,
+          "height": 13.65625
+        },
+        {
+          "action": "statistics-select-day-03",
+          "x": 157.703125,
+          "y": 110,
+          "width": 44.578125,
+          "height": 13.65625
+        },
+        {
+          "action": "statistics-select-day-04",
+          "x": 205.28125,
+          "y": 110,
+          "width": 44.5625,
+          "height": 13.65625
+        },
+        {
+          "action": "statistics-select-day-05",
+          "x": 252.84375,
+          "y": 110,
+          "width": 44.578125,
+          "height": 13.65625
+        },
+        {
+          "action": "statistics-select-day-06",
+          "x": 300.421875,
+          "y": 110,
+          "width": 44.578125,
+          "height": 13.65625
+        },
+        {
+          "action": "statistics-select-day-07",
+          "x": 15,
+          "y": 126.65625,
+          "width": 44.5625,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-08",
+          "x": 62.5625,
+          "y": 126.65625,
+          "width": 44.578125,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-09",
+          "x": 110.140625,
+          "y": 126.65625,
+          "width": 44.5625,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-10",
+          "x": 157.703125,
+          "y": 126.65625,
+          "width": 44.578125,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-11",
+          "x": 205.28125,
+          "y": 126.65625,
+          "width": 44.5625,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-12",
+          "x": 252.84375,
+          "y": 126.65625,
+          "width": 44.578125,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-13",
+          "x": 300.421875,
+          "y": 126.65625,
+          "width": 44.578125,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-14",
+          "x": 15,
+          "y": 143.328125,
+          "width": 44.5625,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-15",
+          "x": 62.5625,
+          "y": 143.328125,
+          "width": 44.578125,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-16",
+          "x": 110.140625,
+          "y": 143.328125,
+          "width": 44.5625,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-17",
+          "x": 157.703125,
+          "y": 143.328125,
+          "width": 44.578125,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-18",
+          "x": 205.28125,
+          "y": 143.328125,
+          "width": 44.5625,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-19",
+          "x": 252.84375,
+          "y": 143.328125,
+          "width": 44.578125,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-20",
+          "x": 300.421875,
+          "y": 143.328125,
+          "width": 44.578125,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-21",
+          "x": 15,
+          "y": 160,
+          "width": 44.5625,
+          "height": 13.65625
+        },
+        {
+          "action": "statistics-select-day-22",
+          "x": 62.5625,
+          "y": 160,
+          "width": 44.578125,
+          "height": 13.65625
+        },
+        {
+          "action": "statistics-select-day-23",
+          "x": 110.140625,
+          "y": 160,
+          "width": 44.5625,
+          "height": 13.65625
+        },
+        {
+          "action": "statistics-select-day-24",
+          "x": 157.703125,
+          "y": 160,
+          "width": 44.578125,
+          "height": 13.65625
+        },
+        {
+          "action": "statistics-select-day-25",
+          "x": 205.28125,
+          "y": 160,
+          "width": 44.5625,
+          "height": 13.65625
+        },
+        {
+          "action": "statistics-select-day-26",
+          "x": 252.84375,
+          "y": 160,
+          "width": 44.578125,
+          "height": 13.65625
+        },
+        {
+          "action": "statistics-select-day-27",
+          "x": 300.421875,
+          "y": 160,
+          "width": 44.578125,
+          "height": 13.65625
+        },
+        {
+          "action": "statistics-select-day-28",
+          "x": 15,
+          "y": 176.65625,
+          "width": 44.5625,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-29",
+          "x": 62.5625,
+          "y": 176.65625,
+          "width": 44.578125,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-30",
+          "x": 110.140625,
+          "y": 176.65625,
+          "width": 44.5625,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-31",
+          "x": 157.703125,
+          "y": 176.65625,
+          "width": 44.578125,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-32",
+          "x": 205.28125,
+          "y": 176.65625,
+          "width": 44.5625,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-33",
+          "x": 252.84375,
+          "y": 176.65625,
+          "width": 44.578125,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-34",
+          "x": 300.421875,
+          "y": 176.65625,
+          "width": 44.578125,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-35",
+          "x": 15,
+          "y": 193.328125,
+          "width": 44.5625,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-36",
+          "x": 62.5625,
+          "y": 193.328125,
+          "width": 44.578125,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-37",
+          "x": 110.140625,
+          "y": 193.328125,
+          "width": 44.5625,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-38",
+          "x": 157.703125,
+          "y": 193.328125,
+          "width": 44.578125,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-39",
+          "x": 205.28125,
+          "y": 193.328125,
+          "width": 44.5625,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-40",
+          "x": 252.84375,
+          "y": 193.328125,
+          "width": 44.578125,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-41",
+          "x": 300.421875,
+          "y": 193.328125,
+          "width": 44.578125,
+          "height": 13.671875
+        }
+      ],
+      "dynamic": {
+        "text": [
+          {
+            "bind": "statistics.total",
+            "rect": {
+              "x": 15,
+              "y": 15.5,
+              "width": 65,
+              "height": 18
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 14,
+            "fontWeight": 700,
+            "color": "#f4f5f6ff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.peak",
+            "rect": {
+              "x": 80,
+              "y": 15.5,
+              "width": 65,
+              "height": 18
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 14,
+            "fontWeight": 700,
+            "color": "#f4f5f6ff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.duration",
+            "rect": {
+              "x": 145,
+              "y": 15.5,
+              "width": 80,
+              "height": 18
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 14,
+            "fontWeight": 700,
+            "color": "#f4f5f6ff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.currentStreak",
+            "rect": {
+              "x": 225,
+              "y": 15.5,
+              "width": 60,
+              "height": 18
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 14,
+            "fontWeight": 700,
+            "color": "#f4f5f6ff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.longestStreak",
+            "rect": {
+              "x": 285,
+              "y": 15.5,
+              "width": 60,
+              "height": 18
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 14,
+            "fontWeight": 700,
+            "color": "#f4f5f6ff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.previousMonth",
+            "rect": {
+              "x": 15,
+              "y": 72,
+              "width": 22,
+              "height": 22
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 14,
+            "fontWeight": 400,
+            "color": "#92979dff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.month",
+            "rect": {
+              "x": 37,
+              "y": 76,
+              "width": 74,
+              "height": 14
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 11,
+            "fontWeight": 700,
+            "color": "#f4f5f6ff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.nextMonth",
+            "rect": {
+              "x": 111,
+              "y": 72,
+              "width": 22,
+              "height": 22
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 14,
+            "fontWeight": 400,
+            "color": "#92979dff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.viewMonth",
+            "rect": {
+              "x": 195,
+              "y": 75,
+              "width": 42,
+              "height": 16
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 10,
+            "fontWeight": 400,
+            "color": "#f4f5f6ff",
+            "align": "center",
+            "toneColors": {
+              "good": "#f4f5f6ff",
+              "warn": "#25282bff",
+              "danger": "#00000000",
+              "offline": "#92979dff"
+            }
+          },
+          {
+            "bind": "statistics.viewWeek",
+            "rect": {
+              "x": 241,
+              "y": 75,
+              "width": 32,
+              "height": 16
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 10,
+            "fontWeight": 400,
+            "color": "#92979dff",
+            "align": "center",
+            "toneColors": {
+              "good": "#f4f5f6ff",
+              "warn": "#25282bff",
+              "danger": "#00000000",
+              "offline": "#92979dff"
+            }
+          },
+          {
+            "bind": "statistics.viewCumulative",
+            "rect": {
+              "x": 277,
+              "y": 75,
+              "width": 32,
+              "height": 16
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 10,
+            "fontWeight": 400,
+            "color": "#92979dff",
+            "align": "center",
+            "toneColors": {
+              "good": "#f4f5f6ff",
+              "warn": "#25282bff",
+              "danger": "#00000000",
+              "offline": "#92979dff"
+            }
+          },
+          {
+            "bind": "statistics.viewDetail",
+            "rect": {
+              "x": 313,
+              "y": 75,
+              "width": 32,
+              "height": 16
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 10,
+            "fontWeight": 400,
+            "color": "#92979dff",
+            "align": "center",
+            "toneColors": {
+              "good": "#f4f5f6ff",
+              "warn": "#25282bff",
+              "danger": "#00000000",
+              "offline": "#92979dff"
+            }
+          },
+          {
+            "bind": "statistics.detailInput",
+            "rect": {
+              "x": 15,
+              "y": 111.75,
+              "width": 79.5,
+              "height": 16
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 13,
+            "fontWeight": 700,
+            "color": "#f4f5f6ff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.labelInput",
+            "rect": {
+              "x": 15,
+              "y": 129.75,
+              "width": 79.5,
+              "height": 10
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 8,
+            "fontWeight": 400,
+            "color": "#a2a5a9ff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.detailOutput",
+            "rect": {
+              "x": 98.5,
+              "y": 111.75,
+              "width": 79.5,
+              "height": 16
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 13,
+            "fontWeight": 700,
+            "color": "#f4f5f6ff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.labelOutput",
+            "rect": {
+              "x": 98.5,
+              "y": 129.75,
+              "width": 79.5,
+              "height": 10
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 8,
+            "fontWeight": 400,
+            "color": "#a2a5a9ff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.detailTotal",
+            "rect": {
+              "x": 182,
+              "y": 111.75,
+              "width": 79.5,
+              "height": 16
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 13,
+            "fontWeight": 700,
+            "color": "#f4f5f6ff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.labelTotal",
+            "rect": {
+              "x": 182,
+              "y": 129.75,
+              "width": 79.5,
+              "height": 10
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 8,
+            "fontWeight": 400,
+            "color": "#a2a5a9ff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.detailCached",
+            "rect": {
+              "x": 265.5,
+              "y": 111.75,
+              "width": 79.5,
+              "height": 16
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 13,
+            "fontWeight": 700,
+            "color": "#f4f5f6ff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.labelCached",
+            "rect": {
+              "x": 265.5,
+              "y": 129.75,
+              "width": 79.5,
+              "height": 10
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 8,
+            "fontWeight": 400,
+            "color": "#a2a5a9ff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.detailReasoning",
+            "rect": {
+              "x": 15,
+              "y": 167.25,
+              "width": 79.5,
+              "height": 16
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 13,
+            "fontWeight": 700,
+            "color": "#f4f5f6ff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.labelReasoning",
+            "rect": {
+              "x": 15,
+              "y": 185.25,
+              "width": 79.5,
+              "height": 10
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 8,
+            "fontWeight": 400,
+            "color": "#a2a5a9ff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.detailCacheHit",
+            "rect": {
+              "x": 98.5,
+              "y": 167.25,
+              "width": 79.5,
+              "height": 16
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 13,
+            "fontWeight": 700,
+            "color": "#f4f5f6ff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.labelCacheHit",
+            "rect": {
+              "x": 98.5,
+              "y": 185.25,
+              "width": 79.5,
+              "height": 10
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 8,
+            "fontWeight": 400,
+            "color": "#a2a5a9ff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.detailCost",
+            "rect": {
+              "x": 182,
+              "y": 167.25,
+              "width": 163,
+              "height": 16
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 13,
+            "fontWeight": 700,
+            "color": "#f4f5f6ff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.labelCost",
+            "rect": {
+              "x": 182,
+              "y": 185.25,
+              "width": 163,
+              "height": 10
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 8,
+            "fontWeight": 400,
+            "color": "#a2a5a9ff",
+            "align": "center",
+            "toneColors": {}
+          }
+        ],
+        "cells": [
+          {
+            "bind": "statistics.monthCells",
+            "rects": [
+              {
+                "x": 15,
+                "y": 110,
+                "width": 44.5625,
+                "height": 13.65625
+              },
+              {
+                "x": 62.5625,
+                "y": 110,
+                "width": 44.578125,
+                "height": 13.65625
+              },
+              {
+                "x": 110.140625,
+                "y": 110,
+                "width": 44.5625,
+                "height": 13.65625
+              },
+              {
+                "x": 157.703125,
+                "y": 110,
+                "width": 44.578125,
+                "height": 13.65625
+              },
+              {
+                "x": 205.28125,
+                "y": 110,
+                "width": 44.5625,
+                "height": 13.65625
+              },
+              {
+                "x": 252.84375,
+                "y": 110,
+                "width": 44.578125,
+                "height": 13.65625
+              },
+              {
+                "x": 300.421875,
+                "y": 110,
+                "width": 44.578125,
+                "height": 13.65625
+              },
+              {
+                "x": 15,
+                "y": 126.65625,
+                "width": 44.5625,
+                "height": 13.671875
+              },
+              {
+                "x": 62.5625,
+                "y": 126.65625,
+                "width": 44.578125,
+                "height": 13.671875
+              },
+              {
+                "x": 110.140625,
+                "y": 126.65625,
+                "width": 44.5625,
+                "height": 13.671875
+              },
+              {
+                "x": 157.703125,
+                "y": 126.65625,
+                "width": 44.578125,
+                "height": 13.671875
+              },
+              {
+                "x": 205.28125,
+                "y": 126.65625,
+                "width": 44.5625,
+                "height": 13.671875
+              },
+              {
+                "x": 252.84375,
+                "y": 126.65625,
+                "width": 44.578125,
+                "height": 13.671875
+              },
+              {
+                "x": 300.421875,
+                "y": 126.65625,
+                "width": 44.578125,
+                "height": 13.671875
+              },
+              {
+                "x": 15,
+                "y": 143.328125,
+                "width": 44.5625,
+                "height": 13.671875
+              },
+              {
+                "x": 62.5625,
+                "y": 143.328125,
+                "width": 44.578125,
+                "height": 13.671875
+              },
+              {
+                "x": 110.140625,
+                "y": 143.328125,
+                "width": 44.5625,
+                "height": 13.671875
+              },
+              {
+                "x": 157.703125,
+                "y": 143.328125,
+                "width": 44.578125,
+                "height": 13.671875
+              },
+              {
+                "x": 205.28125,
+                "y": 143.328125,
+                "width": 44.5625,
+                "height": 13.671875
+              },
+              {
+                "x": 252.84375,
+                "y": 143.328125,
+                "width": 44.578125,
+                "height": 13.671875
+              },
+              {
+                "x": 300.421875,
+                "y": 143.328125,
+                "width": 44.578125,
+                "height": 13.671875
+              },
+              {
+                "x": 15,
+                "y": 160,
+                "width": 44.5625,
+                "height": 13.65625
+              },
+              {
+                "x": 62.5625,
+                "y": 160,
+                "width": 44.578125,
+                "height": 13.65625
+              },
+              {
+                "x": 110.140625,
+                "y": 160,
+                "width": 44.5625,
+                "height": 13.65625
+              },
+              {
+                "x": 157.703125,
+                "y": 160,
+                "width": 44.578125,
+                "height": 13.65625
+              },
+              {
+                "x": 205.28125,
+                "y": 160,
+                "width": 44.5625,
+                "height": 13.65625
+              },
+              {
+                "x": 252.84375,
+                "y": 160,
+                "width": 44.578125,
+                "height": 13.65625
+              },
+              {
+                "x": 300.421875,
+                "y": 160,
+                "width": 44.578125,
+                "height": 13.65625
+              },
+              {
+                "x": 15,
+                "y": 176.65625,
+                "width": 44.5625,
+                "height": 13.671875
+              },
+              {
+                "x": 62.5625,
+                "y": 176.65625,
+                "width": 44.578125,
+                "height": 13.671875
+              },
+              {
+                "x": 110.140625,
+                "y": 176.65625,
+                "width": 44.5625,
+                "height": 13.671875
+              },
+              {
+                "x": 157.703125,
+                "y": 176.65625,
+                "width": 44.578125,
+                "height": 13.671875
+              },
+              {
+                "x": 205.28125,
+                "y": 176.65625,
+                "width": 44.5625,
+                "height": 13.671875
+              },
+              {
+                "x": 252.84375,
+                "y": 176.65625,
+                "width": 44.578125,
+                "height": 13.671875
+              },
+              {
+                "x": 300.421875,
+                "y": 176.65625,
+                "width": 44.578125,
+                "height": 13.671875
+              },
+              {
+                "x": 15,
+                "y": 193.328125,
+                "width": 44.5625,
+                "height": 13.671875
+              },
+              {
+                "x": 62.5625,
+                "y": 193.328125,
+                "width": 44.578125,
+                "height": 13.671875
+              },
+              {
+                "x": 110.140625,
+                "y": 193.328125,
+                "width": 44.5625,
+                "height": 13.671875
+              },
+              {
+                "x": 157.703125,
+                "y": 193.328125,
+                "width": 44.578125,
+                "height": 13.671875
+              },
+              {
+                "x": 205.28125,
+                "y": 193.328125,
+                "width": 44.5625,
+                "height": 13.671875
+              },
+              {
+                "x": 252.84375,
+                "y": 193.328125,
+                "width": 44.578125,
+                "height": 13.671875
+              },
+              {
+                "x": 300.421875,
+                "y": 193.328125,
+                "width": 44.578125,
+                "height": 13.671875
+              }
+            ],
+            "colors": [
+              "#25282bff",
+              "#344b5eff",
+              "#416a89ff",
+              "#5796c3ff",
+              "#79bef2ff",
+              "#b9e2ffff"
+            ],
+            "backgroundColor": "#181b1eff"
+          }
+        ]
+      },
+      "variants": [
+        {
+          "scale": 1,
+          "file": "assets/431ecec88a3dc850/statistics@100.png",
+          "width": 360,
+          "height": 220,
+          "sourceHash": "32e4c66d57dd32e918578e40d9b28a02e550719468fe2229c407d808388cff5a"
+        },
+        {
+          "scale": 1.25,
+          "file": "assets/431ecec88a3dc850/statistics@125.png",
+          "width": 450,
+          "height": 275,
+          "sourceHash": "6779f2bca4344fc9643a4a5ca9e64fa19aeb90569d363364197ef8584199ea4c"
+        },
+        {
+          "scale": 1.5,
+          "file": "assets/431ecec88a3dc850/statistics@150.png",
+          "width": 540,
+          "height": 330,
+          "sourceHash": "b8e7fa538b799bb98ae7b9fc1114131f5f59913a2e31aa59cc8a1821f450773b"
+        },
+        {
+          "scale": 2,
+          "file": "assets/431ecec88a3dc850/statistics@200.png",
+          "width": 720,
+          "height": 440,
+          "sourceHash": "f0000dd1441627ab958233530556940519697d4a2fab4e409046d9e8fbb2e92e"
+        }
+      ]
+    },
+    {
+      "id": "usage-toast-good",
+      "logicalWidth": 396,
+      "logicalHeight": 112,
+      "hitRegions": [
+        {
+          "action": "hide",
+          "x": 314,
+          "y": 45,
+          "width": 22,
+          "height": 22
+        }
+      ],
+      "dynamic": {
+        "text": [
+          {
+            "bind": "toast.title",
+            "rect": {
+              "x": 77,
+              "y": 39.078125,
+              "width": 227,
+              "height": 16
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 13,
+            "fontWeight": 700,
+            "color": "#0b2a1dff",
+            "align": "left",
+            "toneColors": {}
+          },
+          {
+            "bind": "toast.message",
+            "rect": {
+              "x": 77,
+              "y": 58.078125,
+              "width": 227,
+              "height": 14.84375
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 11,
+            "fontWeight": 400,
+            "color": "#0b2a1dff",
+            "align": "left",
+            "toneColors": {}
+          }
+        ]
+      },
+      "variants": [
+        {
+          "scale": 1,
+          "file": "assets/431ecec88a3dc850/usage-toast-good@100.png",
+          "width": 396,
+          "height": 112,
+          "sourceHash": "191c7700a0fcbc1f4e69787d13ca2e2e3e196603279fc19f4d1b3e3ffd61f6ca"
+        },
+        {
+          "scale": 1.25,
+          "file": "assets/431ecec88a3dc850/usage-toast-good@125.png",
+          "width": 495,
+          "height": 140,
+          "sourceHash": "6ad5f64221991c2e373f5aaf1be29399b0e9090021d168837f7859caab5dbc28"
+        },
+        {
+          "scale": 1.5,
+          "file": "assets/431ecec88a3dc850/usage-toast-good@150.png",
+          "width": 594,
+          "height": 168,
+          "sourceHash": "b5eb9545757ea0ab1582e7022da940d335083e52efcbca208992ef71e6ede789"
+        },
+        {
+          "scale": 2,
+          "file": "assets/431ecec88a3dc850/usage-toast-good@200.png",
+          "width": 792,
+          "height": 224,
+          "sourceHash": "b04b9acd4beeaa8589644fa959362bec79adfd7ba9027e6d335180806b54b1c5"
+        }
+      ]
+    },
+    {
+      "id": "usage-toast",
+      "logicalWidth": 396,
+      "logicalHeight": 112,
+      "hitRegions": [
+        {
+          "action": "hide",
+          "x": 314,
+          "y": 45,
+          "width": 22,
+          "height": 22
+        }
+      ],
+      "dynamic": {
+        "text": [
+          {
+            "bind": "toast.title",
+            "rect": {
+              "x": 77,
+              "y": 39.078125,
+              "width": 227,
+              "height": 16
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 13,
+            "fontWeight": 700,
+            "color": "#111827ff",
+            "align": "left",
+            "toneColors": {}
+          },
+          {
+            "bind": "toast.message",
+            "rect": {
+              "x": 77,
+              "y": 58.078125,
+              "width": 227,
+              "height": 14.84375
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 11,
+            "fontWeight": 400,
+            "color": "#111827ff",
+            "align": "left",
+            "toneColors": {}
+          }
+        ]
+      },
+      "variants": [
+        {
+          "scale": 1,
+          "file": "assets/431ecec88a3dc850/usage-toast@100.png",
+          "width": 396,
+          "height": 112,
+          "sourceHash": "b868b5144acb6602b990506feda3deea4dd2aab8680dfc0c396f0ca62ff2f138"
+        },
+        {
+          "scale": 1.25,
+          "file": "assets/431ecec88a3dc850/usage-toast@125.png",
+          "width": 495,
+          "height": 140,
+          "sourceHash": "d50a944e196047aa4dcefea35d03f48a3acb7e8a2647c27c89340560134318aa"
+        },
+        {
+          "scale": 1.5,
+          "file": "assets/431ecec88a3dc850/usage-toast@150.png",
+          "width": 594,
+          "height": 168,
+          "sourceHash": "88fcd5af8145170d1b8c1246deaf568d07274947be13cdb091e7c1633bf61116"
+        },
+        {
+          "scale": 2,
+          "file": "assets/431ecec88a3dc850/usage-toast@200.png",
+          "width": 792,
+          "height": 224,
+          "sourceHash": "bed5f5547a03b10cbab10b26a8e459e0c19056b824c1559ab600ae16d417cfa8"
+        }
+      ]
+    },
+    {
+      "id": "usage-toast-danger",
+      "logicalWidth": 396,
+      "logicalHeight": 112,
+      "hitRegions": [
+        {
+          "action": "hide",
+          "x": 314,
+          "y": 45,
+          "width": 22,
+          "height": 22
+        }
+      ],
+      "dynamic": {
+        "text": [
+          {
+            "bind": "toast.title",
+            "rect": {
+              "x": 77,
+              "y": 39.078125,
+              "width": 227,
+              "height": 16
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 13,
+            "fontWeight": 700,
+            "color": "#ffffffff",
+            "align": "left",
+            "toneColors": {}
+          },
+          {
+            "bind": "toast.message",
+            "rect": {
+              "x": 77,
+              "y": 58.078125,
+              "width": 227,
+              "height": 14.84375
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 11,
+            "fontWeight": 400,
+            "color": "#ffffffff",
+            "align": "left",
+            "toneColors": {}
+          }
+        ]
+      },
+      "variants": [
+        {
+          "scale": 1,
+          "file": "assets/431ecec88a3dc850/usage-toast-danger@100.png",
+          "width": 396,
+          "height": 112,
+          "sourceHash": "5b6bedfe9d22e965937c132c87983845fd69c7e4d16ee9918179ba100ec20ee0"
+        },
+        {
+          "scale": 1.25,
+          "file": "assets/431ecec88a3dc850/usage-toast-danger@125.png",
+          "width": 495,
+          "height": 140,
+          "sourceHash": "438aff2f5e0f8a1c73959a7f3740b262150a83dd7908def02d1a93acb9a81033"
+        },
+        {
+          "scale": 1.5,
+          "file": "assets/431ecec88a3dc850/usage-toast-danger@150.png",
+          "width": 594,
+          "height": 168,
+          "sourceHash": "595c4f22107e60cb16ac62cd702104d6cfa928829dc530adc55e7199240568e3"
+        },
+        {
+          "scale": 2,
+          "file": "assets/431ecec88a3dc850/usage-toast-danger@200.png",
+          "width": 792,
+          "height": 224,
+          "sourceHash": "2e9b943115995d37990168785e319a76752155662f1ff2abef1da723d2a27702"
+        }
+      ]
+    },
+    {
+      "id": "usage-toast-offline",
+      "logicalWidth": 396,
+      "logicalHeight": 112,
+      "hitRegions": [
+        {
+          "action": "hide",
+          "x": 314,
+          "y": 45,
+          "width": 22,
+          "height": 22
+        }
+      ],
+      "dynamic": {
+        "text": [
+          {
+            "bind": "toast.title",
+            "rect": {
+              "x": 77,
+              "y": 39.078125,
+              "width": 227,
+              "height": 16
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 13,
+            "fontWeight": 700,
+            "color": "#ffffffff",
+            "align": "left",
+            "toneColors": {}
+          },
+          {
+            "bind": "toast.message",
+            "rect": {
+              "x": 77,
+              "y": 58.078125,
+              "width": 227,
+              "height": 14.84375
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 11,
+            "fontWeight": 400,
+            "color": "#ffffffff",
+            "align": "left",
+            "toneColors": {}
+          }
+        ]
+      },
+      "variants": [
+        {
+          "scale": 1,
+          "file": "assets/431ecec88a3dc850/usage-toast-offline@100.png",
+          "width": 396,
+          "height": 112,
+          "sourceHash": "51e80deb98f453c35115bfab16376eda43e2028581a548c967b36abe1e16314f"
+        },
+        {
+          "scale": 1.25,
+          "file": "assets/431ecec88a3dc850/usage-toast-offline@125.png",
+          "width": 495,
+          "height": 140,
+          "sourceHash": "9ba5bf8839755a032ed42bba754bf56e76646889da079c87891f5a6cb0e332cf"
+        },
+        {
+          "scale": 1.5,
+          "file": "assets/431ecec88a3dc850/usage-toast-offline@150.png",
+          "width": 594,
+          "height": 168,
+          "sourceHash": "72b228a3d7ddbbe6b4bbef7a86e3b8fd9b76c75cf9267bc11bf5d09bbbe5aaec"
+        },
+        {
+          "scale": 2,
+          "file": "assets/431ecec88a3dc850/usage-toast-offline@200.png",
+          "width": 792,
+          "height": 224,
+          "sourceHash": "4a20853b5b3d87a086804be301d7b74d5dc103e8efe07828d70c818952910132"
+        }
+      ]
+    },
+    {
+      "id": "main-horizontal-light",
+      "logicalWidth": 460,
+      "logicalHeight": 50,
+      "hitRegions": [
+        {
+          "action": "toggle-theme",
+          "x": 333,
+          "y": 14,
+          "width": 22,
+          "height": 22
+        },
+        {
+          "action": "toggle-statistics",
+          "x": 358,
+          "y": 14,
+          "width": 22,
+          "height": 22
+        },
+        {
+          "action": "toggle-toast",
+          "x": 383,
+          "y": 14,
+          "width": 22,
+          "height": 22
+        },
+        {
+          "action": "toggle-layout",
+          "x": 408,
+          "y": 14,
+          "width": 22,
+          "height": 22
+        },
+        {
+          "action": "hide",
+          "x": 433,
+          "y": 14,
+          "width": 22,
+          "height": 22
+        }
+      ],
+      "dynamic": {
+        "text": [
+          {
+            "bind": "runtime.model",
+            "rect": {
+              "x": 11,
+              "y": 22.5,
+              "width": 88,
+              "height": 13
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 10,
+            "fontWeight": 700,
+            "color": "#111827ff",
+            "align": "left",
+            "toneColors": {}
+          },
+          {
+            "bind": "runtime.effort",
+            "rect": {
+              "x": 115,
+              "y": 22.5,
+              "width": 30,
+              "height": 13
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 10,
+            "fontWeight": 700,
+            "color": "#111827ff",
+            "align": "left",
+            "toneColors": {}
+          },
+          {
+            "bind": "runtime.speed",
+            "rect": {
+              "x": 161,
+              "y": 22.5,
+              "width": 34,
+              "height": 13
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 10,
+            "fontWeight": 700,
+            "color": "#111827ff",
+            "align": "left",
+            "toneColors": {}
+          },
+          {
+            "bind": "quota.remaining",
+            "rect": {
+              "x": 293.015625,
+              "y": 8,
+              "width": 25.984375,
+              "height": 15
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 12,
+            "fontWeight": 700,
+            "color": "#77e0adff",
+            "align": "left",
+            "toneColors": {
+              "good": "#77e0adff",
+              "warn": "#e2b744ff",
+              "danger": "#ff7272ff",
+              "offline": "#71808eff"
+            }
+          },
+          {
+            "bind": "quota.reset",
+            "rect": {
+              "x": 215,
+              "y": 24,
+              "width": 104,
+              "height": 10
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 8,
+            "fontWeight": 400,
+            "color": "#647180ff",
+            "align": "left",
+            "toneColors": {}
+          }
+        ],
+        "progress": [
+          {
+            "bind": "quota.progress",
+            "rect": {
+              "x": 215,
+              "y": 37,
+              "width": 104,
+              "height": 3
+            },
+            "color": "#36a370ff",
+            "toneColors": {
+              "good": "#36a370ff",
+              "warn": "#c79522ff",
+              "danger": "#d84a4aff",
+              "offline": "#53616dff"
+            }
+          }
+        ]
+      },
+      "variants": [
+        {
+          "scale": 1,
+          "file": "assets/431ecec88a3dc850/main-horizontal-light@100.png",
+          "width": 460,
+          "height": 50,
+          "sourceHash": "f718e8d15dc9ab622588255f40764a0933aec9293dbfe23ff945dc4a31a69389"
+        },
+        {
+          "scale": 1.25,
+          "file": "assets/431ecec88a3dc850/main-horizontal-light@125.png",
+          "width": 575,
+          "height": 63,
+          "sourceHash": "19920b3d4a7e54d21f7138eb74fe5db16dab44db08a3c0a255431e0893158975"
+        },
+        {
+          "scale": 1.5,
+          "file": "assets/431ecec88a3dc850/main-horizontal-light@150.png",
+          "width": 690,
+          "height": 75,
+          "sourceHash": "6ff6674ffdb9d639006b3b94e500920f1cd4d0ae31d6e47943d287b9b572cab5"
+        },
+        {
+          "scale": 2,
+          "file": "assets/431ecec88a3dc850/main-horizontal-light@200.png",
+          "width": 920,
+          "height": 100,
+          "sourceHash": "fe175f0487c750a1085cccf2ddee26049b4578bada1e7173258a75e1dfdeb14e"
+        }
+      ]
+    },
+    {
+      "id": "main-vertical-light",
+      "logicalWidth": 130,
+      "logicalHeight": 180,
+      "hitRegions": [
+        {
+          "action": "toggle-theme",
+          "x": 6,
+          "y": 153,
+          "width": 22,
+          "height": 22
+        },
+        {
+          "action": "toggle-statistics",
+          "x": 30,
+          "y": 153,
+          "width": 22,
+          "height": 22
+        },
+        {
+          "action": "toggle-toast",
+          "x": 54,
+          "y": 153,
+          "width": 22,
+          "height": 22
+        },
+        {
+          "action": "toggle-layout",
+          "x": 78,
+          "y": 153,
+          "width": 22,
+          "height": 22
+        },
+        {
+          "action": "hide",
+          "x": 102,
+          "y": 153,
+          "width": 22,
+          "height": 22
+        }
+      ],
+      "dynamic": {
+        "text": [
+          {
+            "bind": "runtime.model",
+            "rect": {
+              "x": 11,
+              "y": 19,
+              "width": 108,
+              "height": 12
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 10,
+            "fontWeight": 700,
+            "color": "#111827ff",
+            "align": "left",
+            "toneColors": {}
+          },
+          {
+            "bind": "runtime.effort",
+            "rect": {
+              "x": 11,
+              "y": 52,
+              "width": 108,
+              "height": 12
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 10,
+            "fontWeight": 700,
+            "color": "#111827ff",
+            "align": "left",
+            "toneColors": {}
+          },
+          {
+            "bind": "runtime.speed",
+            "rect": {
+              "x": 11,
+              "y": 85,
+              "width": 108,
+              "height": 12
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 10,
+            "fontWeight": 700,
+            "color": "#111827ff",
+            "align": "left",
+            "toneColors": {}
+          },
+          {
+            "bind": "quota.remaining",
+            "rect": {
+              "x": 92.015625,
+              "y": 109,
+              "width": 25.984375,
+              "height": 15
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 12,
+            "fontWeight": 700,
+            "color": "#77e0adff",
+            "align": "left",
+            "toneColors": {
+              "good": "#77e0adff",
+              "warn": "#e2b744ff",
+              "danger": "#ff7272ff",
+              "offline": "#71808eff"
+            }
+          },
+          {
+            "bind": "quota.reset",
+            "rect": {
+              "x": 12,
+              "y": 125,
+              "width": 106,
+              "height": 10
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 8,
+            "fontWeight": 400,
+            "color": "#647180ff",
+            "align": "left",
+            "toneColors": {}
+          }
+        ],
+        "progress": [
+          {
+            "bind": "quota.progress",
+            "rect": {
+              "x": 12,
+              "y": 138,
+              "width": 106,
+              "height": 3
+            },
+            "color": "#36a370ff",
+            "toneColors": {
+              "good": "#36a370ff",
+              "warn": "#c79522ff",
+              "danger": "#d84a4aff",
+              "offline": "#53616dff"
+            }
+          }
+        ]
+      },
+      "variants": [
+        {
+          "scale": 1,
+          "file": "assets/431ecec88a3dc850/main-vertical-light@100.png",
+          "width": 130,
+          "height": 180,
+          "sourceHash": "1f60f17031c6a32fd883c149bdab7294c48ab0640d56edf93beef01959a28852"
+        },
+        {
+          "scale": 1.25,
+          "file": "assets/431ecec88a3dc850/main-vertical-light@125.png",
+          "width": 163,
+          "height": 225,
+          "sourceHash": "f6fff94da3fa2861ac33ffdc1abf422a063a0dbbf368f884b1803cc8e51e3826"
+        },
+        {
+          "scale": 1.5,
+          "file": "assets/431ecec88a3dc850/main-vertical-light@150.png",
+          "width": 195,
+          "height": 270,
+          "sourceHash": "1fc4fe8f694b42a5443b3ae73e8a5ea2e7a34756b9a355809c3808b261b6265a"
+        },
+        {
+          "scale": 2,
+          "file": "assets/431ecec88a3dc850/main-vertical-light@200.png",
+          "width": 260,
+          "height": 360,
+          "sourceHash": "2b6307d937629c33dd9b8597c44dd0a38a084f69f0221365005c4369ff4ae82b"
+        }
+      ]
+    },
+    {
+      "id": "statistics-light",
+      "logicalWidth": 360,
+      "logicalHeight": 220,
+      "hitRegions": [
+        {
+          "action": "statistics-previous-month",
+          "x": 15,
+          "y": 72,
+          "width": 22,
+          "height": 22
+        },
+        {
+          "action": "statistics-next-month",
+          "x": 111,
+          "y": 72,
+          "width": 22,
+          "height": 22
+        },
+        {
+          "action": "statistics-view-month",
+          "x": 195,
+          "y": 75,
+          "width": 42,
+          "height": 16
+        },
+        {
+          "action": "statistics-view-week",
+          "x": 241,
+          "y": 75,
+          "width": 32,
+          "height": 16
+        },
+        {
+          "action": "statistics-view-cumulative",
+          "x": 277,
+          "y": 75,
+          "width": 32,
+          "height": 16
+        },
+        {
+          "action": "statistics-view-detail",
+          "x": 313,
+          "y": 75,
+          "width": 32,
+          "height": 16
+        },
+        {
+          "action": "statistics-select-day-00",
+          "x": 15,
+          "y": 110,
+          "width": 44.5625,
+          "height": 13.65625
+        },
+        {
+          "action": "statistics-select-day-01",
+          "x": 62.5625,
+          "y": 110,
+          "width": 44.578125,
+          "height": 13.65625
+        },
+        {
+          "action": "statistics-select-day-02",
+          "x": 110.140625,
+          "y": 110,
+          "width": 44.5625,
+          "height": 13.65625
+        },
+        {
+          "action": "statistics-select-day-03",
+          "x": 157.703125,
+          "y": 110,
+          "width": 44.578125,
+          "height": 13.65625
+        },
+        {
+          "action": "statistics-select-day-04",
+          "x": 205.28125,
+          "y": 110,
+          "width": 44.5625,
+          "height": 13.65625
+        },
+        {
+          "action": "statistics-select-day-05",
+          "x": 252.84375,
+          "y": 110,
+          "width": 44.578125,
+          "height": 13.65625
+        },
+        {
+          "action": "statistics-select-day-06",
+          "x": 300.421875,
+          "y": 110,
+          "width": 44.578125,
+          "height": 13.65625
+        },
+        {
+          "action": "statistics-select-day-07",
+          "x": 15,
+          "y": 126.65625,
+          "width": 44.5625,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-08",
+          "x": 62.5625,
+          "y": 126.65625,
+          "width": 44.578125,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-09",
+          "x": 110.140625,
+          "y": 126.65625,
+          "width": 44.5625,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-10",
+          "x": 157.703125,
+          "y": 126.65625,
+          "width": 44.578125,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-11",
+          "x": 205.28125,
+          "y": 126.65625,
+          "width": 44.5625,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-12",
+          "x": 252.84375,
+          "y": 126.65625,
+          "width": 44.578125,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-13",
+          "x": 300.421875,
+          "y": 126.65625,
+          "width": 44.578125,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-14",
+          "x": 15,
+          "y": 143.328125,
+          "width": 44.5625,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-15",
+          "x": 62.5625,
+          "y": 143.328125,
+          "width": 44.578125,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-16",
+          "x": 110.140625,
+          "y": 143.328125,
+          "width": 44.5625,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-17",
+          "x": 157.703125,
+          "y": 143.328125,
+          "width": 44.578125,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-18",
+          "x": 205.28125,
+          "y": 143.328125,
+          "width": 44.5625,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-19",
+          "x": 252.84375,
+          "y": 143.328125,
+          "width": 44.578125,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-20",
+          "x": 300.421875,
+          "y": 143.328125,
+          "width": 44.578125,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-21",
+          "x": 15,
+          "y": 160,
+          "width": 44.5625,
+          "height": 13.65625
+        },
+        {
+          "action": "statistics-select-day-22",
+          "x": 62.5625,
+          "y": 160,
+          "width": 44.578125,
+          "height": 13.65625
+        },
+        {
+          "action": "statistics-select-day-23",
+          "x": 110.140625,
+          "y": 160,
+          "width": 44.5625,
+          "height": 13.65625
+        },
+        {
+          "action": "statistics-select-day-24",
+          "x": 157.703125,
+          "y": 160,
+          "width": 44.578125,
+          "height": 13.65625
+        },
+        {
+          "action": "statistics-select-day-25",
+          "x": 205.28125,
+          "y": 160,
+          "width": 44.5625,
+          "height": 13.65625
+        },
+        {
+          "action": "statistics-select-day-26",
+          "x": 252.84375,
+          "y": 160,
+          "width": 44.578125,
+          "height": 13.65625
+        },
+        {
+          "action": "statistics-select-day-27",
+          "x": 300.421875,
+          "y": 160,
+          "width": 44.578125,
+          "height": 13.65625
+        },
+        {
+          "action": "statistics-select-day-28",
+          "x": 15,
+          "y": 176.65625,
+          "width": 44.5625,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-29",
+          "x": 62.5625,
+          "y": 176.65625,
+          "width": 44.578125,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-30",
+          "x": 110.140625,
+          "y": 176.65625,
+          "width": 44.5625,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-31",
+          "x": 157.703125,
+          "y": 176.65625,
+          "width": 44.578125,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-32",
+          "x": 205.28125,
+          "y": 176.65625,
+          "width": 44.5625,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-33",
+          "x": 252.84375,
+          "y": 176.65625,
+          "width": 44.578125,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-34",
+          "x": 300.421875,
+          "y": 176.65625,
+          "width": 44.578125,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-35",
+          "x": 15,
+          "y": 193.328125,
+          "width": 44.5625,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-36",
+          "x": 62.5625,
+          "y": 193.328125,
+          "width": 44.578125,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-37",
+          "x": 110.140625,
+          "y": 193.328125,
+          "width": 44.5625,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-38",
+          "x": 157.703125,
+          "y": 193.328125,
+          "width": 44.578125,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-39",
+          "x": 205.28125,
+          "y": 193.328125,
+          "width": 44.5625,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-40",
+          "x": 252.84375,
+          "y": 193.328125,
+          "width": 44.578125,
+          "height": 13.671875
+        },
+        {
+          "action": "statistics-select-day-41",
+          "x": 300.421875,
+          "y": 193.328125,
+          "width": 44.578125,
+          "height": 13.671875
+        }
+      ],
+      "dynamic": {
+        "text": [
+          {
+            "bind": "statistics.total",
+            "rect": {
+              "x": 15,
+              "y": 15.5,
+              "width": 65,
+              "height": 18
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 14,
+            "fontWeight": 700,
+            "color": "#171c22ff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.peak",
+            "rect": {
+              "x": 80,
+              "y": 15.5,
+              "width": 65,
+              "height": 18
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 14,
+            "fontWeight": 700,
+            "color": "#171c22ff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.duration",
+            "rect": {
+              "x": 145,
+              "y": 15.5,
+              "width": 80,
+              "height": 18
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 14,
+            "fontWeight": 700,
+            "color": "#171c22ff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.currentStreak",
+            "rect": {
+              "x": 225,
+              "y": 15.5,
+              "width": 60,
+              "height": 18
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 14,
+            "fontWeight": 700,
+            "color": "#171c22ff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.longestStreak",
+            "rect": {
+              "x": 285,
+              "y": 15.5,
+              "width": 60,
+              "height": 18
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 14,
+            "fontWeight": 700,
+            "color": "#171c22ff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.previousMonth",
+            "rect": {
+              "x": 15,
+              "y": 72,
+              "width": 22,
+              "height": 22
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 14,
+            "fontWeight": 400,
+            "color": "#65717dff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.month",
+            "rect": {
+              "x": 37,
+              "y": 76,
+              "width": 74,
+              "height": 14
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 11,
+            "fontWeight": 700,
+            "color": "#171c22ff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.nextMonth",
+            "rect": {
+              "x": 111,
+              "y": 72,
+              "width": 22,
+              "height": 22
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 14,
+            "fontWeight": 400,
+            "color": "#65717dff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.viewMonth",
+            "rect": {
+              "x": 195,
+              "y": 75,
+              "width": 42,
+              "height": 16
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 10,
+            "fontWeight": 400,
+            "color": "#171c22ff",
+            "align": "center",
+            "toneColors": {
+              "good": "#171c22ff",
+              "warn": "#e4e9edff",
+              "danger": "#00000000",
+              "offline": "#65717dff"
+            }
+          },
+          {
+            "bind": "statistics.viewWeek",
+            "rect": {
+              "x": 241,
+              "y": 75,
+              "width": 32,
+              "height": 16
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 10,
+            "fontWeight": 400,
+            "color": "#65717dff",
+            "align": "center",
+            "toneColors": {
+              "good": "#171c22ff",
+              "warn": "#e4e9edff",
+              "danger": "#00000000",
+              "offline": "#65717dff"
+            }
+          },
+          {
+            "bind": "statistics.viewCumulative",
+            "rect": {
+              "x": 277,
+              "y": 75,
+              "width": 32,
+              "height": 16
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 10,
+            "fontWeight": 400,
+            "color": "#65717dff",
+            "align": "center",
+            "toneColors": {
+              "good": "#171c22ff",
+              "warn": "#e4e9edff",
+              "danger": "#00000000",
+              "offline": "#65717dff"
+            }
+          },
+          {
+            "bind": "statistics.viewDetail",
+            "rect": {
+              "x": 313,
+              "y": 75,
+              "width": 32,
+              "height": 16
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 10,
+            "fontWeight": 400,
+            "color": "#65717dff",
+            "align": "center",
+            "toneColors": {
+              "good": "#171c22ff",
+              "warn": "#e4e9edff",
+              "danger": "#00000000",
+              "offline": "#65717dff"
+            }
+          },
+          {
+            "bind": "statistics.detailInput",
+            "rect": {
+              "x": 15,
+              "y": 111.75,
+              "width": 79.5,
+              "height": 16
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 13,
+            "fontWeight": 700,
+            "color": "#171c22ff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.labelInput",
+            "rect": {
+              "x": 15,
+              "y": 129.75,
+              "width": 79.5,
+              "height": 10
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 8,
+            "fontWeight": 400,
+            "color": "#65717dff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.detailOutput",
+            "rect": {
+              "x": 98.5,
+              "y": 111.75,
+              "width": 79.5,
+              "height": 16
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 13,
+            "fontWeight": 700,
+            "color": "#171c22ff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.labelOutput",
+            "rect": {
+              "x": 98.5,
+              "y": 129.75,
+              "width": 79.5,
+              "height": 10
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 8,
+            "fontWeight": 400,
+            "color": "#65717dff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.detailTotal",
+            "rect": {
+              "x": 182,
+              "y": 111.75,
+              "width": 79.5,
+              "height": 16
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 13,
+            "fontWeight": 700,
+            "color": "#171c22ff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.labelTotal",
+            "rect": {
+              "x": 182,
+              "y": 129.75,
+              "width": 79.5,
+              "height": 10
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 8,
+            "fontWeight": 400,
+            "color": "#65717dff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.detailCached",
+            "rect": {
+              "x": 265.5,
+              "y": 111.75,
+              "width": 79.5,
+              "height": 16
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 13,
+            "fontWeight": 700,
+            "color": "#171c22ff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.labelCached",
+            "rect": {
+              "x": 265.5,
+              "y": 129.75,
+              "width": 79.5,
+              "height": 10
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 8,
+            "fontWeight": 400,
+            "color": "#65717dff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.detailReasoning",
+            "rect": {
+              "x": 15,
+              "y": 167.25,
+              "width": 79.5,
+              "height": 16
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 13,
+            "fontWeight": 700,
+            "color": "#171c22ff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.labelReasoning",
+            "rect": {
+              "x": 15,
+              "y": 185.25,
+              "width": 79.5,
+              "height": 10
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 8,
+            "fontWeight": 400,
+            "color": "#65717dff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.detailCacheHit",
+            "rect": {
+              "x": 98.5,
+              "y": 167.25,
+              "width": 79.5,
+              "height": 16
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 13,
+            "fontWeight": 700,
+            "color": "#171c22ff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.labelCacheHit",
+            "rect": {
+              "x": 98.5,
+              "y": 185.25,
+              "width": 79.5,
+              "height": 10
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 8,
+            "fontWeight": 400,
+            "color": "#65717dff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.detailCost",
+            "rect": {
+              "x": 182,
+              "y": 167.25,
+              "width": 163,
+              "height": 16
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 13,
+            "fontWeight": 700,
+            "color": "#171c22ff",
+            "align": "center",
+            "toneColors": {}
+          },
+          {
+            "bind": "statistics.labelCost",
+            "rect": {
+              "x": 182,
+              "y": 185.25,
+              "width": 163,
+              "height": 10
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 8,
+            "fontWeight": 400,
+            "color": "#65717dff",
+            "align": "center",
+            "toneColors": {}
+          }
+        ],
+        "cells": [
+          {
+            "bind": "statistics.monthCells",
+            "rects": [
+              {
+                "x": 15,
+                "y": 110,
+                "width": 44.5625,
+                "height": 13.65625
+              },
+              {
+                "x": 62.5625,
+                "y": 110,
+                "width": 44.578125,
+                "height": 13.65625
+              },
+              {
+                "x": 110.140625,
+                "y": 110,
+                "width": 44.5625,
+                "height": 13.65625
+              },
+              {
+                "x": 157.703125,
+                "y": 110,
+                "width": 44.578125,
+                "height": 13.65625
+              },
+              {
+                "x": 205.28125,
+                "y": 110,
+                "width": 44.5625,
+                "height": 13.65625
+              },
+              {
+                "x": 252.84375,
+                "y": 110,
+                "width": 44.578125,
+                "height": 13.65625
+              },
+              {
+                "x": 300.421875,
+                "y": 110,
+                "width": 44.578125,
+                "height": 13.65625
+              },
+              {
+                "x": 15,
+                "y": 126.65625,
+                "width": 44.5625,
+                "height": 13.671875
+              },
+              {
+                "x": 62.5625,
+                "y": 126.65625,
+                "width": 44.578125,
+                "height": 13.671875
+              },
+              {
+                "x": 110.140625,
+                "y": 126.65625,
+                "width": 44.5625,
+                "height": 13.671875
+              },
+              {
+                "x": 157.703125,
+                "y": 126.65625,
+                "width": 44.578125,
+                "height": 13.671875
+              },
+              {
+                "x": 205.28125,
+                "y": 126.65625,
+                "width": 44.5625,
+                "height": 13.671875
+              },
+              {
+                "x": 252.84375,
+                "y": 126.65625,
+                "width": 44.578125,
+                "height": 13.671875
+              },
+              {
+                "x": 300.421875,
+                "y": 126.65625,
+                "width": 44.578125,
+                "height": 13.671875
+              },
+              {
+                "x": 15,
+                "y": 143.328125,
+                "width": 44.5625,
+                "height": 13.671875
+              },
+              {
+                "x": 62.5625,
+                "y": 143.328125,
+                "width": 44.578125,
+                "height": 13.671875
+              },
+              {
+                "x": 110.140625,
+                "y": 143.328125,
+                "width": 44.5625,
+                "height": 13.671875
+              },
+              {
+                "x": 157.703125,
+                "y": 143.328125,
+                "width": 44.578125,
+                "height": 13.671875
+              },
+              {
+                "x": 205.28125,
+                "y": 143.328125,
+                "width": 44.5625,
+                "height": 13.671875
+              },
+              {
+                "x": 252.84375,
+                "y": 143.328125,
+                "width": 44.578125,
+                "height": 13.671875
+              },
+              {
+                "x": 300.421875,
+                "y": 143.328125,
+                "width": 44.578125,
+                "height": 13.671875
+              },
+              {
+                "x": 15,
+                "y": 160,
+                "width": 44.5625,
+                "height": 13.65625
+              },
+              {
+                "x": 62.5625,
+                "y": 160,
+                "width": 44.578125,
+                "height": 13.65625
+              },
+              {
+                "x": 110.140625,
+                "y": 160,
+                "width": 44.5625,
+                "height": 13.65625
+              },
+              {
+                "x": 157.703125,
+                "y": 160,
+                "width": 44.578125,
+                "height": 13.65625
+              },
+              {
+                "x": 205.28125,
+                "y": 160,
+                "width": 44.5625,
+                "height": 13.65625
+              },
+              {
+                "x": 252.84375,
+                "y": 160,
+                "width": 44.578125,
+                "height": 13.65625
+              },
+              {
+                "x": 300.421875,
+                "y": 160,
+                "width": 44.578125,
+                "height": 13.65625
+              },
+              {
+                "x": 15,
+                "y": 176.65625,
+                "width": 44.5625,
+                "height": 13.671875
+              },
+              {
+                "x": 62.5625,
+                "y": 176.65625,
+                "width": 44.578125,
+                "height": 13.671875
+              },
+              {
+                "x": 110.140625,
+                "y": 176.65625,
+                "width": 44.5625,
+                "height": 13.671875
+              },
+              {
+                "x": 157.703125,
+                "y": 176.65625,
+                "width": 44.578125,
+                "height": 13.671875
+              },
+              {
+                "x": 205.28125,
+                "y": 176.65625,
+                "width": 44.5625,
+                "height": 13.671875
+              },
+              {
+                "x": 252.84375,
+                "y": 176.65625,
+                "width": 44.578125,
+                "height": 13.671875
+              },
+              {
+                "x": 300.421875,
+                "y": 176.65625,
+                "width": 44.578125,
+                "height": 13.671875
+              },
+              {
+                "x": 15,
+                "y": 193.328125,
+                "width": 44.5625,
+                "height": 13.671875
+              },
+              {
+                "x": 62.5625,
+                "y": 193.328125,
+                "width": 44.578125,
+                "height": 13.671875
+              },
+              {
+                "x": 110.140625,
+                "y": 193.328125,
+                "width": 44.5625,
+                "height": 13.671875
+              },
+              {
+                "x": 157.703125,
+                "y": 193.328125,
+                "width": 44.578125,
+                "height": 13.671875
+              },
+              {
+                "x": 205.28125,
+                "y": 193.328125,
+                "width": 44.5625,
+                "height": 13.671875
+              },
+              {
+                "x": 252.84375,
+                "y": 193.328125,
+                "width": 44.578125,
+                "height": 13.671875
+              },
+              {
+                "x": 300.421875,
+                "y": 193.328125,
+                "width": 44.578125,
+                "height": 13.671875
+              }
+            ],
+            "colors": [
+              "#e4e9edff",
+              "#bfd8e9ff",
+              "#8fbcdcff",
+              "#5796c3ff",
+              "#2678b4ff",
+              "#d8efffff"
+            ],
+            "backgroundColor": "#ffffffff"
+          }
+        ]
+      },
+      "variants": [
+        {
+          "scale": 1,
+          "file": "assets/431ecec88a3dc850/statistics-light@100.png",
+          "width": 360,
+          "height": 220,
+          "sourceHash": "58baffb226588927e66ae1bbf5e8ea9e982dcd76ff48ad9af4bcf501f7d5e162"
+        },
+        {
+          "scale": 1.25,
+          "file": "assets/431ecec88a3dc850/statistics-light@125.png",
+          "width": 450,
+          "height": 275,
+          "sourceHash": "6589c537eb5a93bf90c713134691e32ac16761f797328976f119a3aefec58765"
+        },
+        {
+          "scale": 1.5,
+          "file": "assets/431ecec88a3dc850/statistics-light@150.png",
+          "width": 540,
+          "height": 330,
+          "sourceHash": "91039dd263f89876f953ab7fd99876701e4f99fd19ab083e005cc2890d58881d"
+        },
+        {
+          "scale": 2,
+          "file": "assets/431ecec88a3dc850/statistics-light@200.png",
+          "width": 720,
+          "height": 440,
+          "sourceHash": "95511fcbc0e491c95c847d548322d205db41ab0125a6d2b6521476b947cfb7ed"
+        }
+      ]
+    },
+    {
+      "id": "usage-toast-good-light",
+      "logicalWidth": 396,
+      "logicalHeight": 112,
+      "hitRegions": [
+        {
+          "action": "hide",
+          "x": 314,
+          "y": 45,
+          "width": 22,
+          "height": 22
+        }
+      ],
+      "dynamic": {
+        "text": [
+          {
+            "bind": "toast.title",
+            "rect": {
+              "x": 77,
+              "y": 39.078125,
+              "width": 227,
+              "height": 16
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 13,
+            "fontWeight": 700,
+            "color": "#0b2a1dff",
+            "align": "left",
+            "toneColors": {}
+          },
+          {
+            "bind": "toast.message",
+            "rect": {
+              "x": 77,
+              "y": 58.078125,
+              "width": 227,
+              "height": 14.84375
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 11,
+            "fontWeight": 400,
+            "color": "#0b2a1dff",
+            "align": "left",
+            "toneColors": {}
+          }
+        ]
+      },
+      "variants": [
+        {
+          "scale": 1,
+          "file": "assets/431ecec88a3dc850/usage-toast-good-light@100.png",
+          "width": 396,
+          "height": 112,
+          "sourceHash": "ca3163eb310e5ed6d65423db3e2b2ceade8385ca4a16d0fe7f0d00a37eaf1da2"
+        },
+        {
+          "scale": 1.25,
+          "file": "assets/431ecec88a3dc850/usage-toast-good-light@125.png",
+          "width": 495,
+          "height": 140,
+          "sourceHash": "bee393448ada766293bb6de778bbe04e3d66a675bdfc4414672df63f9fb44046"
+        },
+        {
+          "scale": 1.5,
+          "file": "assets/431ecec88a3dc850/usage-toast-good-light@150.png",
+          "width": 594,
+          "height": 168,
+          "sourceHash": "9410c269776f6f2ff353c2c214b21e351644fff750f007dd859624d89ea43eb5"
+        },
+        {
+          "scale": 2,
+          "file": "assets/431ecec88a3dc850/usage-toast-good-light@200.png",
+          "width": 792,
+          "height": 224,
+          "sourceHash": "52adea859cf1b0be0dc61369491802dc9cf1ea210861014b823addcfe6528e11"
+        }
+      ]
+    },
+    {
+      "id": "usage-toast-light",
+      "logicalWidth": 396,
+      "logicalHeight": 112,
+      "hitRegions": [
+        {
+          "action": "hide",
+          "x": 314,
+          "y": 45,
+          "width": 22,
+          "height": 22
+        }
+      ],
+      "dynamic": {
+        "text": [
+          {
+            "bind": "toast.title",
+            "rect": {
+              "x": 77,
+              "y": 39.078125,
+              "width": 227,
+              "height": 16
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 13,
+            "fontWeight": 700,
+            "color": "#111827ff",
+            "align": "left",
+            "toneColors": {}
+          },
+          {
+            "bind": "toast.message",
+            "rect": {
+              "x": 77,
+              "y": 58.078125,
+              "width": 227,
+              "height": 14.84375
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 11,
+            "fontWeight": 400,
+            "color": "#111827ff",
+            "align": "left",
+            "toneColors": {}
+          }
+        ]
+      },
+      "variants": [
+        {
+          "scale": 1,
+          "file": "assets/431ecec88a3dc850/usage-toast-light@100.png",
+          "width": 396,
+          "height": 112,
+          "sourceHash": "2807be2b1c06974d17e7159d5905426dfe30b4424171c8d9b467ec8076805897"
+        },
+        {
+          "scale": 1.25,
+          "file": "assets/431ecec88a3dc850/usage-toast-light@125.png",
+          "width": 495,
+          "height": 140,
+          "sourceHash": "d6f072ba134d15794743a1877879c58d76eb7e2fa38fef26d1c8ac210f469bc2"
+        },
+        {
+          "scale": 1.5,
+          "file": "assets/431ecec88a3dc850/usage-toast-light@150.png",
+          "width": 594,
+          "height": 168,
+          "sourceHash": "1fb63d0a643ae17000f411c88a3abf171c64d869f05e940e4bcead4f6e38f84c"
+        },
+        {
+          "scale": 2,
+          "file": "assets/431ecec88a3dc850/usage-toast-light@200.png",
+          "width": 792,
+          "height": 224,
+          "sourceHash": "43ad8680931637d466eecc9c3e999dfd005fb7250b30ff1e55f0acf3dfee55ea"
+        }
+      ]
+    },
+    {
+      "id": "usage-toast-danger-light",
+      "logicalWidth": 396,
+      "logicalHeight": 112,
+      "hitRegions": [
+        {
+          "action": "hide",
+          "x": 314,
+          "y": 45,
+          "width": 22,
+          "height": 22
+        }
+      ],
+      "dynamic": {
+        "text": [
+          {
+            "bind": "toast.title",
+            "rect": {
+              "x": 77,
+              "y": 39.078125,
+              "width": 227,
+              "height": 16
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 13,
+            "fontWeight": 700,
+            "color": "#ffffffff",
+            "align": "left",
+            "toneColors": {}
+          },
+          {
+            "bind": "toast.message",
+            "rect": {
+              "x": 77,
+              "y": 58.078125,
+              "width": 227,
+              "height": 14.84375
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 11,
+            "fontWeight": 400,
+            "color": "#ffffffff",
+            "align": "left",
+            "toneColors": {}
+          }
+        ]
+      },
+      "variants": [
+        {
+          "scale": 1,
+          "file": "assets/431ecec88a3dc850/usage-toast-danger-light@100.png",
+          "width": 396,
+          "height": 112,
+          "sourceHash": "debe6fb0d1aaadec2ced5bdea56246d96e9ab1cc739e3c49bc9aae80a36d4fa5"
+        },
+        {
+          "scale": 1.25,
+          "file": "assets/431ecec88a3dc850/usage-toast-danger-light@125.png",
+          "width": 495,
+          "height": 140,
+          "sourceHash": "ef12c1f5a54d63d6477cf73be7c831079d0b189228ddc9bd5083fe073b5e8870"
+        },
+        {
+          "scale": 1.5,
+          "file": "assets/431ecec88a3dc850/usage-toast-danger-light@150.png",
+          "width": 594,
+          "height": 168,
+          "sourceHash": "fe5334f5eb0f249d83c1bad3560f27306e0ba411ded0e68f9f3bc8e42ca77627"
+        },
+        {
+          "scale": 2,
+          "file": "assets/431ecec88a3dc850/usage-toast-danger-light@200.png",
+          "width": 792,
+          "height": 224,
+          "sourceHash": "51fc178ca3137672e130bb6cd9a9146ca31fdd7ce25c87527f6bd774bfe5f77c"
+        }
+      ]
+    },
+    {
+      "id": "usage-toast-offline-light",
+      "logicalWidth": 396,
+      "logicalHeight": 112,
+      "hitRegions": [
+        {
+          "action": "hide",
+          "x": 314,
+          "y": 45,
+          "width": 22,
+          "height": 22
+        }
+      ],
+      "dynamic": {
+        "text": [
+          {
+            "bind": "toast.title",
+            "rect": {
+              "x": 77,
+              "y": 39.078125,
+              "width": 227,
+              "height": 16
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 13,
+            "fontWeight": 700,
+            "color": "#24313cff",
+            "align": "left",
+            "toneColors": {}
+          },
+          {
+            "bind": "toast.message",
+            "rect": {
+              "x": 77,
+              "y": 58.078125,
+              "width": 227,
+              "height": 14.84375
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 11,
+            "fontWeight": 400,
+            "color": "#24313cff",
+            "align": "left",
+            "toneColors": {}
+          }
+        ]
+      },
+      "variants": [
+        {
+          "scale": 1,
+          "file": "assets/431ecec88a3dc850/usage-toast-offline-light@100.png",
+          "width": 396,
+          "height": 112,
+          "sourceHash": "4b9d9695e29bb12611b87535610aaa7bb6fdc904349e84f9a92712e6d7a2cde8"
+        },
+        {
+          "scale": 1.25,
+          "file": "assets/431ecec88a3dc850/usage-toast-offline-light@125.png",
+          "width": 495,
+          "height": 140,
+          "sourceHash": "35b3bc5bd2ee8f7468916c334e4746507b03169c4c33a2fa785c5fc69d7d6e24"
+        },
+        {
+          "scale": 1.5,
+          "file": "assets/431ecec88a3dc850/usage-toast-offline-light@150.png",
+          "width": 594,
+          "height": 168,
+          "sourceHash": "7ae3e27b7f3ccf549243628b31dc8bbe52169f531a99a0ad55d742b403e036f0"
+        },
+        {
+          "scale": 2,
+          "file": "assets/431ecec88a3dc850/usage-toast-offline-light@200.png",
+          "width": 792,
+          "height": 224,
+          "sourceHash": "caa2f373d949cbd004281b74587c6bbe7ee296443b4802e1c8242935551b7653"
+        }
+      ]
+    }
+  ]
+}
