@@ -562,6 +562,125 @@ func TestMonitorRefreshesAfterMtimeChange(t *testing.T) {
 	}
 }
 
+func TestStatisticsCacheWriteThrottleKeepsProgressInMemory(t *testing.T) {
+	root := t.TempDir()
+	path := filepath.Join(root, "sessions", "usage.jsonl")
+	cachePath := filepath.Join(root, "cache", "statistics.json")
+	firstLine := `{"timestamp":"2026-08-09T01:00:00+08:00","type":"event_msg",` +
+		`"payload":{"type":"token_count","info":{"total_token_usage":{` +
+		`"input_tokens":100,"output_tokens":20,"total_tokens":120}}}}` + "\n"
+	mustWrite(t, path, firstLine)
+	now := fixtureNow
+	service := NewService(Options{
+		Paths: Paths{
+			Sessions: filepath.Dir(path),
+			Cache:    cachePath,
+		},
+		Location:          fixtureLocation,
+		Now:               func() time.Time { return now },
+		CacheSaveInterval: time.Hour,
+	})
+	if _, err := service.Snapshot(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	marker := fixtureNow.Add(-time.Hour)
+	if err := os.Chtimes(cachePath, marker, marker); err != nil {
+		t.Fatal(err)
+	}
+
+	secondLine := `{"timestamp":"2026-08-09T02:00:00+08:00","type":"event_msg",` +
+		`"payload":{"type":"token_count","info":{"total_token_usage":{` +
+		`"input_tokens":140,"output_tokens":30,"total_tokens":170}}}}` + "\n"
+	file, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := file.WriteString(secondLine); err != nil {
+		_ = file.Close()
+		t.Fatal(err)
+	}
+	if err := file.Close(); err != nil {
+		t.Fatal(err)
+	}
+	now = now.Add(time.Minute)
+	if err := os.Chtimes(path, now, now); err != nil {
+		t.Fatal(err)
+	}
+	snapshot, err := service.Snapshot(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if snapshot.Statistics.TotalTokens != 170 {
+		t.Fatalf("in-memory total = %d, want 170", snapshot.Statistics.TotalTokens)
+	}
+	info, err := os.Stat(cachePath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !info.ModTime().Equal(marker) {
+		t.Fatalf("throttled cache write changed mtime to %v", info.ModTime())
+	}
+
+	service.FlushStatisticsCache()
+	cache := readStatisticsCache(
+		cachePath,
+		statisticsTimeZoneKey(fixtureLocation, now),
+	)
+	if len(cache.Files) != 1 || cache.Files[0].ParsedLength != int64(len(firstLine)+len(secondLine)) {
+		t.Fatalf("flushed cache = %+v", cache.Files)
+	}
+}
+
+func TestServiceReusesParsedSessionTailUntilFileStampChanges(t *testing.T) {
+	root := t.TempDir()
+	path := filepath.Join(root, "sessions", "context.jsonl")
+	first := `{"type":"turn_context","payload":{"model":"model-a"}}` + "\n"
+	second := `{"type":"turn_context","payload":{"model":"model-b"}}` + "\n"
+	if len(first) != len(second) {
+		t.Fatal("test contexts differ in length")
+	}
+	mustWrite(t, path, first)
+	info, err := os.Stat(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	service := fixtureService(Paths{
+		Sessions: filepath.Dir(path),
+		Cache:    filepath.Join(root, "cache.json"),
+	})
+	initial, err := service.Snapshot(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if initial.Runtime.Model != "model-a" {
+		t.Fatalf("initial model = %q", initial.Runtime.Model)
+	}
+
+	mustWrite(t, path, second)
+	if err := os.Chtimes(path, info.ModTime(), info.ModTime()); err != nil {
+		t.Fatal(err)
+	}
+	cached, err := service.Snapshot(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if cached.Runtime.Model != "model-a" {
+		t.Fatalf("cached model = %q, want model-a", cached.Runtime.Model)
+	}
+
+	changedTime := info.ModTime().Add(time.Second)
+	if err := os.Chtimes(path, changedTime, changedTime); err != nil {
+		t.Fatal(err)
+	}
+	changed, err := service.Snapshot(context.Background())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if changed.Runtime.Model != "model-b" {
+		t.Fatalf("changed model = %q, want model-b", changed.Runtime.Model)
+	}
+}
+
 func materializeFixture(t *testing.T, name string) Paths {
 	t.Helper()
 	source := filepath.Join("testdata", "fixtures", name)

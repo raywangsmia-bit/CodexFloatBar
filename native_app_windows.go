@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 	"unsafe"
 
@@ -96,6 +97,9 @@ type nativeApp struct {
 	codexStateKnown       bool
 	codexWasRunning       bool
 	codexWasVisible       bool
+	winEventHooks         []uintptr
+	occlusionEventPending atomic.Bool
+	baseSurfaces          map[string]*renderedSurface
 }
 
 type windowAnimation struct {
@@ -128,6 +132,7 @@ func newNativeApp(bundleRoot string, surfaceID string, startedAt time.Time) *nat
 		surfaceOverride:    surfaceID != "",
 		placement:          newPlacementStore(),
 		stopWatching:       make(chan struct{}),
+		baseSurfaces:       map[string]*renderedSurface{},
 		windowClass:        nativeWindowClass,
 		mutexName:          nativeMutexName,
 		status:             newStatusRuntime(),
@@ -239,6 +244,10 @@ func (app *nativeApp) run() error {
 	defer app.stopStatusMonitor()
 	app.startProcessMonitor()
 	defer app.stopProcessMonitor()
+	if err := app.startOcclusionHooks(); err != nil {
+		log.Printf("starting Codex occlusion hooks: %v", err)
+	}
+	defer app.stopOcclusionHooks()
 	defer app.stopWatcher()
 
 	app.reloadSurface()
@@ -305,6 +314,23 @@ func (app *nativeApp) selectSurfaceIDs(manifest bundleManifest) {
 		app.appearance.current.Theme,
 		tone,
 	)
+	app.pruneBaseSurfaces()
+}
+
+func (app *nativeApp) pruneBaseSurfaces() {
+	if app.baseSurfaces == nil {
+		return
+	}
+	active := map[string]struct{}{
+		app.surfaceID:                  {},
+		app.statisticsWindow.SurfaceID: {},
+		app.usageToastWindow.SurfaceID: {},
+	}
+	for surfaceID := range app.baseSurfaces {
+		if _, keep := active[surfaceID]; !keep {
+			delete(app.baseSurfaces, surfaceID)
+		}
+	}
 }
 
 func (app *nativeApp) acquireSingleInstance() (bool, error) {
@@ -581,16 +607,38 @@ func (app *nativeApp) loadComposedSurface(
 	if app.appearance != nil {
 		targetScale = app.appearance.targetScale(dpi)
 	}
-	surface, err := loadRenderedSurfaceFromManifestAtScale(
-		app.bundleRoot,
-		manifest,
-		surfaceID,
-		targetScale,
-	)
-	if err != nil {
-		return nil, err
+	surface := app.baseSurfaces[surfaceID]
+	if !surfaceMatches(surface, manifest, targetScale) {
+		loaded, err := loadRenderedSurfaceFromManifestAtScale(
+			app.bundleRoot,
+			manifest,
+			surfaceID,
+			targetScale,
+		)
+		if err != nil {
+			return nil, err
+		}
+		surface = loaded
+		if app.baseSurfaces == nil {
+			app.baseSurfaces = map[string]*renderedSurface{}
+		}
+		app.baseSurfaces[surfaceID] = surface
 	}
 	return app.composeSurface(surface)
+}
+
+func surfaceMatches(
+	surface *renderedSurface,
+	manifest bundleManifest,
+	targetScale float64,
+) bool {
+	if surface == nil || surface.Variant.Scale != targetScale {
+		return false
+	}
+	currentVersion := surface.Manifest.Version
+	nextVersion := manifest.Version
+	return currentVersion.Build == nextVersion.Build &&
+		currentVersion.StaticVersion == nextVersion.StaticVersion
 }
 
 func (app *nativeApp) composeSurface(surface *renderedSurface) (*renderedSurface, error) {
@@ -2048,6 +2096,12 @@ func nativeWindowProc(window uintptr, message uint32, wParam uintptr, lParam uin
 			}
 		}
 		return 0
+	case wmNativeOcclusionChanged:
+		if !isMain {
+			break
+		}
+		app.refreshCodexOcclusion()
+		return 0
 	case wmNativeShow:
 		if !isMain {
 			break
@@ -2131,6 +2185,10 @@ func nativeWindowProc(window uintptr, message uint32, wParam uintptr, lParam uin
 	case wmMouseMove, wmNCMouseMove:
 		if isMain && app.collapsed && !app.animation.active {
 			app.startExpandAnimation()
+		}
+	case wmDisplayChange:
+		if isMain {
+			app.queueOcclusionRefresh()
 		}
 	case wmDPIChanged:
 		if isMain {
@@ -2224,6 +2282,7 @@ func nativeWindowProc(window uintptr, message uint32, wParam uintptr, lParam uin
 		procKillTimer.Call(window, animationTimerID)
 		procKillTimer.Call(window, selfTestTimerID)
 		procKillTimer.Call(window, trayRetryTimerID)
+		app.stopOcclusionHooks()
 		app.savePlacement()
 		app.destroyAuxiliaryWindows()
 		app.stopWatcher()

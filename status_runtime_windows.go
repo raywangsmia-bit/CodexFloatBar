@@ -19,16 +19,18 @@ import (
 )
 
 type statusRuntime struct {
-	monitor    *codexdata.Monitor
-	current    codexdata.AppSnapshot
-	pending    atomic.Pointer[codexdata.AppSnapshot]
-	cancel     context.CancelFunc
-	startOnce  sync.Once
-	stopOnce   sync.Once
-	disabled   bool
-	startErr   error
-	quota      quotaLevelObserver
-	statistics statisticsSelection
+	monitor           *codexdata.Monitor
+	current           codexdata.AppSnapshot
+	pending           atomic.Pointer[codexdata.AppSnapshot]
+	cancel            context.CancelFunc
+	startOnce         sync.Once
+	stopOnce          sync.Once
+	disabled          bool
+	startErr          error
+	quota             quotaLevelObserver
+	statistics        statisticsSelection
+	presentation      uiPresentation
+	presentationKnown bool
 }
 
 type quotaLevelObserver struct {
@@ -42,9 +44,10 @@ func newStatusRuntime() *statusRuntime {
 		return &statusRuntime{startErr: err}
 	}
 	service := codexdata.NewService(codexdata.Options{
-		Paths:    paths,
-		Location: time.Local,
-		Now:      time.Now,
+		Paths:             paths,
+		Location:          time.Local,
+		Now:               time.Now,
+		CacheSaveInterval: 15 * time.Second,
 	})
 	return &statusRuntime{
 		monitor: codexdata.NewMonitor(service, codexdata.MonitorOptions{}),
@@ -113,20 +116,33 @@ func (runtime *statusRuntime) acceptPending() bool {
 	if snapshot == nil {
 		return false
 	}
-	runtime.current = *snapshot
-	runtime.statistics = normalizeStatisticsSelection(
-		runtime.current,
+	nextStatistics := normalizeStatisticsSelection(
+		*snapshot,
 		runtime.statistics,
 	)
-	return true
+	nextPresentation := presentSnapshotWithStatistics(*snapshot, nextStatistics)
+	changed := !runtime.presentationKnown ||
+		!sameUIPresentation(runtime.presentation, nextPresentation)
+	runtime.current = *snapshot
+	runtime.statistics = nextStatistics
+	runtime.presentation = nextPresentation
+	runtime.presentationKnown = true
+	return changed
 }
 
 func (runtime *statusRuntime) compose(surface *renderedSurface) (*renderedSurface, error) {
-	return composeRenderedSurfaceWithStatistics(
-		surface,
-		runtime.current,
-		runtime.statistics,
-	)
+	return composeRenderedSurfaceWithPresentation(surface, runtime.currentPresentation())
+}
+
+func (runtime *statusRuntime) currentPresentation() uiPresentation {
+	if !runtime.presentationKnown {
+		runtime.presentation = presentSnapshotWithStatistics(
+			runtime.current,
+			runtime.statistics,
+		)
+		runtime.presentationKnown = true
+	}
+	return runtime.presentation
 }
 
 func (runtime *statusRuntime) applyStatisticsAction(action string) bool {
@@ -173,6 +189,7 @@ func (runtime *statusRuntime) applyStatisticsAction(action string) bool {
 		return false
 	}
 	runtime.statistics = next
+	runtime.presentationKnown = false
 	return true
 }
 
@@ -230,7 +247,7 @@ func (runtime *statusRuntime) tone() quotaTone {
 	if runtime == nil {
 		return quotaToneOffline
 	}
-	return presentSnapshot(runtime.current).Tone
+	return runtime.currentPresentation().Tone
 }
 
 func (runtime *statusRuntime) shouldShowUsageToast() bool {

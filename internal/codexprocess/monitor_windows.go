@@ -10,6 +10,7 @@ import (
 const (
 	defaultPollInterval  = 2 * time.Second
 	defaultMissThreshold = 3
+	defaultEventDebounce = 100 * time.Millisecond
 )
 
 // Status is emitted when the confirmed Codex running state changes.
@@ -41,12 +42,17 @@ type stateDetector interface {
 	State(context.Context) (observedState, error)
 }
 
+type eventStateDetector interface {
+	EventState(context.Context) (observedState, error)
+}
+
 // Options controls the monitor without changing the WPF-compatible defaults.
 type Options struct {
 	PollInterval  time.Duration
 	MissThreshold int
 	Detector      Detector
 	Now           func() time.Time
+	EventDebounce time.Duration
 }
 
 // Monitor polls at low frequency and publishes only confirmed state changes.
@@ -56,6 +62,8 @@ type Monitor struct {
 	detector      Detector
 	now           func() time.Time
 	updates       chan Status
+	refresh       chan struct{}
+	eventDebounce time.Duration
 }
 
 // NewMonitor creates an idle single-use monitor.
@@ -70,7 +78,11 @@ func NewMonitor(options Options) *Monitor {
 	}
 	detector := options.Detector
 	if detector == nil {
-		detector = windowsDetector{}
+		detector = newWindowsDetector()
+	}
+	eventDebounce := options.EventDebounce
+	if eventDebounce <= 0 {
+		eventDebounce = defaultEventDebounce
 	}
 	now := options.Now
 	if now == nil {
@@ -82,12 +94,22 @@ func NewMonitor(options Options) *Monitor {
 		detector:      detector,
 		now:           now,
 		updates:       make(chan Status, 1),
+		refresh:       make(chan struct{}, 1),
+		eventDebounce: eventDebounce,
 	}
 }
 
 // Updates returns latest-value state notifications and closes when Run exits.
 func (monitor *Monitor) Updates() <-chan Status {
 	return monitor.updates
+}
+
+// Refresh schedules a debounced visibility-only check.
+func (monitor *Monitor) Refresh() {
+	select {
+	case monitor.refresh <- struct{}{}:
+	default:
+	}
 }
 
 // Run performs an immediate check and then polls until ctx is canceled.
@@ -100,12 +122,30 @@ func (monitor *Monitor) Run(ctx context.Context) error {
 
 	ticker := time.NewTicker(monitor.pollInterval)
 	defer ticker.Stop()
+	var eventTimer *time.Timer
+	var eventTimerChannel <-chan time.Time
+	defer func() {
+		if eventTimer != nil {
+			eventTimer.Stop()
+		}
+	}()
 	for {
 		select {
 		case <-ctx.Done():
 			return ctx.Err()
 		case <-ticker.C:
 			if err := monitor.poll(ctx, &tracker); err != nil {
+				return err
+			}
+		case <-monitor.refresh:
+			if eventTimer == nil {
+				eventTimer = time.NewTimer(monitor.eventDebounce)
+				eventTimerChannel = eventTimer.C
+			}
+		case <-eventTimerChannel:
+			eventTimer = nil
+			eventTimerChannel = nil
+			if err := monitor.pollEvent(ctx, &tracker); err != nil {
 				return err
 			}
 		}
@@ -117,6 +157,27 @@ func (monitor *Monitor) poll(ctx context.Context, tracker *stateTracker) error {
 		return err
 	}
 	observed, err := observeDetector(ctx, monitor.detector)
+	return monitor.acceptObservation(ctx, tracker, observed, err)
+}
+
+func (monitor *Monitor) pollEvent(ctx context.Context, tracker *stateTracker) error {
+	detector, ok := monitor.detector.(eventStateDetector)
+	if !ok {
+		return monitor.poll(ctx, tracker)
+	}
+	if err := ctx.Err(); err != nil {
+		return err
+	}
+	observed, err := detector.EventState(ctx)
+	return monitor.acceptObservation(ctx, tracker, observed, err)
+}
+
+func (monitor *Monitor) acceptObservation(
+	ctx context.Context,
+	tracker *stateTracker,
+	observed observedState,
+	err error,
+) error {
 	if err != nil {
 		if ctxErr := ctx.Err(); ctxErr != nil {
 			return ctxErr

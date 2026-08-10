@@ -68,6 +68,7 @@ func (monitor *Monitor) Refresh() {
 // Run performs the initial read, then refreshes only after mtime changes or Refresh.
 func (monitor *Monitor) Run(ctx context.Context) error {
 	defer close(monitor.updates)
+	defer monitor.service.FlushStatisticsCache()
 	ticker := time.NewTicker(monitor.pollInterval)
 	defer ticker.Stop()
 

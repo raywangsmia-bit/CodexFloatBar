@@ -33,6 +33,7 @@ var (
 type sessionFile struct {
 	path    string
 	modTime int64
+	size    int64
 }
 
 func readLatestSessionStatus(
@@ -44,6 +45,13 @@ func readLatestSessionStatus(
 		return status
 	}
 
+	return readLatestLogSessionStatus(ctx, logPaths)
+}
+
+func readLatestLogSessionStatus(
+	ctx context.Context,
+	logPaths []string,
+) RuntimeStatus {
 	var latest RuntimeStatus
 	for _, path := range logPaths {
 		if err := ctx.Err(); err != nil {
@@ -102,6 +110,7 @@ func newestSessionFiles(
 		files = append(files, sessionFile{
 			path:    path,
 			modTime: info.ModTime().UTC().UnixNano(),
+			size:    info.Size(),
 		})
 		return nil
 	})
@@ -124,20 +133,27 @@ func newestSessionFiles(
 }
 
 func findLatestSessionContext(path string) (RuntimeStatus, bool) {
-	text, err := readTail(path, sessionTailBytes)
-	if err != nil || strings.TrimSpace(text) == "" {
-		return RuntimeStatus{}, false
-	}
-
 	var latest RuntimeStatus
 	found := false
-	for _, line := range bytes.Split([]byte(text), []byte{'\n'}) {
-		if status, ok := parseTurnContext(line); ok {
+	var speedTier string
+	err := visitTailBytes(path, sessionTailBytes, func(text []byte) {
+		if len(bytes.TrimSpace(text)) == 0 {
+			return
+		}
+		visitLinesReverseBytes(text, func(line []byte, _ int) bool {
+			status, ok := parseTurnContext(line)
+			if !ok {
+				return true
+			}
 			latest = status
 			found = true
-		}
+			return false
+		})
+		speedTier = findLatestSpeedTierBytes(text)
+	})
+	if err != nil {
+		return RuntimeStatus{}, false
 	}
-	speedTier := findLatestSpeedTier(text)
 	if !found {
 		return buildRuntimeStatus("", "", speedTier)
 	}
@@ -294,6 +310,18 @@ func findLatestSpeedTier(text string) string {
 	return normalizeSpeedTier(jsonTier)
 }
 
+func findLatestSpeedTierBytes(text []byte) string {
+	jsonIndex, jsonTier := lastTierMatchBytes(jsonServiceTierPattern, text)
+	logIndex, logTier := lastTierMatchBytes(logServiceTierPattern, text)
+	if jsonIndex < 0 && logIndex < 0 {
+		return ""
+	}
+	if logIndex > jsonIndex {
+		return normalizeSpeedTier(logTier)
+	}
+	return normalizeSpeedTier(jsonTier)
+}
+
 func lastTierMatch(pattern *regexp.Regexp, text string) (int, string) {
 	matches := pattern.FindAllStringSubmatchIndex(text, -1)
 	if len(matches) == 0 {
@@ -303,6 +331,20 @@ func lastTierMatch(pattern *regexp.Regexp, text string) (int, string) {
 	for group := 2; group+1 < len(match); group += 2 {
 		if match[group] >= 0 {
 			return match[0], text[match[group]:match[group+1]]
+		}
+	}
+	return match[0], ""
+}
+
+func lastTierMatchBytes(pattern *regexp.Regexp, text []byte) (int, string) {
+	matches := pattern.FindAllSubmatchIndex(text, -1)
+	if len(matches) == 0 {
+		return -1, ""
+	}
+	match := matches[len(matches)-1]
+	for group := 2; group+1 < len(match); group += 2 {
+		if match[group] >= 0 {
+			return match[0], string(text[match[group]:match[group+1]])
 		}
 	}
 	return match[0], ""

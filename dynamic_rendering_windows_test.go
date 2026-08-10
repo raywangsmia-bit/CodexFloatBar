@@ -350,6 +350,30 @@ func TestDirectWriteFontResolverSkipsUnavailableCandidate(t *testing.T) {
 	}
 }
 
+func TestTextMaskCacheRespectsMemoryLimit(t *testing.T) {
+	cache := newTextMaskCache(4)
+	first := textMaskCacheKey{value: "first"}
+	second := textMaskCacheKey{value: "second"}
+	third := textMaskCacheKey{value: "third"}
+	cache.store(first, image.NewAlpha(image.Rect(0, 0, 2, 1)))
+	cache.store(second, image.NewAlpha(image.Rect(0, 0, 2, 1)))
+	if _, ok := cache.load(first); !ok {
+		t.Fatal("first mask was not cached")
+	}
+	cache.store(third, image.NewAlpha(image.Rect(0, 0, 2, 1)))
+	if _, ok := cache.load(first); ok {
+		t.Fatal("oldest mask was not evicted")
+	}
+	if _, ok := cache.load(third); !ok {
+		t.Fatal("newest mask was not cached")
+	}
+	oversized := textMaskCacheKey{value: "oversized"}
+	cache.store(oversized, image.NewAlpha(image.Rect(0, 0, 5, 1)))
+	if _, ok := cache.load(oversized); ok {
+		t.Fatal("oversized mask was cached")
+	}
+}
+
 func TestExpandedTextSlotRectAddsAlignmentAwareAllowance(t *testing.T) {
 	bounds := image.Rect(0, 0, 100, 40)
 	logical := slotRect{X: 20, Y: 5, Width: 24, Height: 17}

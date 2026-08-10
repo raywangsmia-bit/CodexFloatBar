@@ -102,6 +102,13 @@ func (runtime *processRuntime) acceptPending() (codexprocess.Status, bool) {
 	return *status, true
 }
 
+func (runtime *processRuntime) refresh() {
+	if runtime == nil || runtime.disabled || runtime.monitor == nil {
+		return
+	}
+	runtime.monitor.Refresh()
+}
+
 func (runtime *processRuntime) stop() {
 	if runtime == nil {
 		return

@@ -46,6 +46,7 @@ const (
 	wmEnterSizeMove    = 0x0231
 	wmExitSizeMove     = 0x0232
 	wmDPIChanged       = 0x02E0
+	wmDisplayChange    = 0x007E
 	wmApp              = 0x8000
 	wmUser             = 0x0400
 	ninSelect          = wmUser
@@ -58,6 +59,19 @@ const (
 	wmNativeSelfTestComplete = wmApp + 5
 	wmNativeStatusChanged    = wmApp + 6
 	wmNativeCodexChanged     = wmApp + 7
+	wmNativeOcclusionChanged = wmApp + 8
+
+	eventSystemForeground     = 0x0003
+	eventSystemMinimizeStart  = 0x0016
+	eventSystemMinimizeEnd    = 0x0017
+	eventObjectDestroy        = 0x8001
+	eventObjectShow           = 0x8002
+	eventObjectHide           = 0x8003
+	eventObjectReorder        = 0x8004
+	eventObjectLocationChange = 0x800B
+	objidWindow               = 0
+	wineventOutOfContext      = 0x0000
+	wineventSkipOwnProcess    = 0x0002
 
 	htClient                  = 1
 	htCaption                 = 2
@@ -273,6 +287,8 @@ var (
 	procGetGuiResources               = user32.NewProc("GetGuiResources")
 	procGetWindowThreadProcessID      = user32.NewProc("GetWindowThreadProcessId")
 	procDrawTextW                     = user32.NewProc("DrawTextW")
+	procSetWinEventHook               = user32.NewProc("SetWinEventHook")
+	procUnhookWinEvent                = user32.NewProc("UnhookWinEvent")
 
 	procCreateCompatibleDC = gdi32.NewProc("CreateCompatibleDC")
 	procDeleteDC           = gdi32.NewProc("DeleteDC")

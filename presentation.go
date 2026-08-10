@@ -4,7 +4,9 @@ package main
 
 import (
 	"fmt"
+	"maps"
 	"math"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -49,6 +51,21 @@ type statisticsSelection struct {
 	View        statisticsView
 	Month       time.Time
 	SelectedDay int
+}
+
+func sameUIPresentation(left uiPresentation, right uiPresentation) bool {
+	sameCells := maps.EqualFunc(
+		left.Cells,
+		right.Cells,
+		func(leftLevels []int, rightLevels []int) bool {
+			return slices.Equal(leftLevels, rightLevels)
+		},
+	)
+	return left.Tone == right.Tone &&
+		left.StatisticsView == right.StatisticsView &&
+		maps.Equal(left.Text, right.Text) &&
+		maps.Equal(left.Progress, right.Progress) &&
+		sameCells && slices.Equal(left.ChartValues, right.ChartValues)
 }
 
 func presentSnapshot(snapshot codexdata.AppSnapshot) uiPresentation {

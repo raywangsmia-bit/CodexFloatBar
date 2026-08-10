@@ -66,15 +66,17 @@ type tokenEvent struct {
 	} `json:"payload"`
 }
 
-func readStatistics(
+func updateStatistics(
 	ctx context.Context,
-	sessionsPath string,
-	cachePath string,
+	paths []string,
 	now time.Time,
 	location *time.Location,
-) (StatisticsSnapshot, error) {
+	oldCache statisticsCache,
+) (StatisticsSnapshot, statisticsCache, bool, error) {
 	timeZone := statisticsTimeZoneKey(location, now)
-	oldCache := readStatisticsCache(cachePath, timeZone)
+	if oldCache.Version != cacheVersion || oldCache.TimeZone != timeZone {
+		oldCache = emptyStatisticsCache(timeZone)
+	}
 	oldFiles := make(map[string]cachedFile, len(oldCache.Files))
 	for _, file := range oldCache.Files {
 		if !validCachedFile(file) {
@@ -87,14 +89,16 @@ func readStatistics(
 		workingFiles[key] = file
 	}
 
-	paths, err := allSessionPaths(ctx, sessionsPath)
-	if err != nil && !errors.Is(err, os.ErrNotExist) {
-		return StatisticsSnapshot{}, err
-	}
 	nextFiles := make([]cachedFile, 0, len(paths))
+	changedFiles := 0
 	for _, path := range paths {
 		if err := ctx.Err(); err != nil {
-			return StatisticsSnapshot{}, err
+			partial := statisticsCache{
+				Version:  cacheVersion,
+				TimeZone: timeZone,
+				Files:    sortedCachedFiles(workingFiles),
+			}
+			return StatisticsSnapshot{}, partial, changedFiles > 0, err
 		}
 		fullPath, err := filepath.Abs(path)
 		if err != nil {
@@ -128,7 +132,12 @@ func readStatistics(
 		)
 		if err != nil {
 			if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
-				return StatisticsSnapshot{}, err
+				partial := statisticsCache{
+					Version:  cacheVersion,
+					TimeZone: timeZone,
+					Files:    sortedCachedFiles(workingFiles),
+				}
+				return StatisticsSnapshot{}, partial, changedFiles > 0, err
 			}
 			if hadPrevious {
 				nextFiles = append(nextFiles, previous)
@@ -140,29 +149,32 @@ func readStatistics(
 		parsed.LastWriteUTCTicks = lastWriteTicks
 		nextFiles = append(nextFiles, parsed)
 		workingFiles[cachePathKey(fullPath)] = parsed
-		_ = saveStatisticsCache(cachePath, statisticsCache{
-			Version:  cacheVersion,
-			TimeZone: timeZone,
-			Files:    sortedCachedFiles(workingFiles),
-		})
+		changedFiles++
 	}
 	slices.SortFunc(nextFiles, func(left cachedFile, right cachedFile) int {
 		return strings.Compare(cachePathKey(left.Path), cachePathKey(right.Path))
 	})
 	if err := ctx.Err(); err != nil {
-		return StatisticsSnapshot{}, err
+		partial := statisticsCache{
+			Version:  cacheVersion,
+			TimeZone: timeZone,
+			Files:    sortedCachedFiles(workingFiles),
+		}
+		return StatisticsSnapshot{}, partial, changedFiles > 0, err
 	}
 	nextCache := statisticsCache{
 		Version:  cacheVersion,
 		TimeZone: timeZone,
 		Files:    nextFiles,
 	}
-	_ = saveStatisticsCache(cachePath, nextCache)
 	summaries := make([]sessionSummary, 0, len(nextFiles))
 	for _, file := range nextFiles {
 		summaries = append(summaries, file.Summary)
 	}
-	return buildStatisticsSnapshot(summaries, now, location), nil
+	removedFiles := len(nextFiles) != len(oldFiles)
+	invalidCacheEntries := len(oldCache.Files) != len(oldFiles)
+	changed := changedFiles > 0 || removedFiles || invalidCacheEntries
+	return buildStatisticsSnapshot(summaries, now, location), nextCache, changed, nil
 }
 
 func sortedCachedFiles(files map[string]cachedFile) []cachedFile {
@@ -636,11 +648,7 @@ func buildMonthlyUsage(
 }
 
 func readStatisticsCache(path string, timeZone string) statisticsCache {
-	empty := statisticsCache{
-		Version:  cacheVersion,
-		TimeZone: timeZone,
-		Files:    []cachedFile{},
-	}
+	empty := emptyStatisticsCache(timeZone)
 	data, err := readLimitedFile(path, maxStatisticsCacheBytes)
 	if err != nil {
 		return empty
@@ -651,6 +659,14 @@ func readStatisticsCache(path string, timeZone string) statisticsCache {
 		return empty
 	}
 	return cache
+}
+
+func emptyStatisticsCache(timeZone string) statisticsCache {
+	return statisticsCache{
+		Version:  cacheVersion,
+		TimeZone: timeZone,
+		Files:    []cachedFile{},
+	}
 }
 
 func saveStatisticsCache(path string, cache statisticsCache) error {

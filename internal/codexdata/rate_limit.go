@@ -37,6 +37,14 @@ func readLatestRateLimit(
 		return summarizeRateLimit(*candidate, location)
 	}
 
+	return readLatestLogRateLimit(ctx, logPaths, location)
+}
+
+func readLatestLogRateLimit(
+	ctx context.Context,
+	logPaths []string,
+	location *time.Location,
+) RateLimitSummary {
 	var latest *rateLimitCandidate
 	for pathIndex, path := range logPaths {
 		if err := ctx.Err(); err != nil {
@@ -85,34 +93,40 @@ func findSessionRateLimit(
 	path string,
 	fileIndex int,
 ) *rateLimitCandidate {
-	text, err := readTail(path, rateSessionTailBytes)
-	if err != nil || strings.TrimSpace(text) == "" {
+	var latest *rateLimitCandidate
+	linesVisited := 0
+	err := visitTailBytes(path, rateSessionTailBytes, func(text []byte) {
+		if len(bytes.TrimSpace(text)) == 0 {
+			return
+		}
+		visitLinesReverseBytes(text, func(line []byte, offset int) bool {
+			linesVisited++
+			if linesVisited&255 == 0 && ctx.Err() != nil {
+				return false
+			}
+			if !bytes.Contains(line, []byte(`"rate_limits"`)) {
+				return true
+			}
+			root, ok := decodeObject(line)
+			if !ok {
+				return true
+			}
+			if _, _, ok := getRateLimits(root); !ok {
+				return true
+			}
+			latest = &rateLimitCandidate{
+				json:        string(line),
+				observedAt:  observedAt(root),
+				pathIndex:   fileIndex,
+				markerIndex: offset,
+			}
+			return false
+		})
+	})
+	if err != nil {
 		return nil
 	}
-	lines := strings.Split(text, "\n")
-	for index := len(lines) - 1; index >= 0; index-- {
-		if index&255 == 0 && ctx.Err() != nil {
-			return nil
-		}
-		line := strings.TrimSuffix(lines[index], "\r")
-		if !strings.Contains(line, `"rate_limits"`) {
-			continue
-		}
-		root, ok := decodeObject([]byte(line))
-		if !ok {
-			continue
-		}
-		if _, _, ok := getRateLimits(root); !ok {
-			continue
-		}
-		return &rateLimitCandidate{
-			json:        line,
-			observedAt:  observedAt(root),
-			pathIndex:   fileIndex,
-			markerIndex: index,
-		}
-	}
-	return nil
+	return latest
 }
 
 func findLogRateLimitCandidates(

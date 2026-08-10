@@ -67,6 +67,7 @@ var (
 	sharedDWriteFactory unsafe.Pointer
 	sharedDWriteErr     error
 	fontFamilyCache     sync.Map
+	sharedTextMaskCache = newTextMaskCache(2 * 1024 * 1024)
 )
 
 var defaultTextFontFamilies = [...]string{
@@ -134,13 +135,94 @@ type textMaskRequest struct {
 	Align        string
 }
 
+type textMaskCacheKey struct {
+	value        string
+	width        int
+	height       int
+	fontFamilies string
+	fontPixels   uint64
+	fontWeight   int
+	align        string
+}
+
+type textMaskCacheEntry struct {
+	mask *image.Alpha
+	size int
+}
+
+type textMaskCache struct {
+	mu      sync.Mutex
+	maximum int
+	total   int
+	order   []textMaskCacheKey
+	entries map[textMaskCacheKey]textMaskCacheEntry
+}
+
+func newTextMaskCache(maximum int) *textMaskCache {
+	return &textMaskCache{
+		maximum: maximum,
+		entries: map[textMaskCacheKey]textMaskCacheEntry{},
+	}
+}
+
+func (cache *textMaskCache) load(key textMaskCacheKey) (*image.Alpha, bool) {
+	cache.mu.Lock()
+	defer cache.mu.Unlock()
+	entry, ok := cache.entries[key]
+	return entry.mask, ok
+}
+
+func (cache *textMaskCache) store(key textMaskCacheKey, mask *image.Alpha) {
+	if mask == nil || len(mask.Pix) > cache.maximum {
+		return
+	}
+	cache.mu.Lock()
+	defer cache.mu.Unlock()
+	if _, exists := cache.entries[key]; exists {
+		return
+	}
+	for cache.total+len(mask.Pix) > cache.maximum && len(cache.order) > 0 {
+		oldest := cache.order[0]
+		cache.order = cache.order[1:]
+		entry, exists := cache.entries[oldest]
+		if !exists {
+			continue
+		}
+		delete(cache.entries, oldest)
+		cache.total -= entry.size
+	}
+	cache.entries[key] = textMaskCacheEntry{mask: mask, size: len(mask.Pix)}
+	cache.order = append(cache.order, key)
+	cache.total += len(mask.Pix)
+}
+
+func textMaskKey(request textMaskRequest) textMaskCacheKey {
+	return textMaskCacheKey{
+		value:        request.Value,
+		width:        request.Width,
+		height:       request.Height,
+		fontFamilies: strings.Join(request.FontFamilies, "\x00"),
+		fontPixels:   math.Float64bits(request.FontPixels),
+		fontWeight:   request.FontWeight,
+		align:        request.Align,
+	}
+}
+
 func drawTextMask(request textMaskRequest) (*image.Alpha, error) {
-	mask, resolvedFamily, err := drawDirectWriteTextMaskResolved(request)
-	if err == nil {
+	key := textMaskKey(request)
+	if mask, ok := sharedTextMaskCache.load(key); ok {
 		return mask, nil
 	}
-	request.FontFamilies = []string{resolvedFamily}
-	return drawGDITextMask(request)
+	mask, resolvedFamily, err := drawDirectWriteTextMaskResolved(request)
+	if err != nil {
+		request.FontFamilies = []string{resolvedFamily}
+		mask, err = drawGDITextMask(request)
+	}
+	if err != nil {
+		return nil, err
+	}
+	sharedTextMaskCache.store(key, mask)
+	return mask, nil
 }
 
 func drawDirectWriteTextMask(request textMaskRequest) (*image.Alpha, error) {

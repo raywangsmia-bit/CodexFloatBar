@@ -135,6 +135,101 @@ func TestNormalizeObservedWindowStateFallsBackWithoutWindowProcess(t *testing.T)
 	}
 }
 
+func TestHostAncestorAssociatesRestrictedCodexWindowProcess(t *testing.T) {
+	windowProcesses := map[uint32]struct{}{}
+	hostProcesses := map[uint32]struct{}{30: {}}
+	chatGPTProcesses := map[uint32]struct{}{10: {}, 90: {}}
+	parentProcesses := map[uint32]uint32{
+		10: 1,
+		20: 10,
+		30: 20,
+		90: 1,
+	}
+
+	addHostAncestorWindows(
+		windowProcesses,
+		hostProcesses,
+		chatGPTProcesses,
+		parentProcesses,
+	)
+	if _, ok := windowProcesses[10]; !ok {
+		t.Fatal("ChatGPT ancestor was not associated with the Codex host")
+	}
+	if _, ok := windowProcesses[90]; ok {
+		t.Fatal("unrelated ChatGPT process was associated with the Codex host")
+	}
+}
+
+func TestHostAncestorTraversalStopsAtCycle(t *testing.T) {
+	windowProcesses := map[uint32]struct{}{}
+	addHostAncestorWindows(
+		windowProcesses,
+		map[uint32]struct{}{30: {}},
+		map[uint32]struct{}{90: {}},
+		map[uint32]uint32{30: 20, 20: 30},
+	)
+	if len(windowProcesses) != 0 {
+		t.Fatalf("cyclic ancestry associated windows: %v", windowProcesses)
+	}
+}
+
+func TestRectFullyCoveredByZOrderUnion(t *testing.T) {
+	target := screenRect{Left: -100, Top: 20, Right: 100, Bottom: 120}
+	tests := []struct {
+		name   string
+		covers []screenRect
+		want   bool
+	}{
+		{name: "no covering windows", covers: []screenRect{}},
+		{
+			name: "one fullscreen window",
+			covers: []screenRect{
+				{Left: -200, Top: 0, Right: 200, Bottom: 200},
+			},
+			want: true,
+		},
+		{
+			name: "one partial window",
+			covers: []screenRect{
+				{Left: -100, Top: 20, Right: 0, Bottom: 120},
+			},
+		},
+		{
+			name: "two windows cover both halves",
+			covers: []screenRect{
+				{Left: -100, Top: 20, Right: 0, Bottom: 120},
+				{Left: 0, Top: 20, Right: 100, Bottom: 120},
+			},
+			want: true,
+		},
+		{
+			name: "one pixel gap remains visible",
+			covers: []screenRect{
+				{Left: -100, Top: 20, Right: -1, Bottom: 120},
+				{Left: 0, Top: 20, Right: 100, Bottom: 120},
+			},
+		},
+		{
+			name: "overlapping quadrants cover target",
+			covers: []screenRect{
+				{Left: -100, Top: 20, Right: 20, Bottom: 80},
+				{Left: 0, Top: 20, Right: 100, Bottom: 80},
+				{Left: -100, Top: 80, Right: 20, Bottom: 120},
+				{Left: 0, Top: 80, Right: 100, Bottom: 120},
+			},
+			want: true,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			if got := rectFullyCovered(target, test.covers); got != test.want {
+				t.Fatalf("rectFullyCovered() = %v, want %v", got, test.want)
+			}
+		})
+	}
+}
+
 func TestStateTrackerDebouncesExitAndRestoresImmediately(t *testing.T) {
 	tracker := stateTracker{missThreshold: 3}
 	tests := []struct {
@@ -281,6 +376,47 @@ func TestMonitorUsesWPFCompatibleDefaults(t *testing.T) {
 	}
 	if monitor.missThreshold != 3 {
 		t.Fatalf("miss threshold = %d, want 3", monitor.missThreshold)
+	}
+}
+
+type refreshDetector struct {
+	eventCalls int
+}
+
+func (detector *refreshDetector) Running(context.Context) (bool, error) {
+	return true, nil
+}
+
+func (detector *refreshDetector) State(context.Context) (observedState, error) {
+	return observedState{Running: true, Visible: true}, nil
+}
+
+func (detector *refreshDetector) EventState(context.Context) (observedState, error) {
+	detector.eventCalls++
+	return observedState{Running: true, Visible: false}, nil
+}
+
+func TestMonitorDebouncesEventVisibilityRefresh(t *testing.T) {
+	detector := &refreshDetector{}
+	monitor := NewMonitor(Options{
+		PollInterval:  time.Hour,
+		Detector:      detector,
+		EventDebounce: 5 * time.Millisecond,
+		Now:           func() time.Time { return time.Time{} },
+	})
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	go func() {
+		_ = monitor.Run(ctx)
+	}()
+
+	assertStatus(t, monitor.Updates(), true, true, time.Time{})
+	monitor.Refresh()
+	monitor.Refresh()
+	monitor.Refresh()
+	assertStatus(t, monitor.Updates(), true, false, time.Time{})
+	if detector.eventCalls != 1 {
+		t.Fatalf("event visibility calls = %d, want 1", detector.eventCalls)
 	}
 }
 
