@@ -26,24 +26,6 @@ func TestUseSelfTestIdentityIsolatesRuntimeState(t *testing.T) {
 	}
 }
 
-func TestUseWorkbenchIdentityDoesNotCollideWithRelease(t *testing.T) {
-	app := newNativeApp(t.TempDir(), "main-horizontal", time.Now())
-	app.useWorkbenchIdentity()
-
-	if app.windowClass != nativeWorkbenchWindowClass {
-		t.Fatalf("window class = %q", app.windowClass)
-	}
-	if app.mutexName != nativeWorkbenchMutexName {
-		t.Fatalf("mutex name = %q", app.mutexName)
-	}
-	if app.windowClass == nativeWindowClass || app.mutexName == nativeMutexName {
-		t.Fatal("workbench identity collides with the release identity")
-	}
-	if !app.placementDisabled {
-		t.Fatal("workbench identity did not disable placement persistence")
-	}
-}
-
 func TestNativeSelfTestWritesStartupFailureReport(t *testing.T) {
 	outputPath := filepath.Join(t.TempDir(), "self-test.json")
 	selfTest := newNativeSelfTest(outputPath)

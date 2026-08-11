@@ -8,8 +8,30 @@ CodexFloatingBar 是一个面向 Windows 的轻量级 Codex 桌面状态浮条�
 Win32 原生窗口显示模型、推理强度、额度与 Token 统计，并提供托盘、主题、布局、
 多显示器和跟随 Codex 显示状态等桌面集成功能。
 
-正式程序不嵌入 WebView，不启动本地 Web 服务，也不依赖 Node.js、React、.NET、
-Wails 或 CGO。HTML/CSS/JavaScript 仅用于设计时工作台和 UI 资源导出。
+正式程序不包含工作台 HTTP 服务或 Edge 导出代码，不嵌入 WebView，也不依赖
+Node.js、React、.NET、Wails 或 CGO。HTML/CSS/JavaScript 仅供独立的设计时工作台
+和 UI 资源导出使用。
+
+## 界面预览
+
+<p align="center">
+  <img src="docs/images/ui-overview.png" alt="CodexFloatingBar 主浮条、Token 统计窗口和额度提醒" width="900" />
+</p>
+
+上图由项目工作台调用正式程序同一套 DirectWrite/Direct2D 合成路径生成，展示横版
+状态浮条、Token 统计窗口和额度提醒。程序还支持竖版布局、浅色主题、多档缩放及托盘
+菜单，可在不打开 Codex 主窗口的情况下持续查看运行状态。
+
+## 核心特点
+
+| 能力 | 说明 |
+| --- | --- |
+| 原生轻量运行 | Go + Win32 分层窗口，不携带浏览器内核、WebView 或前端运行时 |
+| Codex 状态概览 | 同时显示模型、推理强度、速度档位、PLAN、一周额度和重置时间 |
+| Token 统计 | 月热图、每周、累计和单日详情，覆盖输入、输出、缓存及推理 Token |
+| 桌面集成 | 托盘、单实例、开机启动、自动收起、位置记忆和多显示器 DPI |
+| 可调整 UI | HTML/CSS 工作台负责设计，正式程序只消费经过验证的静态资产与动态槽 |
+| 本地隐私边界 | 只读取必要的本地 Codex 数据，UI 不接收 JWT、原始 session 或日志正文 |
 
 > [!NOTE]
 > 本项目是社区项目，并非 OpenAI 官方产品。Codex、ChatGPT 和 OpenAI 是其各自
@@ -23,7 +45,7 @@ Wails 或 CGO。HTML/CSS/JavaScript 仅用于设计时工作台和 UI 资源导�
 和数据行为对照结果；原 WPF/C# 源码及运行时依赖未包含在当前实现中。完整资源来源见
 [资源来源与继承说明](docs/asset-provenance.md)。
 
-## 功能
+## 功能详情
 
 - 显示当前模型、推理强度、速度档位和额度窗口。
 - 支持横向与纵向浮条、深色与浅色主题以及多档缩放。
@@ -63,13 +85,14 @@ $env:CGO_ENABLED = '0'
 
 go test ./...
 go vet ./...
+.\scripts\build-workbench.ps1 -TestOnly
 ```
 
 ### 构建
 
 ```powershell
 New-Item -ItemType Directory -Force bin | Out-Null
-go build -trimpath -o bin\CodexFloatingBar.Next-dev.exe .
+go build -trimpath -ldflags "-H=windowsgui" -o bin\CodexFloatingBar.Next-dev.exe .
 ```
 
 ### 运行
@@ -108,10 +131,11 @@ UI。UI 只接收经过聚合的最小数据对象。
 
 ## UI 工作台
 
-先构建开发程序，然后启动工作台：
+构建并启动独立工作台：
 
 ```powershell
-.\bin\CodexFloatingBar.Next-dev.exe --workbench
+.\scripts\build-workbench.ps1
+.\bin\CodexFloatingBar.Workbench.exe
 ```
 
 浏览器访问 <http://127.0.0.1:9315/>。常用流程：
@@ -124,6 +148,10 @@ UI。UI 只接收经过聚合的最小数据对象。
 
 工作台会根据 `ui/workbench` 内全部静态文件的规范化路径和内容计算 SHA-256 指纹。
 导出采用临时目录和原子切换；导出失败时保留上一份可用 UI。
+
+工作台通过 `workbench` 构建标签生成独立 EXE。正式 Floating Bar 默认构建不会编译
+工作台服务器、导出端点或 Edge 进程管理代码；工作台也不会启动原生浮条、托盘、
+Codex 数据监控或读取真实账户/session 数据。
 
 ### UI 资产提交规则
 
@@ -161,7 +189,7 @@ UI。UI 只接收经过聚合的最小数据对象。
 ├─ internal/                数据、设置、进程监视和应用身份
 ├─ ui/workbench/            HTML/CSS/JavaScript 设计工作台
 ├─ ui/dist/                 正式程序使用的 UI manifest 与 PNG
-├─ scripts/                 构建、发布、安装和验证脚本
+├─ scripts/                 正式程序、独立工作台、发布和验证脚本
 ├─ installer/               NSIS 安装器定义
 ├─ resources/               Windows 资源和发布元数据
 ├─ docs/                    架构、迁移、验证与发布报告
@@ -223,7 +251,9 @@ UI。UI 只接收经过聚合的最小数据对象。
    ```powershell
    go test ./...
    go vet ./...
-   go build -trimpath -o .cache\verify\CodexFloatingBar.exe .
+   .\scripts\build-workbench.ps1 -TestOnly
+   go build -trimpath -ldflags "-H=windowsgui" -o .cache\verify\CodexFloatingBar.exe .
+   go build -tags workbench -trimpath -o .cache\verify\CodexFloatingBar.Workbench.exe .
    git diff --check
    ```
 

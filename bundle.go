@@ -421,6 +421,7 @@ func validTextBinding(value string) bool {
 	case "runtime.model",
 		"runtime.effort",
 		"runtime.speed",
+		"quota.plan",
 		"quota.remaining",
 		"quota.reset",
 		"statistics.total",

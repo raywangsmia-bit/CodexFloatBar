@@ -8,13 +8,17 @@ Wails P0 因 WebView2 空闲总工作集约 335 MiB 未通过。替代路线不�
 | 部分 | 技术 | 是否进入正式运行时 |
 | --- | --- | --- |
 | UI 设计和场景预览 | 纯 HTML、CSS、JavaScript | 否 |
-| 设计导出 | 开发模式 Go HTTP 服务 + 系统 Edge | 否 |
+| 设计导出 | 独立 Workbench EXE + 系统 Edge | 否 |
 | UI 包 | JSON manifest + 多 DPI PNG | 是 |
 | 桌面壳 | Go + Win32 + `UpdateLayeredWindow` | 是 |
 | 数据服务 | Go 标准库为主 | P2 接入 |
 
 React、Vite、Node、Wails、WebView2 和 .NET 均不再是正式运行依赖。HTML 是设计
 源；导出的 manifest 是窗口尺寸、DPI 资源和点击区域的唯一权威来源。
+
+工作台使用 `workbench` 构建标签生成独立可执行文件。正式 Floating Bar 默认构建在
+编译期排除 HTTP 服务、导出端点和 Edge 进程管理代码；独立工作台不启动原生浮条、
+托盘或 Codex 数据监控，只读写工作区中的 UI 源和导出 bundle。
 
 ## 当前阶段
 

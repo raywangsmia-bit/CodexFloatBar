@@ -79,6 +79,7 @@ try {
         if ($LASTEXITCODE -ne 0) {
             throw "go test failed with exit code $LASTEXITCODE"
         }
+        $null = & (Join-Path $PSScriptRoot "build-workbench.ps1") -TestOnly
     }
     go build -trimpath -ldflags "-s -w -H=windowsgui" -o $executablePath .
     if ($LASTEXITCODE -ne 0) {

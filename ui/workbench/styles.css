@@ -277,6 +277,13 @@ select {
   font-size: 12px;
 }
 
+.usage-plan {
+  margin-left: 2px;
+  color: #d7e2eb;
+  font-size: 8px;
+  font-weight: 700;
+}
+
 .horizontal .usage-heading strong {
   width: 34px;
   text-align: right;

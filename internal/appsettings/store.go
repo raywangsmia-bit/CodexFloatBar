@@ -78,16 +78,18 @@ func (store *Store) Save(settings Appearance) error {
 	normalized := normalize(settings)
 	followCodex := normalized.FollowCodex
 	disk := diskSettings{
-		Schema:               settingsSchema,
-		Theme:                normalized.Theme,
-		Layout:               normalized.Layout,
-		Scale:                normalized.Scale,
-		AutoCollapse:         normalized.AutoCollapse,
-		FollowCodex:          &followCodex,
-		MainWindow:           normalized.MainWindow,
-		HorizontalMainWindow: normalized.HorizontalMainWindow,
-		VerticalMainWindow:   normalized.VerticalMainWindow,
-		StatisticsWindow:     normalized.StatisticsWindow,
+		Schema:                settingsSchema,
+		Theme:                 normalized.Theme,
+		Layout:                normalized.Layout,
+		Scale:                 normalized.Scale,
+		AutoCollapse:          normalized.AutoCollapse,
+		FollowCodex:           &followCodex,
+		AccountExpiryDate:     normalized.AccountExpiryDate,
+		AccountExpiryReminder: normalized.AccountExpiryReminder,
+		MainWindow:            normalized.MainWindow,
+		HorizontalMainWindow:  normalized.HorizontalMainWindow,
+		VerticalMainWindow:    normalized.VerticalMainWindow,
+		StatisticsWindow:      normalized.StatisticsWindow,
 	}
 	contents, err := json.MarshalIndent(disk, "", "  ")
 	if err != nil {
@@ -109,16 +111,18 @@ const (
 )
 
 type diskSettings struct {
-	Schema               int             `json:"schema"`
-	Theme                Theme           `json:"theme"`
-	Layout               Layout          `json:"layout"`
-	Scale                float64         `json:"scale"`
-	AutoCollapse         bool            `json:"autoCollapse"`
-	FollowCodex          *bool           `json:"followCodex,omitempty"`
-	MainWindow           *WindowPosition `json:"mainWindow,omitempty"`
-	HorizontalMainWindow *WindowPosition `json:"horizontalMainWindow,omitempty"`
-	VerticalMainWindow   *WindowPosition `json:"verticalMainWindow,omitempty"`
-	StatisticsWindow     *WindowPosition `json:"statisticsWindow,omitempty"`
+	Schema                int             `json:"schema"`
+	Theme                 Theme           `json:"theme"`
+	Layout                Layout          `json:"layout"`
+	Scale                 float64         `json:"scale"`
+	AutoCollapse          bool            `json:"autoCollapse"`
+	FollowCodex           *bool           `json:"followCodex,omitempty"`
+	AccountExpiryDate     string          `json:"accountExpiryDate,omitempty"`
+	AccountExpiryReminder bool            `json:"accountExpiryReminder,omitempty"`
+	MainWindow            *WindowPosition `json:"mainWindow,omitempty"`
+	HorizontalMainWindow  *WindowPosition `json:"horizontalMainWindow,omitempty"`
+	VerticalMainWindow    *WindowPosition `json:"verticalMainWindow,omitempty"`
+	StatisticsWindow      *WindowPosition `json:"statisticsWindow,omitempty"`
 }
 
 func (store *Store) loadNative() (Appearance, nativeSettingsState, error) {
@@ -152,6 +156,8 @@ func (store *Store) loadNative() (Appearance, nativeSettingsState, error) {
 	if disk.FollowCodex != nil {
 		settings.FollowCodex = *disk.FollowCodex
 	}
+	settings.AccountExpiryDate = disk.AccountExpiryDate
+	settings.AccountExpiryReminder = disk.AccountExpiryReminder
 	return normalize(settings), nativeSettingsValid, nil
 }
 
