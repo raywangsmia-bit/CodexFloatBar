@@ -4,8 +4,8 @@
   "defaultSurface": "main-horizontal",
   "version": {
     "update": "2026-08-11",
-    "build": "2026-08-11 00:05:24",
-    "staticVersion": "codexfloatingbar-6a00038f8b95"
+    "build": "2026-08-11 13:13:23",
+    "staticVersion": "codexfloatingbar-3bf1d2785c66"
   },
   "surfaces": [
     {
@@ -15,35 +15,35 @@
       "hitRegions": [
         {
           "action": "toggle-theme",
-          "x": 333,
+          "x": 333.3333435058594,
           "y": 14,
           "width": 22,
           "height": 22
         },
         {
           "action": "toggle-statistics",
-          "x": 358,
+          "x": 358.3333435058594,
           "y": 14,
           "width": 22,
           "height": 22
         },
         {
           "action": "toggle-toast",
-          "x": 383,
+          "x": 383.3333435058594,
           "y": 14,
           "width": 22,
           "height": 22
         },
         {
           "action": "toggle-layout",
-          "x": 408,
+          "x": 408.3333435058594,
           "y": 14,
           "width": 22,
           "height": 22
         },
         {
           "action": "hide",
-          "x": 433,
+          "x": 433.3333435058594,
           "y": 14,
           "width": 22,
           "height": 22
@@ -54,10 +54,10 @@
           {
             "bind": "runtime.model",
             "rect": {
-              "x": 11,
-              "y": 22.5,
-              "width": 88,
-              "height": 13
+              "x": 10.333343505859375,
+              "y": 22.166656494140625,
+              "width": 89.33333587646484,
+              "height": 12.666666984558105
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -76,10 +76,10 @@
           {
             "bind": "runtime.effort",
             "rect": {
-              "x": 115,
-              "y": 22.5,
-              "width": 30,
-              "height": 13
+              "x": 115.00003051757812,
+              "y": 22.166656494140625,
+              "width": 30.666667938232422,
+              "height": 12.666666984558105
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -98,10 +98,10 @@
           {
             "bind": "runtime.speed",
             "rect": {
-              "x": 161,
-              "y": 22.5,
-              "width": 34,
-              "height": 13
+              "x": 161.00003051757812,
+              "y": 22.166656494140625,
+              "width": 34.66666793823242,
+              "height": 12.666666984558105
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -120,10 +120,10 @@
           {
             "bind": "quota.remaining",
             "rect": {
-              "x": 293.015625,
-              "y": 8,
-              "width": 25.984375,
-              "height": 15
+              "x": 285.6666564941406,
+              "y": 7.666656494140625,
+              "width": 34,
+              "height": 15.333333969116211
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -136,7 +136,7 @@
             "fontSize": 12,
             "fontWeight": 700,
             "color": "#77e0adff",
-            "align": "left",
+            "align": "right",
             "toneColors": {
               "good": "#77e0adff",
               "warn": "#e2b744ff",
@@ -147,9 +147,9 @@
           {
             "bind": "quota.reset",
             "rect": {
-              "x": 215,
+              "x": 215.00003051757812,
               "y": 24,
-              "width": 104,
+              "width": 104.66667175292969,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -171,9 +171,9 @@
           {
             "bind": "quota.progress",
             "rect": {
-              "x": 215,
+              "x": 215.00003051757812,
               "y": 37,
-              "width": 104,
+              "width": 104.66667175292969,
               "height": 3
             },
             "color": "#36a370ff",
@@ -192,28 +192,28 @@
           "file": "assets/431ecec88a3dc850/main-horizontal@100.png",
           "width": 460,
           "height": 50,
-          "sourceHash": "180f2880d93245556ec44de71951e0b7869fab66256ff4a39e3487d0e5e6c84d"
+          "sourceHash": "df8109c38ae83362d58102aa7c22b29a1246bf8638797e4674cb48c25b3f5e68"
         },
         {
           "scale": 1.25,
           "file": "assets/431ecec88a3dc850/main-horizontal@125.png",
           "width": 575,
           "height": 63,
-          "sourceHash": "2b60c2df64188b2978cbe9fb790cd4658098106d3600a41d4e2c88dd997b8a8a"
+          "sourceHash": "dbec21c0cfa9d2b50f421abc37896e5efe8974a5f5e79a17930b9804a561ba4b"
         },
         {
           "scale": 1.5,
           "file": "assets/431ecec88a3dc850/main-horizontal@150.png",
           "width": 690,
           "height": 75,
-          "sourceHash": "57b42fe18632ec7ad2218cccf4bea160fb95b269fe7b433fc9a2f01f46597d5c"
+          "sourceHash": "e1043e32dd150598557ab8bfd1421b6d65798a16b23f9d2ef046f2b11a4a6a15"
         },
         {
           "scale": 2,
           "file": "assets/431ecec88a3dc850/main-horizontal@200.png",
           "width": 920,
           "height": 100,
-          "sourceHash": "28b76791f78c2aaa1a60046005aa531c61fa3b2fcb316d11b2a9c0d74af952cd"
+          "sourceHash": "001c15d54160ccc1709ebfa0721a88ca21fdb19e92736d5ecf48de803ea8706f"
         }
       ]
     },
@@ -225,35 +225,35 @@
         {
           "action": "toggle-theme",
           "x": 6,
-          "y": 153,
+          "y": 152.66665649414062,
           "width": 22,
           "height": 22
         },
         {
           "action": "toggle-statistics",
           "x": 30,
-          "y": 153,
+          "y": 152.66665649414062,
           "width": 22,
           "height": 22
         },
         {
           "action": "toggle-toast",
           "x": 54,
-          "y": 153,
+          "y": 152.66665649414062,
           "width": 22,
           "height": 22
         },
         {
           "action": "toggle-layout",
           "x": 78,
-          "y": 153,
+          "y": 152.66665649414062,
           "width": 22,
           "height": 22
         },
         {
           "action": "hide",
           "x": 102,
-          "y": 153,
+          "y": 152.66665649414062,
           "width": 22,
           "height": 22
         }
@@ -263,10 +263,10 @@
           {
             "bind": "runtime.model",
             "rect": {
-              "x": 11,
-              "y": 19,
-              "width": 108,
-              "height": 12
+              "x": 10.33331298828125,
+              "y": 18.333343505859375,
+              "width": 108.66667175292969,
+              "height": 12.666666984558105
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -285,10 +285,10 @@
           {
             "bind": "runtime.effort",
             "rect": {
-              "x": 11,
-              "y": 52,
-              "width": 108,
-              "height": 12
+              "x": 10.33331298828125,
+              "y": 51.333343505859375,
+              "width": 108.66667175292969,
+              "height": 12.666666984558105
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -307,10 +307,10 @@
           {
             "bind": "runtime.speed",
             "rect": {
-              "x": 11,
-              "y": 85,
-              "width": 108,
-              "height": 12
+              "x": 10.33331298828125,
+              "y": 84.33334350585938,
+              "width": 108.66667175292969,
+              "height": 12.666666984558105
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -329,10 +329,10 @@
           {
             "bind": "quota.remaining",
             "rect": {
-              "x": 92.015625,
-              "y": 109,
-              "width": 25.984375,
-              "height": 15
+              "x": 92.02081298828125,
+              "y": 108.33334350585938,
+              "width": 25.979167938232422,
+              "height": 15.333333969116211
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -356,9 +356,9 @@
           {
             "bind": "quota.reset",
             "rect": {
-              "x": 12,
-              "y": 125,
-              "width": 106,
+              "x": 11.33331298828125,
+              "y": 124.66665649414062,
+              "width": 106.66667175292969,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -380,9 +380,9 @@
           {
             "bind": "quota.progress",
             "rect": {
-              "x": 12,
-              "y": 138,
-              "width": 106,
+              "x": 11.33331298828125,
+              "y": 137.66665649414062,
+              "width": 106.66667175292969,
               "height": 3
             },
             "color": "#36a370ff",
@@ -433,339 +433,339 @@
       "hitRegions": [
         {
           "action": "statistics-previous-month",
-          "x": 15,
-          "y": 72,
+          "x": 14.333343505859375,
+          "y": 71.3333740234375,
           "width": 22,
           "height": 22
         },
         {
           "action": "statistics-next-month",
-          "x": 111,
-          "y": 72,
+          "x": 110.33334350585938,
+          "y": 71.3333740234375,
           "width": 22,
           "height": 22
         },
         {
           "action": "statistics-view-month",
-          "x": 195,
-          "y": 75,
+          "x": 195.66665649414062,
+          "y": 74.3333740234375,
           "width": 42,
           "height": 16
         },
         {
           "action": "statistics-view-week",
-          "x": 241,
-          "y": 75,
+          "x": 241.66665649414062,
+          "y": 74.3333740234375,
           "width": 32,
           "height": 16
         },
         {
           "action": "statistics-view-cumulative",
-          "x": 277,
-          "y": 75,
+          "x": 277.6666564941406,
+          "y": 74.3333740234375,
           "width": 32,
           "height": 16
         },
         {
           "action": "statistics-view-detail",
-          "x": 313,
-          "y": 75,
+          "x": 313.6666564941406,
+          "y": 74.3333740234375,
           "width": 32,
           "height": 16
         },
         {
           "action": "statistics-select-day-00",
-          "x": 15,
-          "y": 110,
-          "width": 44.5625,
-          "height": 13.65625
+          "x": 14.333343505859375,
+          "y": 109.3333740234375,
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-01",
-          "x": 62.5625,
-          "y": 110,
-          "width": 44.578125,
-          "height": 13.65625
+          "x": 62.09375,
+          "y": 109.3333740234375,
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-02",
-          "x": 110.140625,
-          "y": 110,
-          "width": 44.5625,
-          "height": 13.65625
+          "x": 109.85415649414062,
+          "y": 109.3333740234375,
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-03",
-          "x": 157.703125,
-          "y": 110,
-          "width": 44.578125,
-          "height": 13.65625
+          "x": 157.61459350585938,
+          "y": 109.3333740234375,
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-04",
-          "x": 205.28125,
-          "y": 110,
-          "width": 44.5625,
-          "height": 13.65625
+          "x": 205.375,
+          "y": 109.3333740234375,
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-05",
-          "x": 252.84375,
-          "y": 110,
-          "width": 44.578125,
-          "height": 13.65625
+          "x": 253.13540649414062,
+          "y": 109.3333740234375,
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-06",
-          "x": 300.421875,
-          "y": 110,
-          "width": 44.578125,
-          "height": 13.65625
+          "x": 300.8958435058594,
+          "y": 109.3333740234375,
+          "width": 44.770835876464844,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-07",
-          "x": 15,
-          "y": 126.65625,
-          "width": 44.5625,
-          "height": 13.671875
+          "x": 14.333343505859375,
+          "y": 126.21875,
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-08",
-          "x": 62.5625,
-          "y": 126.65625,
-          "width": 44.578125,
-          "height": 13.671875
+          "x": 62.09375,
+          "y": 126.21875,
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-09",
-          "x": 110.140625,
-          "y": 126.65625,
-          "width": 44.5625,
-          "height": 13.671875
+          "x": 109.85415649414062,
+          "y": 126.21875,
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-10",
-          "x": 157.703125,
-          "y": 126.65625,
-          "width": 44.578125,
-          "height": 13.671875
+          "x": 157.61459350585938,
+          "y": 126.21875,
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-11",
-          "x": 205.28125,
-          "y": 126.65625,
-          "width": 44.5625,
-          "height": 13.671875
+          "x": 205.375,
+          "y": 126.21875,
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-12",
-          "x": 252.84375,
-          "y": 126.65625,
-          "width": 44.578125,
-          "height": 13.671875
+          "x": 253.13540649414062,
+          "y": 126.21875,
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-13",
-          "x": 300.421875,
-          "y": 126.65625,
-          "width": 44.578125,
-          "height": 13.671875
+          "x": 300.8958435058594,
+          "y": 126.21875,
+          "width": 44.770835876464844,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-14",
-          "x": 15,
-          "y": 143.328125,
-          "width": 44.5625,
-          "height": 13.671875
+          "x": 14.333343505859375,
+          "y": 143.10418701171875,
+          "width": 44.76041793823242,
+          "height": 13.895833969116211
         },
         {
           "action": "statistics-select-day-15",
-          "x": 62.5625,
-          "y": 143.328125,
-          "width": 44.578125,
-          "height": 13.671875
+          "x": 62.09375,
+          "y": 143.10418701171875,
+          "width": 44.76041793823242,
+          "height": 13.895833969116211
         },
         {
           "action": "statistics-select-day-16",
-          "x": 110.140625,
-          "y": 143.328125,
-          "width": 44.5625,
-          "height": 13.671875
+          "x": 109.85415649414062,
+          "y": 143.10418701171875,
+          "width": 44.76041793823242,
+          "height": 13.895833969116211
         },
         {
           "action": "statistics-select-day-17",
-          "x": 157.703125,
-          "y": 143.328125,
-          "width": 44.578125,
-          "height": 13.671875
+          "x": 157.61459350585938,
+          "y": 143.10418701171875,
+          "width": 44.76041793823242,
+          "height": 13.895833969116211
         },
         {
           "action": "statistics-select-day-18",
-          "x": 205.28125,
-          "y": 143.328125,
-          "width": 44.5625,
-          "height": 13.671875
+          "x": 205.375,
+          "y": 143.10418701171875,
+          "width": 44.76041793823242,
+          "height": 13.895833969116211
         },
         {
           "action": "statistics-select-day-19",
-          "x": 252.84375,
-          "y": 143.328125,
-          "width": 44.578125,
-          "height": 13.671875
+          "x": 253.13540649414062,
+          "y": 143.10418701171875,
+          "width": 44.76041793823242,
+          "height": 13.895833969116211
         },
         {
           "action": "statistics-select-day-20",
-          "x": 300.421875,
-          "y": 143.328125,
-          "width": 44.578125,
-          "height": 13.671875
+          "x": 300.8958435058594,
+          "y": 143.10418701171875,
+          "width": 44.770835876464844,
+          "height": 13.895833969116211
         },
         {
           "action": "statistics-select-day-21",
-          "x": 15,
+          "x": 14.333343505859375,
           "y": 160,
-          "width": 44.5625,
-          "height": 13.65625
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-22",
-          "x": 62.5625,
+          "x": 62.09375,
           "y": 160,
-          "width": 44.578125,
-          "height": 13.65625
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-23",
-          "x": 110.140625,
+          "x": 109.85415649414062,
           "y": 160,
-          "width": 44.5625,
-          "height": 13.65625
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-24",
-          "x": 157.703125,
+          "x": 157.61459350585938,
           "y": 160,
-          "width": 44.578125,
-          "height": 13.65625
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-25",
-          "x": 205.28125,
+          "x": 205.375,
           "y": 160,
-          "width": 44.5625,
-          "height": 13.65625
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-26",
-          "x": 252.84375,
+          "x": 253.13540649414062,
           "y": 160,
-          "width": 44.578125,
-          "height": 13.65625
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-27",
-          "x": 300.421875,
+          "x": 300.8958435058594,
           "y": 160,
-          "width": 44.578125,
-          "height": 13.65625
+          "width": 44.770835876464844,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-28",
-          "x": 15,
-          "y": 176.65625,
-          "width": 44.5625,
-          "height": 13.671875
+          "x": 14.333343505859375,
+          "y": 176.88543701171875,
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-29",
-          "x": 62.5625,
-          "y": 176.65625,
-          "width": 44.578125,
-          "height": 13.671875
+          "x": 62.09375,
+          "y": 176.88543701171875,
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-30",
-          "x": 110.140625,
-          "y": 176.65625,
-          "width": 44.5625,
-          "height": 13.671875
+          "x": 109.85415649414062,
+          "y": 176.88543701171875,
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-31",
-          "x": 157.703125,
-          "y": 176.65625,
-          "width": 44.578125,
-          "height": 13.671875
+          "x": 157.61459350585938,
+          "y": 176.88543701171875,
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-32",
-          "x": 205.28125,
-          "y": 176.65625,
-          "width": 44.5625,
-          "height": 13.671875
+          "x": 205.375,
+          "y": 176.88543701171875,
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-33",
-          "x": 252.84375,
-          "y": 176.65625,
-          "width": 44.578125,
-          "height": 13.671875
+          "x": 253.13540649414062,
+          "y": 176.88543701171875,
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-34",
-          "x": 300.421875,
-          "y": 176.65625,
-          "width": 44.578125,
-          "height": 13.671875
+          "x": 300.8958435058594,
+          "y": 176.88543701171875,
+          "width": 44.770835876464844,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-35",
-          "x": 15,
-          "y": 193.328125,
-          "width": 44.5625,
-          "height": 13.671875
+          "x": 14.333343505859375,
+          "y": 193.7708740234375,
+          "width": 44.76041793823242,
+          "height": 13.895833969116211
         },
         {
           "action": "statistics-select-day-36",
-          "x": 62.5625,
-          "y": 193.328125,
-          "width": 44.578125,
-          "height": 13.671875
+          "x": 62.09375,
+          "y": 193.7708740234375,
+          "width": 44.76041793823242,
+          "height": 13.895833969116211
         },
         {
           "action": "statistics-select-day-37",
-          "x": 110.140625,
-          "y": 193.328125,
-          "width": 44.5625,
-          "height": 13.671875
+          "x": 109.85415649414062,
+          "y": 193.7708740234375,
+          "width": 44.76041793823242,
+          "height": 13.895833969116211
         },
         {
           "action": "statistics-select-day-38",
-          "x": 157.703125,
-          "y": 193.328125,
-          "width": 44.578125,
-          "height": 13.671875
+          "x": 157.61459350585938,
+          "y": 193.7708740234375,
+          "width": 44.76041793823242,
+          "height": 13.895833969116211
         },
         {
           "action": "statistics-select-day-39",
-          "x": 205.28125,
-          "y": 193.328125,
-          "width": 44.5625,
-          "height": 13.671875
+          "x": 205.375,
+          "y": 193.7708740234375,
+          "width": 44.76041793823242,
+          "height": 13.895833969116211
         },
         {
           "action": "statistics-select-day-40",
-          "x": 252.84375,
-          "y": 193.328125,
-          "width": 44.578125,
-          "height": 13.671875
+          "x": 253.13540649414062,
+          "y": 193.7708740234375,
+          "width": 44.76041793823242,
+          "height": 13.895833969116211
         },
         {
           "action": "statistics-select-day-41",
-          "x": 300.421875,
-          "y": 193.328125,
-          "width": 44.578125,
-          "height": 13.671875
+          "x": 300.8958435058594,
+          "y": 193.7708740234375,
+          "width": 44.770835876464844,
+          "height": 13.895833969116211
         }
       ],
       "dynamic": {
@@ -774,9 +774,9 @@
             "bind": "statistics.total",
             "rect": {
               "x": 15,
-              "y": 15.5,
+              "y": 15.333343505859375,
               "width": 65,
-              "height": 18
+              "height": 17.33333396911621
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -796,9 +796,9 @@
             "bind": "statistics.peak",
             "rect": {
               "x": 80,
-              "y": 15.5,
+              "y": 15.333343505859375,
               "width": 65,
-              "height": 18
+              "height": 17.33333396911621
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -818,9 +818,9 @@
             "bind": "statistics.duration",
             "rect": {
               "x": 145,
-              "y": 15.5,
+              "y": 15.333343505859375,
               "width": 80,
-              "height": 18
+              "height": 17.33333396911621
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -840,9 +840,9 @@
             "bind": "statistics.currentStreak",
             "rect": {
               "x": 225,
-              "y": 15.5,
+              "y": 15.333343505859375,
               "width": 60,
-              "height": 18
+              "height": 17.33333396911621
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -861,10 +861,10 @@
           {
             "bind": "statistics.longestStreak",
             "rect": {
-              "x": 285,
-              "y": 15.5,
+              "x": 285.0000305175781,
+              "y": 15.333343505859375,
               "width": 60,
-              "height": 18
+              "height": 17.33333396911621
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -883,8 +883,8 @@
           {
             "bind": "statistics.previousMonth",
             "rect": {
-              "x": 15,
-              "y": 72,
+              "x": 14.333343505859375,
+              "y": 71.3333740234375,
               "width": 22,
               "height": 22
             },
@@ -905,8 +905,8 @@
           {
             "bind": "statistics.month",
             "rect": {
-              "x": 37,
-              "y": 76,
+              "x": 36.333343505859375,
+              "y": 75.3333740234375,
               "width": 74,
               "height": 14
             },
@@ -927,8 +927,8 @@
           {
             "bind": "statistics.nextMonth",
             "rect": {
-              "x": 111,
-              "y": 72,
+              "x": 110.33334350585938,
+              "y": 71.3333740234375,
               "width": 22,
               "height": 22
             },
@@ -949,8 +949,8 @@
           {
             "bind": "statistics.viewMonth",
             "rect": {
-              "x": 195,
-              "y": 75,
+              "x": 195.66665649414062,
+              "y": 74.3333740234375,
               "width": 42,
               "height": 16
             },
@@ -976,8 +976,8 @@
           {
             "bind": "statistics.viewWeek",
             "rect": {
-              "x": 241,
-              "y": 75,
+              "x": 241.66665649414062,
+              "y": 74.3333740234375,
               "width": 32,
               "height": 16
             },
@@ -1003,8 +1003,8 @@
           {
             "bind": "statistics.viewCumulative",
             "rect": {
-              "x": 277,
-              "y": 75,
+              "x": 277.6666564941406,
+              "y": 74.3333740234375,
               "width": 32,
               "height": 16
             },
@@ -1030,8 +1030,8 @@
           {
             "bind": "statistics.viewDetail",
             "rect": {
-              "x": 313,
-              "y": 75,
+              "x": 313.6666564941406,
+              "y": 74.3333740234375,
               "width": 32,
               "height": 16
             },
@@ -1057,10 +1057,10 @@
           {
             "bind": "statistics.detailInput",
             "rect": {
-              "x": 15,
-              "y": 111.75,
-              "width": 79.5,
-              "height": 16
+              "x": 14.333343505859375,
+              "y": 111.0833740234375,
+              "width": 79.83333587646484,
+              "height": 16.666667938232422
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -1079,9 +1079,9 @@
           {
             "bind": "statistics.labelInput",
             "rect": {
-              "x": 15,
+              "x": 14.333343505859375,
               "y": 129.75,
-              "width": 79.5,
+              "width": 79.83333587646484,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -1101,10 +1101,10 @@
           {
             "bind": "statistics.detailOutput",
             "rect": {
-              "x": 98.5,
-              "y": 111.75,
-              "width": 79.5,
-              "height": 16
+              "x": 98.16665649414062,
+              "y": 111.0833740234375,
+              "width": 79.83333587646484,
+              "height": 16.666667938232422
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -1123,9 +1123,9 @@
           {
             "bind": "statistics.labelOutput",
             "rect": {
-              "x": 98.5,
+              "x": 98.16665649414062,
               "y": 129.75,
-              "width": 79.5,
+              "width": 79.83333587646484,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -1146,9 +1146,9 @@
             "bind": "statistics.detailTotal",
             "rect": {
               "x": 182,
-              "y": 111.75,
-              "width": 79.5,
-              "height": 16
+              "y": 111.0833740234375,
+              "width": 79.83333587646484,
+              "height": 16.666667938232422
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -1169,7 +1169,7 @@
             "rect": {
               "x": 182,
               "y": 129.75,
-              "width": 79.5,
+              "width": 79.83333587646484,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -1189,10 +1189,10 @@
           {
             "bind": "statistics.detailCached",
             "rect": {
-              "x": 265.5,
-              "y": 111.75,
-              "width": 79.5,
-              "height": 16
+              "x": 265.8333435058594,
+              "y": 111.0833740234375,
+              "width": 79.83333587646484,
+              "height": 16.666667938232422
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -1211,9 +1211,9 @@
           {
             "bind": "statistics.labelCached",
             "rect": {
-              "x": 265.5,
+              "x": 265.8333435058594,
               "y": 129.75,
-              "width": 79.5,
+              "width": 79.83333587646484,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -1233,10 +1233,10 @@
           {
             "bind": "statistics.detailReasoning",
             "rect": {
-              "x": 15,
+              "x": 14.333343505859375,
               "y": 167.25,
-              "width": 79.5,
-              "height": 16
+              "width": 79.83333587646484,
+              "height": 16.666667938232422
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -1255,9 +1255,9 @@
           {
             "bind": "statistics.labelReasoning",
             "rect": {
-              "x": 15,
-              "y": 185.25,
-              "width": 79.5,
+              "x": 14.333343505859375,
+              "y": 185.91668701171875,
+              "width": 79.83333587646484,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -1277,10 +1277,10 @@
           {
             "bind": "statistics.detailCacheHit",
             "rect": {
-              "x": 98.5,
+              "x": 98.16665649414062,
               "y": 167.25,
-              "width": 79.5,
-              "height": 16
+              "width": 79.83333587646484,
+              "height": 16.666667938232422
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -1299,9 +1299,9 @@
           {
             "bind": "statistics.labelCacheHit",
             "rect": {
-              "x": 98.5,
-              "y": 185.25,
-              "width": 79.5,
+              "x": 98.16665649414062,
+              "y": 185.91668701171875,
+              "width": 79.83333587646484,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -1323,8 +1323,8 @@
             "rect": {
               "x": 182,
               "y": 167.25,
-              "width": 163,
-              "height": 16
+              "width": 163.6666717529297,
+              "height": 16.666667938232422
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -1344,8 +1344,8 @@
             "bind": "statistics.labelCost",
             "rect": {
               "x": 182,
-              "y": 185.25,
-              "width": 163,
+              "y": 185.91668701171875,
+              "width": 163.6666717529297,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -1368,256 +1368,256 @@
             "bind": "statistics.monthCells",
             "rects": [
               {
-                "x": 15,
-                "y": 110,
-                "width": 44.5625,
-                "height": 13.65625
+                "x": 14.333343505859375,
+                "y": 109.3333740234375,
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 62.5625,
-                "y": 110,
-                "width": 44.578125,
-                "height": 13.65625
+                "x": 62.09375,
+                "y": 109.3333740234375,
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 110.140625,
-                "y": 110,
-                "width": 44.5625,
-                "height": 13.65625
+                "x": 109.85415649414062,
+                "y": 109.3333740234375,
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 157.703125,
-                "y": 110,
-                "width": 44.578125,
-                "height": 13.65625
+                "x": 157.61459350585938,
+                "y": 109.3333740234375,
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 205.28125,
-                "y": 110,
-                "width": 44.5625,
-                "height": 13.65625
+                "x": 205.375,
+                "y": 109.3333740234375,
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 252.84375,
-                "y": 110,
-                "width": 44.578125,
-                "height": 13.65625
+                "x": 253.13540649414062,
+                "y": 109.3333740234375,
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 300.421875,
-                "y": 110,
-                "width": 44.578125,
-                "height": 13.65625
+                "x": 300.8958435058594,
+                "y": 109.3333740234375,
+                "width": 44.770835876464844,
+                "height": 13.885416984558105
               },
               {
-                "x": 15,
-                "y": 126.65625,
-                "width": 44.5625,
-                "height": 13.671875
+                "x": 14.333343505859375,
+                "y": 126.21875,
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 62.5625,
-                "y": 126.65625,
-                "width": 44.578125,
-                "height": 13.671875
+                "x": 62.09375,
+                "y": 126.21875,
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 110.140625,
-                "y": 126.65625,
-                "width": 44.5625,
-                "height": 13.671875
+                "x": 109.85415649414062,
+                "y": 126.21875,
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 157.703125,
-                "y": 126.65625,
-                "width": 44.578125,
-                "height": 13.671875
+                "x": 157.61459350585938,
+                "y": 126.21875,
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 205.28125,
-                "y": 126.65625,
-                "width": 44.5625,
-                "height": 13.671875
+                "x": 205.375,
+                "y": 126.21875,
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 252.84375,
-                "y": 126.65625,
-                "width": 44.578125,
-                "height": 13.671875
+                "x": 253.13540649414062,
+                "y": 126.21875,
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 300.421875,
-                "y": 126.65625,
-                "width": 44.578125,
-                "height": 13.671875
+                "x": 300.8958435058594,
+                "y": 126.21875,
+                "width": 44.770835876464844,
+                "height": 13.885416984558105
               },
               {
-                "x": 15,
-                "y": 143.328125,
-                "width": 44.5625,
-                "height": 13.671875
+                "x": 14.333343505859375,
+                "y": 143.10418701171875,
+                "width": 44.76041793823242,
+                "height": 13.895833969116211
               },
               {
-                "x": 62.5625,
-                "y": 143.328125,
-                "width": 44.578125,
-                "height": 13.671875
+                "x": 62.09375,
+                "y": 143.10418701171875,
+                "width": 44.76041793823242,
+                "height": 13.895833969116211
               },
               {
-                "x": 110.140625,
-                "y": 143.328125,
-                "width": 44.5625,
-                "height": 13.671875
+                "x": 109.85415649414062,
+                "y": 143.10418701171875,
+                "width": 44.76041793823242,
+                "height": 13.895833969116211
               },
               {
-                "x": 157.703125,
-                "y": 143.328125,
-                "width": 44.578125,
-                "height": 13.671875
+                "x": 157.61459350585938,
+                "y": 143.10418701171875,
+                "width": 44.76041793823242,
+                "height": 13.895833969116211
               },
               {
-                "x": 205.28125,
-                "y": 143.328125,
-                "width": 44.5625,
-                "height": 13.671875
+                "x": 205.375,
+                "y": 143.10418701171875,
+                "width": 44.76041793823242,
+                "height": 13.895833969116211
               },
               {
-                "x": 252.84375,
-                "y": 143.328125,
-                "width": 44.578125,
-                "height": 13.671875
+                "x": 253.13540649414062,
+                "y": 143.10418701171875,
+                "width": 44.76041793823242,
+                "height": 13.895833969116211
               },
               {
-                "x": 300.421875,
-                "y": 143.328125,
-                "width": 44.578125,
-                "height": 13.671875
+                "x": 300.8958435058594,
+                "y": 143.10418701171875,
+                "width": 44.770835876464844,
+                "height": 13.895833969116211
               },
               {
-                "x": 15,
+                "x": 14.333343505859375,
                 "y": 160,
-                "width": 44.5625,
-                "height": 13.65625
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 62.5625,
+                "x": 62.09375,
                 "y": 160,
-                "width": 44.578125,
-                "height": 13.65625
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 110.140625,
+                "x": 109.85415649414062,
                 "y": 160,
-                "width": 44.5625,
-                "height": 13.65625
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 157.703125,
+                "x": 157.61459350585938,
                 "y": 160,
-                "width": 44.578125,
-                "height": 13.65625
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 205.28125,
+                "x": 205.375,
                 "y": 160,
-                "width": 44.5625,
-                "height": 13.65625
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 252.84375,
+                "x": 253.13540649414062,
                 "y": 160,
-                "width": 44.578125,
-                "height": 13.65625
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 300.421875,
+                "x": 300.8958435058594,
                 "y": 160,
-                "width": 44.578125,
-                "height": 13.65625
+                "width": 44.770835876464844,
+                "height": 13.885416984558105
               },
               {
-                "x": 15,
-                "y": 176.65625,
-                "width": 44.5625,
-                "height": 13.671875
+                "x": 14.333343505859375,
+                "y": 176.88543701171875,
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 62.5625,
-                "y": 176.65625,
-                "width": 44.578125,
-                "height": 13.671875
+                "x": 62.09375,
+                "y": 176.88543701171875,
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 110.140625,
-                "y": 176.65625,
-                "width": 44.5625,
-                "height": 13.671875
+                "x": 109.85415649414062,
+                "y": 176.88543701171875,
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 157.703125,
-                "y": 176.65625,
-                "width": 44.578125,
-                "height": 13.671875
+                "x": 157.61459350585938,
+                "y": 176.88543701171875,
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 205.28125,
-                "y": 176.65625,
-                "width": 44.5625,
-                "height": 13.671875
+                "x": 205.375,
+                "y": 176.88543701171875,
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 252.84375,
-                "y": 176.65625,
-                "width": 44.578125,
-                "height": 13.671875
+                "x": 253.13540649414062,
+                "y": 176.88543701171875,
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 300.421875,
-                "y": 176.65625,
-                "width": 44.578125,
-                "height": 13.671875
+                "x": 300.8958435058594,
+                "y": 176.88543701171875,
+                "width": 44.770835876464844,
+                "height": 13.885416984558105
               },
               {
-                "x": 15,
-                "y": 193.328125,
-                "width": 44.5625,
-                "height": 13.671875
+                "x": 14.333343505859375,
+                "y": 193.7708740234375,
+                "width": 44.76041793823242,
+                "height": 13.895833969116211
               },
               {
-                "x": 62.5625,
-                "y": 193.328125,
-                "width": 44.578125,
-                "height": 13.671875
+                "x": 62.09375,
+                "y": 193.7708740234375,
+                "width": 44.76041793823242,
+                "height": 13.895833969116211
               },
               {
-                "x": 110.140625,
-                "y": 193.328125,
-                "width": 44.5625,
-                "height": 13.671875
+                "x": 109.85415649414062,
+                "y": 193.7708740234375,
+                "width": 44.76041793823242,
+                "height": 13.895833969116211
               },
               {
-                "x": 157.703125,
-                "y": 193.328125,
-                "width": 44.578125,
-                "height": 13.671875
+                "x": 157.61459350585938,
+                "y": 193.7708740234375,
+                "width": 44.76041793823242,
+                "height": 13.895833969116211
               },
               {
-                "x": 205.28125,
-                "y": 193.328125,
-                "width": 44.5625,
-                "height": 13.671875
+                "x": 205.375,
+                "y": 193.7708740234375,
+                "width": 44.76041793823242,
+                "height": 13.895833969116211
               },
               {
-                "x": 252.84375,
-                "y": 193.328125,
-                "width": 44.578125,
-                "height": 13.671875
+                "x": 253.13540649414062,
+                "y": 193.7708740234375,
+                "width": 44.76041793823242,
+                "height": 13.895833969116211
               },
               {
-                "x": 300.421875,
-                "y": 193.328125,
-                "width": 44.578125,
-                "height": 13.671875
+                "x": 300.8958435058594,
+                "y": 193.7708740234375,
+                "width": 44.770835876464844,
+                "height": 13.895833969116211
               }
             ],
             "colors": [
@@ -1682,9 +1682,9 @@
             "bind": "toast.title",
             "rect": {
               "x": 77,
-              "y": 39.078125,
+              "y": 38.7396240234375,
               "width": 227,
-              "height": 16
+              "height": 16.666667938232422
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -1704,7 +1704,7 @@
             "bind": "toast.message",
             "rect": {
               "x": 77,
-              "y": 58.078125,
+              "y": 58.40625,
               "width": 227,
               "height": 14.84375
             },
@@ -1774,9 +1774,9 @@
             "bind": "toast.title",
             "rect": {
               "x": 77,
-              "y": 39.078125,
+              "y": 38.7396240234375,
               "width": 227,
-              "height": 16
+              "height": 16.666667938232422
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -1796,7 +1796,7 @@
             "bind": "toast.message",
             "rect": {
               "x": 77,
-              "y": 58.078125,
+              "y": 58.40625,
               "width": 227,
               "height": 14.84375
             },
@@ -1866,9 +1866,9 @@
             "bind": "toast.title",
             "rect": {
               "x": 77,
-              "y": 39.078125,
+              "y": 38.7396240234375,
               "width": 227,
-              "height": 16
+              "height": 16.666667938232422
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -1888,7 +1888,7 @@
             "bind": "toast.message",
             "rect": {
               "x": 77,
-              "y": 58.078125,
+              "y": 58.40625,
               "width": 227,
               "height": 14.84375
             },
@@ -1958,9 +1958,9 @@
             "bind": "toast.title",
             "rect": {
               "x": 77,
-              "y": 39.078125,
+              "y": 38.7396240234375,
               "width": 227,
-              "height": 16
+              "height": 16.666667938232422
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -1980,7 +1980,7 @@
             "bind": "toast.message",
             "rect": {
               "x": 77,
-              "y": 58.078125,
+              "y": 58.40625,
               "width": 227,
               "height": 14.84375
             },
@@ -2038,35 +2038,35 @@
       "hitRegions": [
         {
           "action": "toggle-theme",
-          "x": 333,
+          "x": 333.3333435058594,
           "y": 14,
           "width": 22,
           "height": 22
         },
         {
           "action": "toggle-statistics",
-          "x": 358,
+          "x": 358.3333435058594,
           "y": 14,
           "width": 22,
           "height": 22
         },
         {
           "action": "toggle-toast",
-          "x": 383,
+          "x": 383.3333435058594,
           "y": 14,
           "width": 22,
           "height": 22
         },
         {
           "action": "toggle-layout",
-          "x": 408,
+          "x": 408.3333435058594,
           "y": 14,
           "width": 22,
           "height": 22
         },
         {
           "action": "hide",
-          "x": 433,
+          "x": 433.3333435058594,
           "y": 14,
           "width": 22,
           "height": 22
@@ -2077,10 +2077,10 @@
           {
             "bind": "runtime.model",
             "rect": {
-              "x": 11,
-              "y": 22.5,
-              "width": 88,
-              "height": 13
+              "x": 10.333343505859375,
+              "y": 22.166656494140625,
+              "width": 89.33333587646484,
+              "height": 12.666666984558105
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -2099,10 +2099,10 @@
           {
             "bind": "runtime.effort",
             "rect": {
-              "x": 115,
-              "y": 22.5,
-              "width": 30,
-              "height": 13
+              "x": 115.00003051757812,
+              "y": 22.166656494140625,
+              "width": 30.666667938232422,
+              "height": 12.666666984558105
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -2121,10 +2121,10 @@
           {
             "bind": "runtime.speed",
             "rect": {
-              "x": 161,
-              "y": 22.5,
-              "width": 34,
-              "height": 13
+              "x": 161.00003051757812,
+              "y": 22.166656494140625,
+              "width": 34.66666793823242,
+              "height": 12.666666984558105
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -2143,10 +2143,10 @@
           {
             "bind": "quota.remaining",
             "rect": {
-              "x": 293.015625,
-              "y": 8,
-              "width": 25.984375,
-              "height": 15
+              "x": 285.6666564941406,
+              "y": 7.666656494140625,
+              "width": 34,
+              "height": 15.333333969116211
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -2159,7 +2159,7 @@
             "fontSize": 12,
             "fontWeight": 700,
             "color": "#77e0adff",
-            "align": "left",
+            "align": "right",
             "toneColors": {
               "good": "#77e0adff",
               "warn": "#e2b744ff",
@@ -2170,9 +2170,9 @@
           {
             "bind": "quota.reset",
             "rect": {
-              "x": 215,
+              "x": 215.00003051757812,
               "y": 24,
-              "width": 104,
+              "width": 104.66667175292969,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -2194,9 +2194,9 @@
           {
             "bind": "quota.progress",
             "rect": {
-              "x": 215,
+              "x": 215.00003051757812,
               "y": 37,
-              "width": 104,
+              "width": 104.66667175292969,
               "height": 3
             },
             "color": "#36a370ff",
@@ -2215,28 +2215,28 @@
           "file": "assets/431ecec88a3dc850/main-horizontal-light@100.png",
           "width": 460,
           "height": 50,
-          "sourceHash": "f718e8d15dc9ab622588255f40764a0933aec9293dbfe23ff945dc4a31a69389"
+          "sourceHash": "24fd6d511e35778666972a11ac148d0477586281989f6cad4244691be1b3fb3c"
         },
         {
           "scale": 1.25,
           "file": "assets/431ecec88a3dc850/main-horizontal-light@125.png",
           "width": 575,
           "height": 63,
-          "sourceHash": "19920b3d4a7e54d21f7138eb74fe5db16dab44db08a3c0a255431e0893158975"
+          "sourceHash": "f799c76d7fe8301d357603cb777eadf60f22083cb5cd3193dfe857296100babf"
         },
         {
           "scale": 1.5,
           "file": "assets/431ecec88a3dc850/main-horizontal-light@150.png",
           "width": 690,
           "height": 75,
-          "sourceHash": "6ff6674ffdb9d639006b3b94e500920f1cd4d0ae31d6e47943d287b9b572cab5"
+          "sourceHash": "37dc4da4bf2e1c9878529300cac3fd3ed37bb1720f32666c0dfd372e5d7d3d88"
         },
         {
           "scale": 2,
           "file": "assets/431ecec88a3dc850/main-horizontal-light@200.png",
           "width": 920,
           "height": 100,
-          "sourceHash": "fe175f0487c750a1085cccf2ddee26049b4578bada1e7173258a75e1dfdeb14e"
+          "sourceHash": "306fb3b72d7ca3737af27bffe9dbe2f366ec269a59f8d37e0891ccf412c52060"
         }
       ]
     },
@@ -2248,35 +2248,35 @@
         {
           "action": "toggle-theme",
           "x": 6,
-          "y": 153,
+          "y": 152.66665649414062,
           "width": 22,
           "height": 22
         },
         {
           "action": "toggle-statistics",
           "x": 30,
-          "y": 153,
+          "y": 152.66665649414062,
           "width": 22,
           "height": 22
         },
         {
           "action": "toggle-toast",
           "x": 54,
-          "y": 153,
+          "y": 152.66665649414062,
           "width": 22,
           "height": 22
         },
         {
           "action": "toggle-layout",
           "x": 78,
-          "y": 153,
+          "y": 152.66665649414062,
           "width": 22,
           "height": 22
         },
         {
           "action": "hide",
           "x": 102,
-          "y": 153,
+          "y": 152.66665649414062,
           "width": 22,
           "height": 22
         }
@@ -2286,10 +2286,10 @@
           {
             "bind": "runtime.model",
             "rect": {
-              "x": 11,
-              "y": 19,
-              "width": 108,
-              "height": 12
+              "x": 10.33331298828125,
+              "y": 18.333343505859375,
+              "width": 108.66667175292969,
+              "height": 12.666666984558105
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -2308,10 +2308,10 @@
           {
             "bind": "runtime.effort",
             "rect": {
-              "x": 11,
-              "y": 52,
-              "width": 108,
-              "height": 12
+              "x": 10.33331298828125,
+              "y": 51.333343505859375,
+              "width": 108.66667175292969,
+              "height": 12.666666984558105
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -2330,10 +2330,10 @@
           {
             "bind": "runtime.speed",
             "rect": {
-              "x": 11,
-              "y": 85,
-              "width": 108,
-              "height": 12
+              "x": 10.33331298828125,
+              "y": 84.33334350585938,
+              "width": 108.66667175292969,
+              "height": 12.666666984558105
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -2352,10 +2352,10 @@
           {
             "bind": "quota.remaining",
             "rect": {
-              "x": 92.015625,
-              "y": 109,
-              "width": 25.984375,
-              "height": 15
+              "x": 92.02081298828125,
+              "y": 108.33334350585938,
+              "width": 25.979167938232422,
+              "height": 15.333333969116211
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -2379,9 +2379,9 @@
           {
             "bind": "quota.reset",
             "rect": {
-              "x": 12,
-              "y": 125,
-              "width": 106,
+              "x": 11.33331298828125,
+              "y": 124.66665649414062,
+              "width": 106.66667175292969,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -2403,9 +2403,9 @@
           {
             "bind": "quota.progress",
             "rect": {
-              "x": 12,
-              "y": 138,
-              "width": 106,
+              "x": 11.33331298828125,
+              "y": 137.66665649414062,
+              "width": 106.66667175292969,
               "height": 3
             },
             "color": "#36a370ff",
@@ -2456,339 +2456,339 @@
       "hitRegions": [
         {
           "action": "statistics-previous-month",
-          "x": 15,
-          "y": 72,
+          "x": 14.333343505859375,
+          "y": 71.3333740234375,
           "width": 22,
           "height": 22
         },
         {
           "action": "statistics-next-month",
-          "x": 111,
-          "y": 72,
+          "x": 110.33334350585938,
+          "y": 71.3333740234375,
           "width": 22,
           "height": 22
         },
         {
           "action": "statistics-view-month",
-          "x": 195,
-          "y": 75,
+          "x": 195.66665649414062,
+          "y": 74.3333740234375,
           "width": 42,
           "height": 16
         },
         {
           "action": "statistics-view-week",
-          "x": 241,
-          "y": 75,
+          "x": 241.66665649414062,
+          "y": 74.3333740234375,
           "width": 32,
           "height": 16
         },
         {
           "action": "statistics-view-cumulative",
-          "x": 277,
-          "y": 75,
+          "x": 277.6666564941406,
+          "y": 74.3333740234375,
           "width": 32,
           "height": 16
         },
         {
           "action": "statistics-view-detail",
-          "x": 313,
-          "y": 75,
+          "x": 313.6666564941406,
+          "y": 74.3333740234375,
           "width": 32,
           "height": 16
         },
         {
           "action": "statistics-select-day-00",
-          "x": 15,
-          "y": 110,
-          "width": 44.5625,
-          "height": 13.65625
+          "x": 14.333343505859375,
+          "y": 109.3333740234375,
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-01",
-          "x": 62.5625,
-          "y": 110,
-          "width": 44.578125,
-          "height": 13.65625
+          "x": 62.09375,
+          "y": 109.3333740234375,
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-02",
-          "x": 110.140625,
-          "y": 110,
-          "width": 44.5625,
-          "height": 13.65625
+          "x": 109.85415649414062,
+          "y": 109.3333740234375,
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-03",
-          "x": 157.703125,
-          "y": 110,
-          "width": 44.578125,
-          "height": 13.65625
+          "x": 157.61459350585938,
+          "y": 109.3333740234375,
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-04",
-          "x": 205.28125,
-          "y": 110,
-          "width": 44.5625,
-          "height": 13.65625
+          "x": 205.375,
+          "y": 109.3333740234375,
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-05",
-          "x": 252.84375,
-          "y": 110,
-          "width": 44.578125,
-          "height": 13.65625
+          "x": 253.13540649414062,
+          "y": 109.3333740234375,
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-06",
-          "x": 300.421875,
-          "y": 110,
-          "width": 44.578125,
-          "height": 13.65625
+          "x": 300.8958435058594,
+          "y": 109.3333740234375,
+          "width": 44.770835876464844,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-07",
-          "x": 15,
-          "y": 126.65625,
-          "width": 44.5625,
-          "height": 13.671875
+          "x": 14.333343505859375,
+          "y": 126.21875,
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-08",
-          "x": 62.5625,
-          "y": 126.65625,
-          "width": 44.578125,
-          "height": 13.671875
+          "x": 62.09375,
+          "y": 126.21875,
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-09",
-          "x": 110.140625,
-          "y": 126.65625,
-          "width": 44.5625,
-          "height": 13.671875
+          "x": 109.85415649414062,
+          "y": 126.21875,
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-10",
-          "x": 157.703125,
-          "y": 126.65625,
-          "width": 44.578125,
-          "height": 13.671875
+          "x": 157.61459350585938,
+          "y": 126.21875,
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-11",
-          "x": 205.28125,
-          "y": 126.65625,
-          "width": 44.5625,
-          "height": 13.671875
+          "x": 205.375,
+          "y": 126.21875,
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-12",
-          "x": 252.84375,
-          "y": 126.65625,
-          "width": 44.578125,
-          "height": 13.671875
+          "x": 253.13540649414062,
+          "y": 126.21875,
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-13",
-          "x": 300.421875,
-          "y": 126.65625,
-          "width": 44.578125,
-          "height": 13.671875
+          "x": 300.8958435058594,
+          "y": 126.21875,
+          "width": 44.770835876464844,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-14",
-          "x": 15,
-          "y": 143.328125,
-          "width": 44.5625,
-          "height": 13.671875
+          "x": 14.333343505859375,
+          "y": 143.10418701171875,
+          "width": 44.76041793823242,
+          "height": 13.895833969116211
         },
         {
           "action": "statistics-select-day-15",
-          "x": 62.5625,
-          "y": 143.328125,
-          "width": 44.578125,
-          "height": 13.671875
+          "x": 62.09375,
+          "y": 143.10418701171875,
+          "width": 44.76041793823242,
+          "height": 13.895833969116211
         },
         {
           "action": "statistics-select-day-16",
-          "x": 110.140625,
-          "y": 143.328125,
-          "width": 44.5625,
-          "height": 13.671875
+          "x": 109.85415649414062,
+          "y": 143.10418701171875,
+          "width": 44.76041793823242,
+          "height": 13.895833969116211
         },
         {
           "action": "statistics-select-day-17",
-          "x": 157.703125,
-          "y": 143.328125,
-          "width": 44.578125,
-          "height": 13.671875
+          "x": 157.61459350585938,
+          "y": 143.10418701171875,
+          "width": 44.76041793823242,
+          "height": 13.895833969116211
         },
         {
           "action": "statistics-select-day-18",
-          "x": 205.28125,
-          "y": 143.328125,
-          "width": 44.5625,
-          "height": 13.671875
+          "x": 205.375,
+          "y": 143.10418701171875,
+          "width": 44.76041793823242,
+          "height": 13.895833969116211
         },
         {
           "action": "statistics-select-day-19",
-          "x": 252.84375,
-          "y": 143.328125,
-          "width": 44.578125,
-          "height": 13.671875
+          "x": 253.13540649414062,
+          "y": 143.10418701171875,
+          "width": 44.76041793823242,
+          "height": 13.895833969116211
         },
         {
           "action": "statistics-select-day-20",
-          "x": 300.421875,
-          "y": 143.328125,
-          "width": 44.578125,
-          "height": 13.671875
+          "x": 300.8958435058594,
+          "y": 143.10418701171875,
+          "width": 44.770835876464844,
+          "height": 13.895833969116211
         },
         {
           "action": "statistics-select-day-21",
-          "x": 15,
+          "x": 14.333343505859375,
           "y": 160,
-          "width": 44.5625,
-          "height": 13.65625
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-22",
-          "x": 62.5625,
+          "x": 62.09375,
           "y": 160,
-          "width": 44.578125,
-          "height": 13.65625
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-23",
-          "x": 110.140625,
+          "x": 109.85415649414062,
           "y": 160,
-          "width": 44.5625,
-          "height": 13.65625
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-24",
-          "x": 157.703125,
+          "x": 157.61459350585938,
           "y": 160,
-          "width": 44.578125,
-          "height": 13.65625
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-25",
-          "x": 205.28125,
+          "x": 205.375,
           "y": 160,
-          "width": 44.5625,
-          "height": 13.65625
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-26",
-          "x": 252.84375,
+          "x": 253.13540649414062,
           "y": 160,
-          "width": 44.578125,
-          "height": 13.65625
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-27",
-          "x": 300.421875,
+          "x": 300.8958435058594,
           "y": 160,
-          "width": 44.578125,
-          "height": 13.65625
+          "width": 44.770835876464844,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-28",
-          "x": 15,
-          "y": 176.65625,
-          "width": 44.5625,
-          "height": 13.671875
+          "x": 14.333343505859375,
+          "y": 176.88543701171875,
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-29",
-          "x": 62.5625,
-          "y": 176.65625,
-          "width": 44.578125,
-          "height": 13.671875
+          "x": 62.09375,
+          "y": 176.88543701171875,
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-30",
-          "x": 110.140625,
-          "y": 176.65625,
-          "width": 44.5625,
-          "height": 13.671875
+          "x": 109.85415649414062,
+          "y": 176.88543701171875,
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-31",
-          "x": 157.703125,
-          "y": 176.65625,
-          "width": 44.578125,
-          "height": 13.671875
+          "x": 157.61459350585938,
+          "y": 176.88543701171875,
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-32",
-          "x": 205.28125,
-          "y": 176.65625,
-          "width": 44.5625,
-          "height": 13.671875
+          "x": 205.375,
+          "y": 176.88543701171875,
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-33",
-          "x": 252.84375,
-          "y": 176.65625,
-          "width": 44.578125,
-          "height": 13.671875
+          "x": 253.13540649414062,
+          "y": 176.88543701171875,
+          "width": 44.76041793823242,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-34",
-          "x": 300.421875,
-          "y": 176.65625,
-          "width": 44.578125,
-          "height": 13.671875
+          "x": 300.8958435058594,
+          "y": 176.88543701171875,
+          "width": 44.770835876464844,
+          "height": 13.885416984558105
         },
         {
           "action": "statistics-select-day-35",
-          "x": 15,
-          "y": 193.328125,
-          "width": 44.5625,
-          "height": 13.671875
+          "x": 14.333343505859375,
+          "y": 193.7708740234375,
+          "width": 44.76041793823242,
+          "height": 13.895833969116211
         },
         {
           "action": "statistics-select-day-36",
-          "x": 62.5625,
-          "y": 193.328125,
-          "width": 44.578125,
-          "height": 13.671875
+          "x": 62.09375,
+          "y": 193.7708740234375,
+          "width": 44.76041793823242,
+          "height": 13.895833969116211
         },
         {
           "action": "statistics-select-day-37",
-          "x": 110.140625,
-          "y": 193.328125,
-          "width": 44.5625,
-          "height": 13.671875
+          "x": 109.85415649414062,
+          "y": 193.7708740234375,
+          "width": 44.76041793823242,
+          "height": 13.895833969116211
         },
         {
           "action": "statistics-select-day-38",
-          "x": 157.703125,
-          "y": 193.328125,
-          "width": 44.578125,
-          "height": 13.671875
+          "x": 157.61459350585938,
+          "y": 193.7708740234375,
+          "width": 44.76041793823242,
+          "height": 13.895833969116211
         },
         {
           "action": "statistics-select-day-39",
-          "x": 205.28125,
-          "y": 193.328125,
-          "width": 44.5625,
-          "height": 13.671875
+          "x": 205.375,
+          "y": 193.7708740234375,
+          "width": 44.76041793823242,
+          "height": 13.895833969116211
         },
         {
           "action": "statistics-select-day-40",
-          "x": 252.84375,
-          "y": 193.328125,
-          "width": 44.578125,
-          "height": 13.671875
+          "x": 253.13540649414062,
+          "y": 193.7708740234375,
+          "width": 44.76041793823242,
+          "height": 13.895833969116211
         },
         {
           "action": "statistics-select-day-41",
-          "x": 300.421875,
-          "y": 193.328125,
-          "width": 44.578125,
-          "height": 13.671875
+          "x": 300.8958435058594,
+          "y": 193.7708740234375,
+          "width": 44.770835876464844,
+          "height": 13.895833969116211
         }
       ],
       "dynamic": {
@@ -2797,9 +2797,9 @@
             "bind": "statistics.total",
             "rect": {
               "x": 15,
-              "y": 15.5,
+              "y": 15.333343505859375,
               "width": 65,
-              "height": 18
+              "height": 17.33333396911621
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -2819,9 +2819,9 @@
             "bind": "statistics.peak",
             "rect": {
               "x": 80,
-              "y": 15.5,
+              "y": 15.333343505859375,
               "width": 65,
-              "height": 18
+              "height": 17.33333396911621
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -2841,9 +2841,9 @@
             "bind": "statistics.duration",
             "rect": {
               "x": 145,
-              "y": 15.5,
+              "y": 15.333343505859375,
               "width": 80,
-              "height": 18
+              "height": 17.33333396911621
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -2863,9 +2863,9 @@
             "bind": "statistics.currentStreak",
             "rect": {
               "x": 225,
-              "y": 15.5,
+              "y": 15.333343505859375,
               "width": 60,
-              "height": 18
+              "height": 17.33333396911621
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -2884,10 +2884,10 @@
           {
             "bind": "statistics.longestStreak",
             "rect": {
-              "x": 285,
-              "y": 15.5,
+              "x": 285.0000305175781,
+              "y": 15.333343505859375,
               "width": 60,
-              "height": 18
+              "height": 17.33333396911621
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -2906,8 +2906,8 @@
           {
             "bind": "statistics.previousMonth",
             "rect": {
-              "x": 15,
-              "y": 72,
+              "x": 14.333343505859375,
+              "y": 71.3333740234375,
               "width": 22,
               "height": 22
             },
@@ -2928,8 +2928,8 @@
           {
             "bind": "statistics.month",
             "rect": {
-              "x": 37,
-              "y": 76,
+              "x": 36.333343505859375,
+              "y": 75.3333740234375,
               "width": 74,
               "height": 14
             },
@@ -2950,8 +2950,8 @@
           {
             "bind": "statistics.nextMonth",
             "rect": {
-              "x": 111,
-              "y": 72,
+              "x": 110.33334350585938,
+              "y": 71.3333740234375,
               "width": 22,
               "height": 22
             },
@@ -2972,8 +2972,8 @@
           {
             "bind": "statistics.viewMonth",
             "rect": {
-              "x": 195,
-              "y": 75,
+              "x": 195.66665649414062,
+              "y": 74.3333740234375,
               "width": 42,
               "height": 16
             },
@@ -2999,8 +2999,8 @@
           {
             "bind": "statistics.viewWeek",
             "rect": {
-              "x": 241,
-              "y": 75,
+              "x": 241.66665649414062,
+              "y": 74.3333740234375,
               "width": 32,
               "height": 16
             },
@@ -3026,8 +3026,8 @@
           {
             "bind": "statistics.viewCumulative",
             "rect": {
-              "x": 277,
-              "y": 75,
+              "x": 277.6666564941406,
+              "y": 74.3333740234375,
               "width": 32,
               "height": 16
             },
@@ -3053,8 +3053,8 @@
           {
             "bind": "statistics.viewDetail",
             "rect": {
-              "x": 313,
-              "y": 75,
+              "x": 313.6666564941406,
+              "y": 74.3333740234375,
               "width": 32,
               "height": 16
             },
@@ -3080,10 +3080,10 @@
           {
             "bind": "statistics.detailInput",
             "rect": {
-              "x": 15,
-              "y": 111.75,
-              "width": 79.5,
-              "height": 16
+              "x": 14.333343505859375,
+              "y": 111.0833740234375,
+              "width": 79.83333587646484,
+              "height": 16.666667938232422
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -3102,9 +3102,9 @@
           {
             "bind": "statistics.labelInput",
             "rect": {
-              "x": 15,
+              "x": 14.333343505859375,
               "y": 129.75,
-              "width": 79.5,
+              "width": 79.83333587646484,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -3124,10 +3124,10 @@
           {
             "bind": "statistics.detailOutput",
             "rect": {
-              "x": 98.5,
-              "y": 111.75,
-              "width": 79.5,
-              "height": 16
+              "x": 98.16665649414062,
+              "y": 111.0833740234375,
+              "width": 79.83333587646484,
+              "height": 16.666667938232422
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -3146,9 +3146,9 @@
           {
             "bind": "statistics.labelOutput",
             "rect": {
-              "x": 98.5,
+              "x": 98.16665649414062,
               "y": 129.75,
-              "width": 79.5,
+              "width": 79.83333587646484,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -3169,9 +3169,9 @@
             "bind": "statistics.detailTotal",
             "rect": {
               "x": 182,
-              "y": 111.75,
-              "width": 79.5,
-              "height": 16
+              "y": 111.0833740234375,
+              "width": 79.83333587646484,
+              "height": 16.666667938232422
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -3192,7 +3192,7 @@
             "rect": {
               "x": 182,
               "y": 129.75,
-              "width": 79.5,
+              "width": 79.83333587646484,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -3212,10 +3212,10 @@
           {
             "bind": "statistics.detailCached",
             "rect": {
-              "x": 265.5,
-              "y": 111.75,
-              "width": 79.5,
-              "height": 16
+              "x": 265.8333435058594,
+              "y": 111.0833740234375,
+              "width": 79.83333587646484,
+              "height": 16.666667938232422
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -3234,9 +3234,9 @@
           {
             "bind": "statistics.labelCached",
             "rect": {
-              "x": 265.5,
+              "x": 265.8333435058594,
               "y": 129.75,
-              "width": 79.5,
+              "width": 79.83333587646484,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -3256,10 +3256,10 @@
           {
             "bind": "statistics.detailReasoning",
             "rect": {
-              "x": 15,
+              "x": 14.333343505859375,
               "y": 167.25,
-              "width": 79.5,
-              "height": 16
+              "width": 79.83333587646484,
+              "height": 16.666667938232422
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -3278,9 +3278,9 @@
           {
             "bind": "statistics.labelReasoning",
             "rect": {
-              "x": 15,
-              "y": 185.25,
-              "width": 79.5,
+              "x": 14.333343505859375,
+              "y": 185.91668701171875,
+              "width": 79.83333587646484,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -3300,10 +3300,10 @@
           {
             "bind": "statistics.detailCacheHit",
             "rect": {
-              "x": 98.5,
+              "x": 98.16665649414062,
               "y": 167.25,
-              "width": 79.5,
-              "height": 16
+              "width": 79.83333587646484,
+              "height": 16.666667938232422
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -3322,9 +3322,9 @@
           {
             "bind": "statistics.labelCacheHit",
             "rect": {
-              "x": 98.5,
-              "y": 185.25,
-              "width": 79.5,
+              "x": 98.16665649414062,
+              "y": 185.91668701171875,
+              "width": 79.83333587646484,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -3346,8 +3346,8 @@
             "rect": {
               "x": 182,
               "y": 167.25,
-              "width": 163,
-              "height": 16
+              "width": 163.6666717529297,
+              "height": 16.666667938232422
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -3367,8 +3367,8 @@
             "bind": "statistics.labelCost",
             "rect": {
               "x": 182,
-              "y": 185.25,
-              "width": 163,
+              "y": 185.91668701171875,
+              "width": 163.6666717529297,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -3391,256 +3391,256 @@
             "bind": "statistics.monthCells",
             "rects": [
               {
-                "x": 15,
-                "y": 110,
-                "width": 44.5625,
-                "height": 13.65625
+                "x": 14.333343505859375,
+                "y": 109.3333740234375,
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 62.5625,
-                "y": 110,
-                "width": 44.578125,
-                "height": 13.65625
+                "x": 62.09375,
+                "y": 109.3333740234375,
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 110.140625,
-                "y": 110,
-                "width": 44.5625,
-                "height": 13.65625
+                "x": 109.85415649414062,
+                "y": 109.3333740234375,
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 157.703125,
-                "y": 110,
-                "width": 44.578125,
-                "height": 13.65625
+                "x": 157.61459350585938,
+                "y": 109.3333740234375,
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 205.28125,
-                "y": 110,
-                "width": 44.5625,
-                "height": 13.65625
+                "x": 205.375,
+                "y": 109.3333740234375,
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 252.84375,
-                "y": 110,
-                "width": 44.578125,
-                "height": 13.65625
+                "x": 253.13540649414062,
+                "y": 109.3333740234375,
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 300.421875,
-                "y": 110,
-                "width": 44.578125,
-                "height": 13.65625
+                "x": 300.8958435058594,
+                "y": 109.3333740234375,
+                "width": 44.770835876464844,
+                "height": 13.885416984558105
               },
               {
-                "x": 15,
-                "y": 126.65625,
-                "width": 44.5625,
-                "height": 13.671875
+                "x": 14.333343505859375,
+                "y": 126.21875,
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 62.5625,
-                "y": 126.65625,
-                "width": 44.578125,
-                "height": 13.671875
+                "x": 62.09375,
+                "y": 126.21875,
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 110.140625,
-                "y": 126.65625,
-                "width": 44.5625,
-                "height": 13.671875
+                "x": 109.85415649414062,
+                "y": 126.21875,
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 157.703125,
-                "y": 126.65625,
-                "width": 44.578125,
-                "height": 13.671875
+                "x": 157.61459350585938,
+                "y": 126.21875,
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 205.28125,
-                "y": 126.65625,
-                "width": 44.5625,
-                "height": 13.671875
+                "x": 205.375,
+                "y": 126.21875,
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 252.84375,
-                "y": 126.65625,
-                "width": 44.578125,
-                "height": 13.671875
+                "x": 253.13540649414062,
+                "y": 126.21875,
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 300.421875,
-                "y": 126.65625,
-                "width": 44.578125,
-                "height": 13.671875
+                "x": 300.8958435058594,
+                "y": 126.21875,
+                "width": 44.770835876464844,
+                "height": 13.885416984558105
               },
               {
-                "x": 15,
-                "y": 143.328125,
-                "width": 44.5625,
-                "height": 13.671875
+                "x": 14.333343505859375,
+                "y": 143.10418701171875,
+                "width": 44.76041793823242,
+                "height": 13.895833969116211
               },
               {
-                "x": 62.5625,
-                "y": 143.328125,
-                "width": 44.578125,
-                "height": 13.671875
+                "x": 62.09375,
+                "y": 143.10418701171875,
+                "width": 44.76041793823242,
+                "height": 13.895833969116211
               },
               {
-                "x": 110.140625,
-                "y": 143.328125,
-                "width": 44.5625,
-                "height": 13.671875
+                "x": 109.85415649414062,
+                "y": 143.10418701171875,
+                "width": 44.76041793823242,
+                "height": 13.895833969116211
               },
               {
-                "x": 157.703125,
-                "y": 143.328125,
-                "width": 44.578125,
-                "height": 13.671875
+                "x": 157.61459350585938,
+                "y": 143.10418701171875,
+                "width": 44.76041793823242,
+                "height": 13.895833969116211
               },
               {
-                "x": 205.28125,
-                "y": 143.328125,
-                "width": 44.5625,
-                "height": 13.671875
+                "x": 205.375,
+                "y": 143.10418701171875,
+                "width": 44.76041793823242,
+                "height": 13.895833969116211
               },
               {
-                "x": 252.84375,
-                "y": 143.328125,
-                "width": 44.578125,
-                "height": 13.671875
+                "x": 253.13540649414062,
+                "y": 143.10418701171875,
+                "width": 44.76041793823242,
+                "height": 13.895833969116211
               },
               {
-                "x": 300.421875,
-                "y": 143.328125,
-                "width": 44.578125,
-                "height": 13.671875
+                "x": 300.8958435058594,
+                "y": 143.10418701171875,
+                "width": 44.770835876464844,
+                "height": 13.895833969116211
               },
               {
-                "x": 15,
+                "x": 14.333343505859375,
                 "y": 160,
-                "width": 44.5625,
-                "height": 13.65625
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 62.5625,
+                "x": 62.09375,
                 "y": 160,
-                "width": 44.578125,
-                "height": 13.65625
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 110.140625,
+                "x": 109.85415649414062,
                 "y": 160,
-                "width": 44.5625,
-                "height": 13.65625
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 157.703125,
+                "x": 157.61459350585938,
                 "y": 160,
-                "width": 44.578125,
-                "height": 13.65625
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 205.28125,
+                "x": 205.375,
                 "y": 160,
-                "width": 44.5625,
-                "height": 13.65625
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 252.84375,
+                "x": 253.13540649414062,
                 "y": 160,
-                "width": 44.578125,
-                "height": 13.65625
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 300.421875,
+                "x": 300.8958435058594,
                 "y": 160,
-                "width": 44.578125,
-                "height": 13.65625
+                "width": 44.770835876464844,
+                "height": 13.885416984558105
               },
               {
-                "x": 15,
-                "y": 176.65625,
-                "width": 44.5625,
-                "height": 13.671875
+                "x": 14.333343505859375,
+                "y": 176.88543701171875,
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 62.5625,
-                "y": 176.65625,
-                "width": 44.578125,
-                "height": 13.671875
+                "x": 62.09375,
+                "y": 176.88543701171875,
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 110.140625,
-                "y": 176.65625,
-                "width": 44.5625,
-                "height": 13.671875
+                "x": 109.85415649414062,
+                "y": 176.88543701171875,
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 157.703125,
-                "y": 176.65625,
-                "width": 44.578125,
-                "height": 13.671875
+                "x": 157.61459350585938,
+                "y": 176.88543701171875,
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 205.28125,
-                "y": 176.65625,
-                "width": 44.5625,
-                "height": 13.671875
+                "x": 205.375,
+                "y": 176.88543701171875,
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 252.84375,
-                "y": 176.65625,
-                "width": 44.578125,
-                "height": 13.671875
+                "x": 253.13540649414062,
+                "y": 176.88543701171875,
+                "width": 44.76041793823242,
+                "height": 13.885416984558105
               },
               {
-                "x": 300.421875,
-                "y": 176.65625,
-                "width": 44.578125,
-                "height": 13.671875
+                "x": 300.8958435058594,
+                "y": 176.88543701171875,
+                "width": 44.770835876464844,
+                "height": 13.885416984558105
               },
               {
-                "x": 15,
-                "y": 193.328125,
-                "width": 44.5625,
-                "height": 13.671875
+                "x": 14.333343505859375,
+                "y": 193.7708740234375,
+                "width": 44.76041793823242,
+                "height": 13.895833969116211
               },
               {
-                "x": 62.5625,
-                "y": 193.328125,
-                "width": 44.578125,
-                "height": 13.671875
+                "x": 62.09375,
+                "y": 193.7708740234375,
+                "width": 44.76041793823242,
+                "height": 13.895833969116211
               },
               {
-                "x": 110.140625,
-                "y": 193.328125,
-                "width": 44.5625,
-                "height": 13.671875
+                "x": 109.85415649414062,
+                "y": 193.7708740234375,
+                "width": 44.76041793823242,
+                "height": 13.895833969116211
               },
               {
-                "x": 157.703125,
-                "y": 193.328125,
-                "width": 44.578125,
-                "height": 13.671875
+                "x": 157.61459350585938,
+                "y": 193.7708740234375,
+                "width": 44.76041793823242,
+                "height": 13.895833969116211
               },
               {
-                "x": 205.28125,
-                "y": 193.328125,
-                "width": 44.5625,
-                "height": 13.671875
+                "x": 205.375,
+                "y": 193.7708740234375,
+                "width": 44.76041793823242,
+                "height": 13.895833969116211
               },
               {
-                "x": 252.84375,
-                "y": 193.328125,
-                "width": 44.578125,
-                "height": 13.671875
+                "x": 253.13540649414062,
+                "y": 193.7708740234375,
+                "width": 44.76041793823242,
+                "height": 13.895833969116211
               },
               {
-                "x": 300.421875,
-                "y": 193.328125,
-                "width": 44.578125,
-                "height": 13.671875
+                "x": 300.8958435058594,
+                "y": 193.7708740234375,
+                "width": 44.770835876464844,
+                "height": 13.895833969116211
               }
             ],
             "colors": [
@@ -3705,9 +3705,9 @@
             "bind": "toast.title",
             "rect": {
               "x": 77,
-              "y": 39.078125,
+              "y": 38.7396240234375,
               "width": 227,
-              "height": 16
+              "height": 16.666667938232422
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -3727,7 +3727,7 @@
             "bind": "toast.message",
             "rect": {
               "x": 77,
-              "y": 58.078125,
+              "y": 58.40625,
               "width": 227,
               "height": 14.84375
             },
@@ -3797,9 +3797,9 @@
             "bind": "toast.title",
             "rect": {
               "x": 77,
-              "y": 39.078125,
+              "y": 38.7396240234375,
               "width": 227,
-              "height": 16
+              "height": 16.666667938232422
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -3819,7 +3819,7 @@
             "bind": "toast.message",
             "rect": {
               "x": 77,
-              "y": 58.078125,
+              "y": 58.40625,
               "width": 227,
               "height": 14.84375
             },
@@ -3889,9 +3889,9 @@
             "bind": "toast.title",
             "rect": {
               "x": 77,
-              "y": 39.078125,
+              "y": 38.7396240234375,
               "width": 227,
-              "height": 16
+              "height": 16.666667938232422
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -3911,7 +3911,7 @@
             "bind": "toast.message",
             "rect": {
               "x": 77,
-              "y": 58.078125,
+              "y": 58.40625,
               "width": 227,
               "height": 14.84375
             },
@@ -3981,9 +3981,9 @@
             "bind": "toast.title",
             "rect": {
               "x": 77,
-              "y": 39.078125,
+              "y": 38.7396240234375,
               "width": 227,
-              "height": 16
+              "height": 16.666667938232422
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -4003,7 +4003,7 @@
             "bind": "toast.message",
             "rect": {
               "x": 77,
-              "y": 58.078125,
+              "y": 58.40625,
               "width": 227,
               "height": 14.84375
             },

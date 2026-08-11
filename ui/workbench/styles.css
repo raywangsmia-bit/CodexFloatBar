@@ -277,6 +277,11 @@ select {
   font-size: 12px;
 }
 
+.horizontal .usage-heading strong {
+  width: 34px;
+  text-align: right;
+}
+
 .usage.warn .usage-heading strong {
   color: #e2b744;
 }
