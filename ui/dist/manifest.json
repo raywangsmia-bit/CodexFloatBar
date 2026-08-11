@@ -4,8 +4,8 @@
   "defaultSurface": "main-horizontal",
   "version": {
     "update": "2026-08-11",
-    "build": "2026-08-11 13:13:23",
-    "staticVersion": "codexfloatingbar-3bf1d2785c66"
+    "build": "2026-08-11 23:41:49",
+    "staticVersion": "codexfloatingbar-8d274710e95b"
   },
   "surfaces": [
     {
@@ -118,6 +118,28 @@
             "toneColors": {}
           },
           {
+            "bind": "quota.plan",
+            "rect": {
+              "x": 251.37503051757812,
+              "y": 10.333343505859375,
+              "width": 16.760417938232422,
+              "height": 10
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 8,
+            "fontWeight": 700,
+            "color": "#d7e2ebff",
+            "align": "left",
+            "toneColors": {}
+          },
+          {
             "bind": "quota.remaining",
             "rect": {
               "x": 285.6666564941406,
@@ -192,28 +214,28 @@
           "file": "assets/431ecec88a3dc850/main-horizontal@100.png",
           "width": 460,
           "height": 50,
-          "sourceHash": "df8109c38ae83362d58102aa7c22b29a1246bf8638797e4674cb48c25b3f5e68"
+          "sourceHash": "dd15ea2547d66bb205f506f0bcebb12042af7651a2b60f8dbeb38f7cb77761bb"
         },
         {
           "scale": 1.25,
           "file": "assets/431ecec88a3dc850/main-horizontal@125.png",
           "width": 575,
           "height": 63,
-          "sourceHash": "dbec21c0cfa9d2b50f421abc37896e5efe8974a5f5e79a17930b9804a561ba4b"
+          "sourceHash": "72f2124fb7a76c342f12de2f67ff847164c1cfb3c6c6a63a6cd5f0cba66390b8"
         },
         {
           "scale": 1.5,
           "file": "assets/431ecec88a3dc850/main-horizontal@150.png",
           "width": 690,
           "height": 75,
-          "sourceHash": "e1043e32dd150598557ab8bfd1421b6d65798a16b23f9d2ef046f2b11a4a6a15"
+          "sourceHash": "74b8d524ab2af9cfc144f05b20a491ae7b3be2a5fdfb31afbd1c6fa7498638df"
         },
         {
           "scale": 2,
           "file": "assets/431ecec88a3dc850/main-horizontal@200.png",
           "width": 920,
           "height": 100,
-          "sourceHash": "001c15d54160ccc1709ebfa0721a88ca21fdb19e92736d5ecf48de803ea8706f"
+          "sourceHash": "919e7df9fae58193ff5ddd609396529858f858096f140f69d1ef5315c69c4243"
         }
       ]
     },
@@ -327,6 +349,28 @@
             "toneColors": {}
           },
           {
+            "bind": "quota.plan",
+            "rect": {
+              "x": 47.70831298828125,
+              "y": 111,
+              "width": 16.760417938232422,
+              "height": 10
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 8,
+            "fontWeight": 700,
+            "color": "#d7e2ebff",
+            "align": "left",
+            "toneColors": {}
+          },
+          {
             "bind": "quota.remaining",
             "rect": {
               "x": 92.02081298828125,
@@ -401,28 +445,28 @@
           "file": "assets/431ecec88a3dc850/main-vertical@100.png",
           "width": 130,
           "height": 180,
-          "sourceHash": "ad52171d794fe3bf1ee107c669ddd1c0f2f77d857c12b3072d8660fd61dab351"
+          "sourceHash": "9bf1d7592143adfccecb9300c0e1959927fccdde3a75112cc20e8e73dbda4c82"
         },
         {
           "scale": 1.25,
           "file": "assets/431ecec88a3dc850/main-vertical@125.png",
           "width": 163,
           "height": 225,
-          "sourceHash": "82d400df5ca27c03ab9b6964651ec2a090322b6bdb747c87aa36304fe15f030c"
+          "sourceHash": "16a0fe37028c2254a62f05d56969af7371ee2068f08cd2c6cdda7a782fc034ff"
         },
         {
           "scale": 1.5,
           "file": "assets/431ecec88a3dc850/main-vertical@150.png",
           "width": 195,
           "height": 270,
-          "sourceHash": "fddc76a933cc0546c7428b9fa30945c3285d4c1820ce8536fd68d85225a3400a"
+          "sourceHash": "9c44b8c5c393c1924a4dc2d12b810ab0ced56b697c20cd2e49e5d819d0fc38ad"
         },
         {
           "scale": 2,
           "file": "assets/431ecec88a3dc850/main-vertical@200.png",
           "width": 260,
           "height": 360,
-          "sourceHash": "29be1f4b9804bc702017bdde34b0b0a2e220e7dcdbd5fd91a7fa7e98d17b47ce"
+          "sourceHash": "cc9999e7b3197ea946a890f8f3efb6f1f824a143feaec9c8934804381f365bbd"
         }
       ]
     },
@@ -2141,6 +2185,28 @@
             "toneColors": {}
           },
           {
+            "bind": "quota.plan",
+            "rect": {
+              "x": 251.37503051757812,
+              "y": 10.333343505859375,
+              "width": 16.760417938232422,
+              "height": 10
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 8,
+            "fontWeight": 700,
+            "color": "#d7e2ebff",
+            "align": "left",
+            "toneColors": {}
+          },
+          {
             "bind": "quota.remaining",
             "rect": {
               "x": 285.6666564941406,
@@ -2215,28 +2281,28 @@
           "file": "assets/431ecec88a3dc850/main-horizontal-light@100.png",
           "width": 460,
           "height": 50,
-          "sourceHash": "24fd6d511e35778666972a11ac148d0477586281989f6cad4244691be1b3fb3c"
+          "sourceHash": "8001f716060efe4916f8b249ce5c76f9c6673fb83059719467be9d31e2b2f667"
         },
         {
           "scale": 1.25,
           "file": "assets/431ecec88a3dc850/main-horizontal-light@125.png",
           "width": 575,
           "height": 63,
-          "sourceHash": "f799c76d7fe8301d357603cb777eadf60f22083cb5cd3193dfe857296100babf"
+          "sourceHash": "4b99efa94893522e2036ead473b7f61646a14b614aeeaea0438096c777518db5"
         },
         {
           "scale": 1.5,
           "file": "assets/431ecec88a3dc850/main-horizontal-light@150.png",
           "width": 690,
           "height": 75,
-          "sourceHash": "37dc4da4bf2e1c9878529300cac3fd3ed37bb1720f32666c0dfd372e5d7d3d88"
+          "sourceHash": "cde3a15334d324bd58e3631e509b57a8b45d306b1fe2668cfcaeb0befe2c1d6f"
         },
         {
           "scale": 2,
           "file": "assets/431ecec88a3dc850/main-horizontal-light@200.png",
           "width": 920,
           "height": 100,
-          "sourceHash": "306fb3b72d7ca3737af27bffe9dbe2f366ec269a59f8d37e0891ccf412c52060"
+          "sourceHash": "b86b08facadf5b01c73466a7084fa85511286defbde4be19bae8206ad5ca39f7"
         }
       ]
     },
@@ -2350,6 +2416,28 @@
             "toneColors": {}
           },
           {
+            "bind": "quota.plan",
+            "rect": {
+              "x": 47.70831298828125,
+              "y": 111,
+              "width": 16.760417938232422,
+              "height": 10
+            },
+            "fontFamily": "Microsoft YaHei UI",
+            "fontFamilies": [
+              "Microsoft YaHei UI",
+              "Microsoft YaHei",
+              "Noto Sans SC",
+              "Segoe UI",
+              "sans-serif"
+            ],
+            "fontSize": 8,
+            "fontWeight": 700,
+            "color": "#d7e2ebff",
+            "align": "left",
+            "toneColors": {}
+          },
+          {
             "bind": "quota.remaining",
             "rect": {
               "x": 92.02081298828125,
@@ -2424,28 +2512,28 @@
           "file": "assets/431ecec88a3dc850/main-vertical-light@100.png",
           "width": 130,
           "height": 180,
-          "sourceHash": "1f60f17031c6a32fd883c149bdab7294c48ab0640d56edf93beef01959a28852"
+          "sourceHash": "0feae25a8a4d1c0f86599e40ea6a05146b090e4fccd9fed2bff540d4880487df"
         },
         {
           "scale": 1.25,
           "file": "assets/431ecec88a3dc850/main-vertical-light@125.png",
           "width": 163,
           "height": 225,
-          "sourceHash": "f6fff94da3fa2861ac33ffdc1abf422a063a0dbbf368f884b1803cc8e51e3826"
+          "sourceHash": "d832119d3697487ad304d28e18dfaf4f3b20822048f3957f9bc08f1a84a68a3a"
         },
         {
           "scale": 1.5,
           "file": "assets/431ecec88a3dc850/main-vertical-light@150.png",
           "width": 195,
           "height": 270,
-          "sourceHash": "1fc4fe8f694b42a5443b3ae73e8a5ea2e7a34756b9a355809c3808b261b6265a"
+          "sourceHash": "5843c9b8455536ce4feafca6bd75872af9db97e7ce430c90010326b334053baf"
         },
         {
           "scale": 2,
           "file": "assets/431ecec88a3dc850/main-vertical-light@200.png",
           "width": 260,
           "height": 360,
-          "sourceHash": "2b6307d937629c33dd9b8597c44dd0a38a084f69f0221365005c4369ff4ae82b"
+          "sourceHash": "4f545182351aa7aef3adbc72cb6dc1b44a8033d7fbd9aead279211a2e045618a"
         }
       ]
     },

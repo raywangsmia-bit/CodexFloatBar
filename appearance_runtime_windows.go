@@ -127,6 +127,20 @@ func (runtime *appearanceRuntime) setFollowCodex(enabled bool) {
 	}
 }
 
+func (runtime *appearanceRuntime) setAccountExpiryDate(value string) {
+	if runtime != nil && runtime.current.AccountExpiryDate != value {
+		runtime.current.AccountExpiryDate = value
+		runtime.dirty = true
+	}
+}
+
+func (runtime *appearanceRuntime) setAccountExpiryReminder(enabled bool) {
+	if runtime != nil && runtime.current.AccountExpiryReminder != enabled {
+		runtime.current.AccountExpiryReminder = enabled
+		runtime.dirty = true
+	}
+}
+
 func (runtime *appearanceRuntime) setMainPosition(position geometryPoint) {
 	if runtime == nil {
 		return

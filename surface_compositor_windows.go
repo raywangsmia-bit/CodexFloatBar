@@ -9,33 +9,9 @@ import (
 	"image/draw"
 	"strconv"
 	"strings"
-
-	"github.com/raywangsmia-bit/CodexFloatBar/internal/codexdata"
 )
 
 const textSlotHorizontalAllowance = 3.0
-
-func composeRenderedSurface(
-	surface *renderedSurface,
-	snapshot codexdata.AppSnapshot,
-) (*renderedSurface, error) {
-	return composeRenderedSurfaceWithStatistics(
-		surface,
-		snapshot,
-		statisticsSelection{},
-	)
-}
-
-func composeRenderedSurfaceWithStatistics(
-	surface *renderedSurface,
-	snapshot codexdata.AppSnapshot,
-	statistics statisticsSelection,
-) (*renderedSurface, error) {
-	return composeRenderedSurfaceWithPresentation(
-		surface,
-		presentSnapshotWithStatistics(snapshot, statistics),
-	)
-}
 
 func composeRenderedSurfaceWithPresentation(
 	surface *renderedSurface,

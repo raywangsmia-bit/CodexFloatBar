@@ -20,24 +20,23 @@ import (
 )
 
 const (
-	nativeWindowClass          = appidentity.WindowClass
-	nativeMutexName            = appidentity.MutexName
-	nativeWorkbenchWindowClass = appidentity.AppID + ".Workbench.Window"
-	nativeWorkbenchMutexName   = "Local\\" + appidentity.AppID + ".Workbench.SingleInstance"
-	nativeSelfTestWindowClass  = appidentity.AppID + ".SelfTest.Window"
-	nativeSelfTestMutexName    = "Local\\" + appidentity.AppID + ".SelfTest.SingleInstance"
-	mainWindowTitle            = appidentity.ProductName
-	statisticsWindowTitle      = appidentity.ProductName + " Statistics"
-	usageToastWindowTitle      = appidentity.ProductName + " Usage Toast"
-	statisticsSurfaceID        = "statistics"
-	usageToastSurfaceID        = "usage-toast"
-	pollTimerID                = 1
-	animationTimerID           = 2
-	usageToastTimerID          = 4
-	trayRetryTimerID           = 5
-	animationSteps             = 10
-	auxiliaryGapLogical        = 8
-	trayRetryLimit             = 5
+	nativeWindowClass            = appidentity.WindowClass
+	nativeMutexName              = appidentity.MutexName
+	nativeSelfTestWindowClass    = appidentity.AppID + ".SelfTest.Window"
+	nativeSelfTestMutexName      = "Local\\" + appidentity.AppID + ".SelfTest.SingleInstance"
+	mainWindowTitle              = appidentity.ProductName
+	statisticsWindowTitle        = appidentity.ProductName + " Statistics"
+	usageToastWindowTitle        = appidentity.ProductName + " Usage Toast"
+	statisticsSurfaceID          = "statistics"
+	usageToastSurfaceID          = "usage-toast"
+	pollTimerID                  = 1
+	animationTimerID             = 2
+	usageToastTimerID            = 4
+	trayRetryTimerID             = 5
+	accountExpiryReminderTimerID = 6
+	animationSteps               = 10
+	auxiliaryGapLogical          = 8
+	trayRetryLimit               = 5
 )
 
 type windowRole uint8
@@ -58,48 +57,53 @@ type auxiliaryWindow struct {
 }
 
 type nativeApp struct {
-	bundleRoot            string
-	surfaceID             string
-	currentSurface        *renderedSurface
-	placement             placementStore
-	savedPlacement        *windowPlacement
-	window                uintptr
-	instance              uintptr
-	mutex                 windows.Handle
-	tray                  notifyIconData
-	trayVersion4          bool
-	trayRetryAttempts     int
-	taskbarCreatedMessage uint32
-	lastManifestState     fileState
-	stopWatching          chan struct{}
-	stopOnce              sync.Once
-	autoCollapseEnabled   bool
-	collapsed             bool
-	expandedPosition      geometryPoint
-	hasExpandedPosition   bool
-	awayPolls             int
-	animation             windowAnimation
-	windowClass           string
-	mutexName             string
-	placementDisabled     bool
-	selfTest              *nativeSelfTest
-	statisticsWindow      auxiliaryWindow
-	usageToastWindow      auxiliaryWindow
-	updatingWindows       bool
-	status                *statusRuntime
-	process               *processRuntime
-	appearance            *appearanceRuntime
-	startedAt             time.Time
-	surfaceOverride       bool
-	statisticsDetached    bool
-	manuallyHidden        bool
-	followCodexEnabled    bool
-	codexStateKnown       bool
-	codexWasRunning       bool
-	codexWasVisible       bool
-	winEventHooks         []uintptr
-	occlusionEventPending atomic.Bool
-	baseSurfaces          map[string]*renderedSurface
+	bundleRoot                    string
+	surfaceID                     string
+	currentSurface                *renderedSurface
+	placement                     placementStore
+	savedPlacement                *windowPlacement
+	window                        uintptr
+	instance                      uintptr
+	mutex                         windows.Handle
+	tray                          notifyIconData
+	trayVersion4                  bool
+	trayRetryAttempts             int
+	taskbarCreatedMessage         uint32
+	lastManifestState             fileState
+	stopWatching                  chan struct{}
+	stopOnce                      sync.Once
+	autoCollapseEnabled           bool
+	collapsed                     bool
+	expandedPosition              geometryPoint
+	hasExpandedPosition           bool
+	awayPolls                     int
+	animation                     windowAnimation
+	windowClass                   string
+	mutexName                     string
+	placementDisabled             bool
+	selfTest                      *nativeSelfTest
+	statisticsWindow              auxiliaryWindow
+	usageToastWindow              auxiliaryWindow
+	updatingWindows               bool
+	status                        *statusRuntime
+	process                       *processRuntime
+	appearance                    *appearanceRuntime
+	startedAt                     time.Time
+	surfaceOverride               bool
+	statisticsDetached            bool
+	manuallyHidden                bool
+	followCodexEnabled            bool
+	accountExpiryDate             string
+	accountExpiryReminderEnabled  bool
+	accountExpiryScheduledHour    time.Time
+	accountExpiryLastReminderHour time.Time
+	accountExpiryToastActive      bool
+	codexStateKnown               bool
+	codexWasRunning               bool
+	codexWasVisible               bool
+	winEventHooks                 []uintptr
+	occlusionEventPending         atomic.Bool
+	baseSurfaces                  map[string]*renderedSurface
 }
 
 type windowAnimation struct {
@@ -168,12 +172,6 @@ func (app *nativeApp) useSelfTestIdentity() {
 	}
 }
 
-func (app *nativeApp) useWorkbenchIdentity() {
-	app.windowClass = nativeWorkbenchWindowClass
-	app.mutexName = nativeWorkbenchMutexName
-	app.placementDisabled = true
-}
-
 func (app *nativeApp) run() error {
 	alreadyRunning, err := app.acquireSingleInstance()
 	if err != nil {
@@ -198,6 +196,8 @@ func (app *nativeApp) run() error {
 		}
 		app.autoCollapseEnabled = app.appearance.current.AutoCollapse
 		app.followCodexEnabled = app.appearance.current.FollowCodex
+		app.accountExpiryDate = app.appearance.current.AccountExpiryDate
+		app.accountExpiryReminderEnabled = app.appearance.current.AccountExpiryReminder
 		app.statisticsDetached = app.appearance.current.StatisticsWindow != nil
 	}
 	if !app.placementDisabled {
@@ -237,6 +237,7 @@ func (app *nativeApp) run() error {
 			app.appearance.setAutoCollapse(false)
 		}
 	}
+	app.scheduleAccountExpiryReminder(time.Now())
 	app.savePlacement()
 	if err := app.startStatusMonitor(); err != nil {
 		log.Printf("starting Codex data monitor: %v", err)
@@ -567,6 +568,7 @@ func (app *nativeApp) reloadSurfaceAtDPI(dpi uint32) {
 	}
 	if nextUsageToast != nil {
 		app.usageToastWindow.CurrentSurface = nextUsageToast
+		app.accountExpiryToastActive = false
 	}
 	log.Printf(
 		"loaded %s at %.0f%% (%dx%d), page BUILD %s, static %s, windows=%d",
@@ -603,6 +605,15 @@ func (app *nativeApp) loadComposedSurface(
 	surfaceID string,
 	dpi uint32,
 ) (*renderedSurface, error) {
+	return app.loadComposedSurfaceWithPresentation(manifest, surfaceID, dpi, nil)
+}
+
+func (app *nativeApp) loadComposedSurfaceWithPresentation(
+	manifest bundleManifest,
+	surfaceID string,
+	dpi uint32,
+	presentation *uiPresentation,
+) (*renderedSurface, error) {
 	targetScale := float64(dpi) / 96
 	if app.appearance != nil {
 		targetScale = app.appearance.targetScale(dpi)
@@ -623,6 +634,9 @@ func (app *nativeApp) loadComposedSurface(
 			app.baseSurfaces = map[string]*renderedSurface{}
 		}
 		app.baseSurfaces[surfaceID] = surface
+	}
+	if presentation != nil {
+		return composeRenderedSurfaceWithPresentation(surface, *presentation)
 	}
 	return app.composeSurface(surface)
 }
@@ -856,6 +870,13 @@ func (app *nativeApp) toggleStatistics() {
 }
 
 func (app *nativeApp) showUsageToast() {
+	if app.accountExpiryToastActive {
+		app.restoreAccountExpiryToast()
+	}
+	app.displayUsageToast()
+}
+
+func (app *nativeApp) displayUsageToast() {
 	app.expandImmediately()
 	if err := app.ensureAuxiliaryWindow(&app.usageToastWindow); err != nil {
 		log.Printf("showing usage toast: %v", err)
@@ -884,6 +905,9 @@ func (app *nativeApp) hideAuxiliaryWindow(auxiliary *auxiliaryWindow) {
 		procKillTimer.Call(auxiliary.Handle, usageToastTimerID)
 	}
 	procShowWindow.Call(auxiliary.Handle, swHide)
+	if auxiliary.Role == windowRoleUsageToast && app.accountExpiryToastActive {
+		app.restoreAccountExpiryToast()
+	}
 	app.repositionAuxiliaryWindows(windowRoleUnknown)
 }
 
@@ -1271,6 +1295,18 @@ func (app *nativeApp) showTrayMenu() {
 	appendMenu(menu, mfString, trayCommandOpenConfig, "打开配置文件")
 	appendMenu(menu, mfString, trayCommandOpenChatGPT, "打开 ChatGPT 账户页")
 	appendMenu(menu, mfString, trayCommandOpenBilling, "打开 Billing 页面")
+	appendMenu(
+		menu,
+		mfString,
+		trayCommandAccountExpiryDate,
+		accountExpiryMenuText(app.accountExpiryDate),
+	)
+	appendMenu(
+		menu,
+		checkedMenuFlags(app.accountExpiryReminderEnabled),
+		trayCommandAccountExpiryReminder,
+		"到期提醒",
+	)
 	appendMenu(menu, mfString, trayCommandOpenAPIUsage, "打开 API 用量页面")
 	appendMenu(menu, mfString, trayCommandOpenAPIKeys, "打开 API Keys 页面")
 	appendMenu(menu, mfString, trayCommandOpenGitHub, "打开 GitHub 仓库")
@@ -1425,6 +1461,10 @@ func (app *nativeApp) executeTrayCommand(command uintptr) {
 		app.openExternalPage(externalPageChatGPT)
 	case trayCommandOpenBilling:
 		app.openExternalPage(externalPageBilling)
+	case trayCommandAccountExpiryDate:
+		app.editAccountExpiryDate()
+	case trayCommandAccountExpiryReminder:
+		app.toggleAccountExpiryReminder()
 	case trayCommandOpenAPIUsage:
 		app.openExternalPage(externalPageAPIUsage)
 	case trayCommandOpenAPIKeys:
@@ -1760,6 +1800,8 @@ func (app *nativeApp) handleTimer(timerID uintptr) {
 				err,
 			)
 		}
+	case accountExpiryReminderTimerID:
+		app.handleAccountExpiryReminderTimer(time.Now())
 	}
 }
 
@@ -1978,13 +2020,6 @@ func isDocked(geometry windowGeometry, area workArea) bool {
 	top := abs(geometry.Y-area.Y) <= tolerance
 	bottom := abs((geometry.Y+geometry.Height)-(area.Y+area.Height)) <= tolerance
 	return left || right || top || bottom
-}
-
-func abs(value int) int {
-	if value < 0 {
-		return -value
-	}
-	return value
 }
 
 func (app *nativeApp) savePlacement() {
@@ -2282,6 +2317,7 @@ func nativeWindowProc(window uintptr, message uint32, wParam uintptr, lParam uin
 		procKillTimer.Call(window, animationTimerID)
 		procKillTimer.Call(window, selfTestTimerID)
 		procKillTimer.Call(window, trayRetryTimerID)
+		procKillTimer.Call(window, accountExpiryReminderTimerID)
 		app.stopOcclusionHooks()
 		app.savePlacement()
 		app.destroyAuxiliaryWindows()

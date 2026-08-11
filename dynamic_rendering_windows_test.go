@@ -19,6 +19,7 @@ func TestPresentSnapshotQuotaToneAndText(t *testing.T) {
 	tests := []struct {
 		name          string
 		state         codexdata.SourceState
+		plan          string
 		remaining     int
 		wantTone      quotaTone
 		wantProgress  int
@@ -39,6 +40,7 @@ func TestPresentSnapshotQuotaToneAndText(t *testing.T) {
 		{
 			name:          "good boundary",
 			state:         codexdata.SourceAvailable,
+			plan:          "Plus",
 			remaining:     61,
 			wantTone:      quotaToneGood,
 			wantProgress:  61,
@@ -87,7 +89,8 @@ func TestPresentSnapshotQuotaToneAndText(t *testing.T) {
 			snapshot := codexdata.AppSnapshot{
 				RefreshedAt: refreshedAt,
 				RateLimit: codexdata.RateLimitSummary{
-					State: test.state,
+					State:    test.state,
+					PlanType: test.plan,
 					Secondary: &codexdata.RateLimitWindow{
 						RemainingPercent: test.remaining,
 						WindowMinutes:    10080,
@@ -107,6 +110,7 @@ func TestPresentSnapshotQuotaToneAndText(t *testing.T) {
 				t.Fatalf("quota progress = %d, want %d", got, test.wantProgress)
 			}
 			assertPresentationText(t, presentation, "quota.remaining", test.wantRemaining)
+			assertPresentationText(t, presentation, "quota.plan", test.plan)
 			assertPresentationText(t, presentation, "quota.reset", test.wantReset)
 			assertPresentationText(t, presentation, "toast.title", test.wantTitle)
 			assertPresentationText(t, presentation, "toast.message", test.wantMessage)

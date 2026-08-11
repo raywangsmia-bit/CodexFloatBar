@@ -27,6 +27,8 @@ func TestTrayCommandIDsAreUnique(t *testing.T) {
 		trayCommandExit,
 		trayCommandFollowCodex,
 		trayCommandReloadUI,
+		trayCommandAccountExpiryDate,
+		trayCommandAccountExpiryReminder,
 	}
 
 	seen := make(map[uintptr]struct{}, len(commands))

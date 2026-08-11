@@ -165,6 +165,36 @@ func TestFollowCodexDefaultsOnAndPersistsDisabled(t *testing.T) {
 	}
 }
 
+func TestAccountExpirySettingsPersistAndRejectInvalidDates(t *testing.T) {
+	paths := DefaultPaths(t.TempDir())
+	store := NewStore(paths)
+	settings := DefaultAppearance()
+	settings.AccountExpiryDate = "2026-09-01"
+	settings.AccountExpiryReminder = true
+	if err := store.Save(settings); err != nil {
+		t.Fatal(err)
+	}
+	loaded, err := store.Load()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if loaded.AccountExpiryDate != "2026-09-01" || !loaded.AccountExpiryReminder {
+		t.Fatalf("account expiry settings = %+v", loaded)
+	}
+
+	settings.AccountExpiryDate = "2026-02-30"
+	if err := store.Save(settings); err != nil {
+		t.Fatal(err)
+	}
+	loaded, err = store.Load()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if loaded.AccountExpiryDate != "" {
+		t.Fatalf("invalid account expiry date survived normalization: %q", loaded.AccountExpiryDate)
+	}
+}
+
 func TestSaveAtomicallyReplacesAndNormalizesSettings(t *testing.T) {
 	paths := DefaultPaths(t.TempDir())
 	store := NewStore(paths)

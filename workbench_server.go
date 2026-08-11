@@ -1,3 +1,5 @@
+//go:build windows && workbench
+
 package main
 
 import (
@@ -51,6 +53,7 @@ var mainWorkbenchTextBindings = [...]string{
 	"runtime.model",
 	"runtime.effort",
 	"runtime.speed",
+	"quota.plan",
 	"quota.remaining",
 	"quota.reset",
 }

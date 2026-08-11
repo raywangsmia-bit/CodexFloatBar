@@ -1,6 +1,10 @@
 package appsettings
 
-import "math"
+import (
+	"math"
+	"strings"
+	"time"
+)
 
 const (
 	MinScale = 0.82
@@ -35,15 +39,17 @@ type WindowPosition struct {
 }
 
 type Appearance struct {
-	Theme                Theme           `json:"theme"`
-	Layout               Layout          `json:"layout"`
-	Scale                float64         `json:"scale"`
-	AutoCollapse         bool            `json:"autoCollapse"`
-	FollowCodex          bool            `json:"followCodex"`
-	MainWindow           *WindowPosition `json:"mainWindow,omitempty"`
-	HorizontalMainWindow *WindowPosition `json:"horizontalMainWindow,omitempty"`
-	VerticalMainWindow   *WindowPosition `json:"verticalMainWindow,omitempty"`
-	StatisticsWindow     *WindowPosition `json:"statisticsWindow,omitempty"`
+	Theme                 Theme           `json:"theme"`
+	Layout                Layout          `json:"layout"`
+	Scale                 float64         `json:"scale"`
+	AutoCollapse          bool            `json:"autoCollapse"`
+	FollowCodex           bool            `json:"followCodex"`
+	AccountExpiryDate     string          `json:"accountExpiryDate,omitempty"`
+	AccountExpiryReminder bool            `json:"accountExpiryReminder"`
+	MainWindow            *WindowPosition `json:"mainWindow,omitempty"`
+	HorizontalMainWindow  *WindowPosition `json:"horizontalMainWindow,omitempty"`
+	VerticalMainWindow    *WindowPosition `json:"verticalMainWindow,omitempty"`
+	StatisticsWindow      *WindowPosition `json:"statisticsWindow,omitempty"`
 }
 
 func DefaultAppearance() Appearance {
@@ -68,6 +74,7 @@ func normalize(settings Appearance) Appearance {
 		result.Scale = 1
 	}
 	result.Scale = max(MinScale, min(MaxScale, result.Scale))
+	result.AccountExpiryDate, _ = NormalizeAccountExpiryDate(result.AccountExpiryDate)
 	legacyMainWindow := validPosition(result.MainWindow)
 	result.HorizontalMainWindow = validPosition(result.HorizontalMainWindow)
 	result.VerticalMainWindow = validPosition(result.VerticalMainWindow)
@@ -80,6 +87,18 @@ func normalize(settings Appearance) Appearance {
 	result.MainWindow = result.MainWindowForLayout(result.Layout)
 	result.StatisticsWindow = validPosition(result.StatisticsWindow)
 	return result
+}
+
+func NormalizeAccountExpiryDate(value string) (string, bool) {
+	value = strings.TrimSpace(value)
+	if value == "" {
+		return "", true
+	}
+	parsed, err := time.Parse("2006-01-02", value)
+	if err != nil || parsed.Format("2006-01-02") != value {
+		return "", false
+	}
+	return value, true
 }
 
 func (settings Appearance) MainWindowForLayout(layout Layout) *WindowPosition {

@@ -4,9 +4,7 @@ package main
 
 import (
 	"fmt"
-	"maps"
 	"math"
-	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -14,59 +12,6 @@ import (
 
 	"github.com/raywangsmia-bit/CodexFloatBar/internal/codexdata"
 )
-
-type quotaTone string
-
-const (
-	quotaToneGood    quotaTone = "good"
-	quotaToneWarn    quotaTone = "warn"
-	quotaToneDanger  quotaTone = "danger"
-	quotaToneOffline quotaTone = "offline"
-)
-
-const (
-	hiddenMonthCellLevel   = -1
-	selectedMonthCellLevel = 5
-)
-
-type uiPresentation struct {
-	Text           map[string]string
-	Progress       map[string]int
-	Cells          map[string][]int
-	Tone           quotaTone
-	StatisticsView statisticsView
-	ChartValues    []int64
-}
-
-type statisticsView string
-
-const (
-	statisticsViewMonth      statisticsView = "month"
-	statisticsViewWeek       statisticsView = "week"
-	statisticsViewCumulative statisticsView = "cumulative"
-	statisticsViewDetail     statisticsView = "detail"
-)
-
-type statisticsSelection struct {
-	View        statisticsView
-	Month       time.Time
-	SelectedDay int
-}
-
-func sameUIPresentation(left uiPresentation, right uiPresentation) bool {
-	sameCells := maps.EqualFunc(
-		left.Cells,
-		right.Cells,
-		func(leftLevels []int, rightLevels []int) bool {
-			return slices.Equal(leftLevels, rightLevels)
-		},
-	)
-	return left.Tone == right.Tone &&
-		left.StatisticsView == right.StatisticsView &&
-		maps.Equal(left.Text, right.Text) &&
-		maps.Equal(left.Progress, right.Progress) &&
-		sameCells && slices.Equal(left.ChartValues, right.ChartValues)
-}
 
 func presentSnapshot(snapshot codexdata.AppSnapshot) uiPresentation {
 	return presentSnapshotWithStatistics(snapshot, statisticsSelection{})
@@ -83,6 +28,7 @@ func presentSnapshotWithStatistics(
 			"runtime.model":             displayOr(snapshot.Runtime.Model, "未配置模型"),
 			"runtime.effort":            formatEffort(snapshot.Runtime.ReasoningEffort),
 			"runtime.speed":             formatSpeed(snapshot.Runtime.SpeedTier),
+			"quota.plan":                strings.TrimSpace(snapshot.RateLimit.PlanType),
 			"statistics.total":          formatTokens(snapshot.Statistics.TotalTokens),
 			"statistics.peak":           formatTokens(snapshot.Statistics.PeakSessionTokens),
 			"statistics.duration":       formatDuration(snapshot.Statistics.LongestActiveSeconds),
@@ -200,16 +146,6 @@ func normalizeStatisticsSelection(
 		selection.SelectedDay = 0
 	}
 	return selection
-}
-
-func validStatisticsView(view statisticsView) bool {
-	switch view {
-	case statisticsViewMonth, statisticsViewWeek, statisticsViewCumulative,
-		statisticsViewDetail:
-		return true
-	default:
-		return false
-	}
 }
 
 func currentStatisticsMonth(snapshot codexdata.AppSnapshot) time.Time {
@@ -459,13 +395,6 @@ func toneForRemaining(remaining int) quotaTone {
 	default:
 		return quotaToneDanger
 	}
-}
-
-func displayOr(value string, fallback string) string {
-	if strings.TrimSpace(value) == "" {
-		return fallback
-	}
-	return value
 }
 
 func formatEffort(value string) string {
