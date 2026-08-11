@@ -8,8 +8,8 @@ Beta 继续与 WPF 正式版并行，不占用 WPF 的应用身份、启动项�
 | 字段 | 默认值 |
 | --- | --- |
 | 渠道 | `Beta` |
-| 展示版本 | `0.1.0-beta.2` |
-| Windows 数字版本 | `0.1.0.1` |
+| 展示版本 | `0.1.0-beta.3` |
+| Windows 数字版本 | `0.1.0.2` |
 | 应用 ID | `CodexFloatingBar.Next` |
 | 可执行文件 | `CodexFloatingBar.Next.exe` |
 | 安装目录 | `%LOCALAPPDATA%\Programs\CodexFloatingBar.Next` |
@@ -62,8 +62,8 @@ NSIS 完整编译，所有输出只进入 `.cache/release-static-validation`。
 
 ```powershell
 .\scripts\build-release.ps1 `
-  -Version 0.1.0-beta.2 `
-  -VersionQuad 0.1.0.1
+  -Version 0.1.0-beta.3 `
+  -VersionQuad 0.1.0.2
 ```
 
 取得当前用户证书存储中的代码签名证书后，可在同一次构建中先签独立 EXE，再生成
@@ -81,8 +81,8 @@ NSIS 完整编译，所有输出只进入 `.cache/release-static-validation`。
 默认产物为：
 
 - `CodexFloatingBar.Next\CodexFloatingBar.Next.exe`
-- `CodexFloatingBar.Next-0.1.0-beta.2-win-x64.zip`
-- `CodexFloatingBar.Next-0.1.0-beta.2-Setup.exe`
+- `CodexFloatingBar.Next-0.1.0-beta.3-win-x64.zip`
+- `CodexFloatingBar.Next-0.1.0-beta.3-Setup.exe`
 - `SHA256SUMS.txt`
 
 便携包和安装目录同时包含 `release.json`，供人工核对渠道、版本、应用 ID 和架构。
@@ -91,25 +91,26 @@ NSIS 时不会把不存在或旧的安装器写入校验文件。
 
 ## 当前 Beta 候选
 
-本机已在独立目录 `release/next-beta-0.1.0-beta.2/` 生成 `0.1.0-beta.2` 候选。
-该版本把动态文字合成从 GDI 切换为 DirectWrite/Direct2D 灰度抗锯齿，并在工作台增加
-与正式程序共用 Go 合成路径的原生预览；GDI 仅作为运行时故障回退。
+本机已在独立目录 `release/next-beta-0.1.0-beta.3/` 生成 `0.1.0-beta.3` 候选。
+该版本分离 UI 工作台与正式运行时，读取账号 PLAN 和到期时间，在一周额度旁显示
+PLAN，并让 DEV 启动不再额外显示命令窗口；项目首页也加入了实际原生 UI 总览图。
 
 | 产物 | 大小 | SHA-256 |
 | --- | ---: | --- |
-| `CodexFloatingBar.Next.exe` | 7,947,776 B | `fbc02c2f83057f0cb00cc529b7a54ac99d2257705e85c3a2b026d8dc05d738ee` |
-| `CodexFloatingBar.Next-0.1.0-beta.2-win-x64.zip` | 3,756,276 B | `e835cebef40ad648cc0035d9fb30eb367e9f00d633496c45a3a6d225a20d44e8` |
-| `CodexFloatingBar.Next-0.1.0-beta.2-Setup.exe` | 3,020,557 B | `b196588afa61e56b52c8ed7d9b8696226e90b32dc2de58181690ab3b7ed32379` |
+| `CodexFloatingBar.Next.exe` | 4,190,208 B | `b3bf750d4e536196442cd4bf0f8bf5e7c88f69df2dd5df51e0f1fe3e2b31eaed` |
+| `CodexFloatingBar.Next-0.1.0-beta.3-win-x64.zip` | 2,186,640 B | `973d3b112a39f92e5be6ac9b3f8d97a4398dca0588c891ab8317da2e6288f018` |
+| `CodexFloatingBar.Next-0.1.0-beta.3-Setup.exe` | 1,825,707 B | `e8207d5a7863427cf069ba654c17de45a3ecf91ec9a794fb1c427e4589fe99c3` |
 
 内置 UI bundle 为 schema 2，包含 14 个 surface、56 个 PNG；页面元数据为
-`BUILD 2026-08-10 17:39:24`、指纹 `codexfloatingbar-0e85bdf81bf4`、generation
-`2d89566fcb95cc96`。便携包只包含 manifest 引用的这一代资源。
+`更新 2026-08-11`、`BUILD 2026-08-11 23:41:49`、指纹
+`codexfloatingbar-8d274710e95b`、generation `431ecec88a3dc850`。便携包只包含
+manifest 引用的这一代资源。
 
-beta.2 已通过普通单元测试、竞态测试、发布静态门槛、Windows 版本资源与 NSIS 编译，
-并独立复算三份 SHA-256。ZIP 内 59 个文件已逐一与便携目录比对，manifest 引用的
-56 张 PNG 与包内 PNG 集合完全一致。由于当前用户已有 Next 数据目录，安装验证脚本
-按保护规则拒绝触碰；本次未移动现有用户数据，也未执行 beta.2 的真实安装/卸载、
-窗口压力循环或长期空闲性能回归。
+beta.3 已通过普通单元测试、发布静态门槛、Windows 版本资源与 NSIS 编译和完整发布
+验证，并独立复算三份 SHA-256。ZIP 内 61 个文件已逐一与便携目录比对，manifest
+引用的 56 张 PNG 与包内 PNG 集合完全一致。由于本次发布未请求触碰现有用户数据，
+未执行 beta.3 的真实安装、覆盖升级、卸载、窗口压力循环或长期空闲性能回归；这些
+系统级行为沿用下方 beta.1 的已验证结果，不能表述为 beta.3 的重新验收。
 
 此前的 beta.1 候选已在本机 Windows 10 Home China 22H2 完成便携启动，以及 `0.0.9-beta.1` 到
 `0.1.0-beta.1` 的同身份覆盖升级。升级会清除注入的旧 UI generation，并保留、更新

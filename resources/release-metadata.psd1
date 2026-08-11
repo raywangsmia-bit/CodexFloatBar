@@ -1,8 +1,8 @@
 @{
     SchemaVersion         = 1
     Channel               = "Beta"
-    Version               = "0.1.0-beta.2"
-    VersionQuad           = "0.1.0.1"
+    Version               = "0.1.0-beta.3"
+    VersionQuad           = "0.1.0.2"
     AppId                 = "CodexFloatingBar.Next"
     ProductName           = "CodexFloatingBar Next Beta"
     FileDescription       = "CodexFloatingBar Next Beta floating status bar"
