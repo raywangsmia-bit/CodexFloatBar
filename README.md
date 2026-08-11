@@ -12,6 +12,27 @@ Win32 原生窗口显示模型、推理强度、额度与 Token 统计，并提�
 Node.js、React、.NET、Wails 或 CGO。HTML/CSS/JavaScript 仅供独立的设计时工作台
 和 UI 资源导出使用。
 
+## 界面预览
+
+<p align="center">
+  <img src="docs/images/ui-overview.png" alt="CodexFloatingBar 主浮条、Token 统计窗口和额度提醒" width="900" />
+</p>
+
+上图由项目工作台调用正式程序同一套 DirectWrite/Direct2D 合成路径生成，展示横版
+状态浮条、Token 统计窗口和额度提醒。程序还支持竖版布局、浅色主题、多档缩放及托盘
+菜单，可在不打开 Codex 主窗口的情况下持续查看运行状态。
+
+## 核心特点
+
+| 能力 | 说明 |
+| --- | --- |
+| 原生轻量运行 | Go + Win32 分层窗口，不携带浏览器内核、WebView 或前端运行时 |
+| Codex 状态概览 | 同时显示模型、推理强度、速度档位、PLAN、一周额度和重置时间 |
+| Token 统计 | 月热图、每周、累计和单日详情，覆盖输入、输出、缓存及推理 Token |
+| 桌面集成 | 托盘、单实例、开机启动、自动收起、位置记忆和多显示器 DPI |
+| 可调整 UI | HTML/CSS 工作台负责设计，正式程序只消费经过验证的静态资产与动态槽 |
+| 本地隐私边界 | 只读取必要的本地 Codex 数据，UI 不接收 JWT、原始 session 或日志正文 |
+
 > [!NOTE]
 > 本项目是社区项目，并非 OpenAI 官方产品。Codex、ChatGPT 和 OpenAI 是其各自
 > 权利人的商标。
@@ -24,7 +45,7 @@ Node.js、React、.NET、Wails 或 CGO。HTML/CSS/JavaScript 仅供独立的设�
 和数据行为对照结果；原 WPF/C# 源码及运行时依赖未包含在当前实现中。完整资源来源见
 [资源来源与继承说明](docs/asset-provenance.md)。
 
-## 功能
+## 功能详情
 
 - 显示当前模型、推理强度、速度档位和额度窗口。
 - 支持横向与纵向浮条、深色与浅色主题以及多档缩放。
