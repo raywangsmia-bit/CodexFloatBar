@@ -16,6 +16,7 @@ type options struct {
 	uiRoot            string
 	surfaceID         string
 	logFile           string
+	watchUI           bool
 	selfTestOutput    string
 	selfTestWakeProbe bool
 	quietUninstall    bool
@@ -41,6 +42,7 @@ func main() {
 
 	bundleRoot := filepath.Join(options.uiRoot, "dist")
 	app := newNativeApp(bundleRoot, options.surfaceID, startedAt)
+	app.watchBundleEnabled = options.watchUI
 	if options.selfTestOutput != "" || options.selfTestWakeProbe {
 		app.useSelfTestIdentity()
 	}
@@ -62,6 +64,12 @@ func parseOptions() options {
 	flag.StringVar(&options.uiRoot, "ui-root", defaultUIRoot(), "UI source and bundle root")
 	flag.StringVar(&options.surfaceID, "surface", "", "surface ID from the bundle manifest")
 	flag.StringVar(&options.logFile, "log-file", "", "optional runtime log file")
+	flag.BoolVar(
+		&options.watchUI,
+		"watch-ui",
+		false,
+		"watch the UI manifest for design-time hot reload",
+	)
 	flag.StringVar(
 		&options.selfTestOutput,
 		"self-test-output",

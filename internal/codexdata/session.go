@@ -7,9 +7,7 @@ import (
 	"fmt"
 	"io/fs"
 	"os"
-	"path/filepath"
 	"regexp"
-	"slices"
 	"strings"
 )
 
@@ -34,6 +32,8 @@ type sessionFile struct {
 	path    string
 	modTime int64
 	size    int64
+	mode    fs.FileMode
+	info    fs.FileInfo
 }
 
 func readLatestSessionStatus(
@@ -52,20 +52,44 @@ func readLatestLogSessionStatus(
 	ctx context.Context,
 	logPaths []string,
 ) RuntimeStatus {
+	status, _ := readLatestLogSessionStatusWithMetrics(ctx, logPaths, nil)
+	return status
+}
+
+func readLatestLogSessionStatusWithMetrics(
+	ctx context.Context,
+	logPaths []string,
+	metrics *ReadMetrics,
+) (RuntimeStatus, error) {
 	var latest RuntimeStatus
 	for _, path := range logPaths {
 		if err := ctx.Err(); err != nil {
-			return RuntimeStatus{}
+			return RuntimeStatus{}, err
 		}
-		text, err := readTail(path, sessionTailBytes)
-		if err != nil || strings.TrimSpace(text) == "" {
+		text, err := readTailContext(ctx, path, sessionTailBytes, metrics)
+		if err != nil {
+			if ctxErr := ctx.Err(); ctxErr != nil {
+				return RuntimeStatus{}, ctxErr
+			}
+			if os.IsNotExist(err) {
+				continue
+			}
+			return RuntimeStatus{}, err
+		}
+		if strings.TrimSpace(text) == "" {
 			continue
 		}
 		if status, ok := findLatestLogStatus(text); ok {
 			latest = status
 		}
+		if err := ctx.Err(); err != nil {
+			return RuntimeStatus{}, err
+		}
 	}
-	return latest
+	if err := ctx.Err(); err != nil {
+		return RuntimeStatus{}, err
+	}
+	return latest, nil
 }
 
 func readLatestSessionContext(ctx context.Context, root string) (RuntimeStatus, bool) {
@@ -89,43 +113,10 @@ func newestSessionFiles(
 	root string,
 	limit int,
 ) ([]sessionFile, error) {
-	files := []sessionFile{}
-	err := filepath.WalkDir(root, func(path string, entry fs.DirEntry, walkErr error) error {
-		if walkErr != nil {
-			if os.IsNotExist(walkErr) || os.IsPermission(walkErr) {
-				return fs.SkipDir
-			}
-			return walkErr
-		}
-		if err := ctx.Err(); err != nil {
-			return err
-		}
-		if entry.IsDir() || !strings.EqualFold(filepath.Ext(path), ".jsonl") {
-			return nil
-		}
-		info, err := entry.Info()
-		if err != nil {
-			return nil
-		}
-		files = append(files, sessionFile{
-			path:    path,
-			modTime: info.ModTime().UTC().UnixNano(),
-			size:    info.Size(),
-		})
-		return nil
-	})
+	files, err := collectSessionInventory(ctx, root, nil)
 	if err != nil {
 		return []sessionFile{}, err
 	}
-	slices.SortFunc(files, func(left sessionFile, right sessionFile) int {
-		if left.modTime != right.modTime {
-			if left.modTime > right.modTime {
-				return -1
-			}
-			return 1
-		}
-		return strings.Compare(strings.ToLower(left.path), strings.ToLower(right.path))
-	})
 	if limit >= 0 && len(files) > limit {
 		files = files[:limit]
 	}
@@ -133,10 +124,18 @@ func newestSessionFiles(
 }
 
 func findLatestSessionContext(path string) (RuntimeStatus, bool) {
+	return findLatestSessionContextContext(context.Background(), path, nil)
+}
+
+func findLatestSessionContextContext(
+	ctx context.Context,
+	path string,
+	metrics *ReadMetrics,
+) (RuntimeStatus, bool) {
 	var latest RuntimeStatus
 	found := false
 	var speedTier string
-	err := visitTailBytes(path, sessionTailBytes, func(text []byte) {
+	err := visitTailBytesContext(ctx, path, sessionTailBytes, metrics, func(text []byte) {
 		if len(bytes.TrimSpace(text)) == 0 {
 			return
 		}

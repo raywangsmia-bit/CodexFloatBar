@@ -37,6 +37,7 @@ function Get-NativeReleaseMetadata {
         "ProductName",
         "FileDescription",
         "Publisher",
+        "Copyright",
         "Website",
         "ExecutableName",
         "PortableDirectoryName",
@@ -133,6 +134,7 @@ function Get-NativeReleaseMetadata {
         "ProductName",
         "FileDescription",
         "Publisher",
+        "Copyright",
         "WindowClass",
         "WindowTitle",
         "Architecture"
@@ -351,6 +353,7 @@ function Write-NativeReleaseResources {
     $values = @{
         APP_ID           = $Metadata.AppId
         CHANNEL          = $Metadata.Channel
+        COPYRIGHT        = $Metadata.Copyright
         DISPLAY_VERSION  = $Metadata.Version
         EXECUTABLE_NAME  = $Metadata.ExecutableName
         FILE_DESCRIPTION = $Metadata.FileDescription
@@ -403,25 +406,34 @@ function New-NativeNsisArguments {
         [Parameter(Mandatory = $true)]
         [string]$OutputFile,
         [Parameter(Mandatory = $true)]
+        [string]$IconPath,
+        [Parameter(Mandatory = $true)]
         [string]$InstallerScript
     )
 
     $resolvedSource = [IO.Path]::GetFullPath($SourceDirectory)
     $resolvedOutput = [IO.Path]::GetFullPath($OutputFile)
-    foreach ($path in @($resolvedSource, $resolvedOutput)) {
+    $resolvedIcon = [IO.Path]::GetFullPath($IconPath)
+    foreach ($path in @($resolvedSource, $resolvedOutput, $resolvedIcon)) {
         if ($path.IndexOfAny([char[]]@('"', "`r", "`n", '$', '!')) -ge 0) {
-            throw "NSIS source and output paths cannot contain quote, dollar, or bang characters"
+            throw "NSIS paths cannot contain quote, dollar, or bang characters"
         }
+    }
+    if (-not (Test-Path -LiteralPath $resolvedIcon -PathType Leaf)) {
+        throw "NSIS application icon was not found: $resolvedIcon"
     }
 
     return @(
         "/DSOURCE_DIR=$resolvedSource",
         "/DOUTPUT_FILE=$resolvedOutput",
+        "/DAPP_ICON=$resolvedIcon",
         "/DAPP_ID=$($Metadata.AppId)",
         "/DAPP_DISPLAY_NAME=$($Metadata.ProductName)",
         "/DAPP_VERSION=$($Metadata.Version)",
+        "/DAPP_VERSION_QUAD=$($Metadata.VersionQuad)",
         "/DAPP_CHANNEL=$($Metadata.Channel)",
         "/DAPP_PUBLISHER=$($Metadata.Publisher)",
+        "/DAPP_COPYRIGHT=$($Metadata.Copyright)",
         "/DAPP_WEBSITE=$($Metadata.Website)",
         "/DEXECUTABLE_NAME=$($Metadata.ExecutableName)",
         "/DINSTALL_DIR_NAME=$($Metadata.InstallDirectoryName)",

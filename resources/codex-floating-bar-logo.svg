@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-labelledby="title desc">
+  <title id="title">CodexFloatingBar sentinel mascot</title>
+  <desc id="desc">A compact mint sentinel robot with a cream status-panel visor on a deep navy field.</desc>
+
+  <!-- The square background remains intentionally opaque and unmasked. -->
+  <rect width="1024" height="1024" fill="#152633"/>
+
+  <!-- One continuous head-and-shoulders silhouette, cropped at the lower-right. -->
+  <path
+    d="M1024 270C930 207 805 176 676 184C439 197 256 338 238 550C225 701 300 821 421 883C375 924 349 972 337 1024H1024V270Z"
+    fill="#72D7A8"
+  />
+
+  <!-- Ultra-light internal modelling; no external shadow or background gradient. -->
+  <path
+    d="M345 430C422 289 617 226 807 251C651 254 505 319 414 435C385 472 350 465 345 430Z"
+    fill="#82DDB2"
+  />
+  <path
+    d="M1024 733C872 847 673 890 421 883C375 924 349 972 337 1024H1024V733Z"
+    fill="#68CD9D"
+  />
+
+  <!-- The broad visor echoes the application's horizontal status bar. -->
+  <rect x="322" y="430" width="617" height="292" rx="142" fill="#F2E5CC"/>
+  <ellipse cx="494" cy="568" rx="45" ry="61" fill="#152633"/>
+  <ellipse cx="774" cy="568" rx="45" ry="61" fill="#152633"/>
+  <rect x="594" y="631" width="96" height="30" rx="15" fill="#152633"/>
+</svg>

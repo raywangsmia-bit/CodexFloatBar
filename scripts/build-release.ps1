@@ -177,6 +177,7 @@ if ($makensisPath) {
         -Metadata $metadata `
         -SourceDirectory $portableRoot `
         -OutputFile $installerPath `
+        -IconPath (Join-Path $resourcesDirectory "app-icon.ico") `
         -InstallerScript (Join-Path $projectRoot "installer\CodexFloatingBar.Native.nsi")
     & $makensisPath @nsisArguments
     if ($LASTEXITCODE -ne 0) {

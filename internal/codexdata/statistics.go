@@ -66,13 +66,23 @@ type tokenEvent struct {
 	} `json:"payload"`
 }
 
+type statisticsUpdateRequest struct {
+	Files           []sessionFile
+	Now             time.Time
+	Location        *time.Location
+	Cache           statisticsCache
+	InvalidatedKeys map[string]struct{}
+	Metrics         *ReadMetrics
+}
+
 func updateStatistics(
 	ctx context.Context,
-	paths []string,
-	now time.Time,
-	location *time.Location,
-	oldCache statisticsCache,
+	request statisticsUpdateRequest,
 ) (StatisticsSnapshot, statisticsCache, bool, error) {
+	files := request.Files
+	now := request.Now
+	location := request.Location
+	oldCache := request.Cache
 	timeZone := statisticsTimeZoneKey(location, now)
 	if oldCache.Version != cacheVersion || oldCache.TimeZone != timeZone {
 		oldCache = emptyStatisticsCache(timeZone)
@@ -82,16 +92,20 @@ func updateStatistics(
 		if !validCachedFile(file) {
 			continue
 		}
-		oldFiles[cachePathKey(file.Path)] = file
+		key := cachePathKey(file.Path)
+		if _, invalidated := request.InvalidatedKeys[key]; invalidated {
+			continue
+		}
+		oldFiles[key] = file
 	}
 	workingFiles := make(map[string]cachedFile, len(oldFiles))
 	for key, file := range oldFiles {
 		workingFiles[key] = file
 	}
 
-	nextFiles := make([]cachedFile, 0, len(paths))
+	nextFiles := make([]cachedFile, 0, len(files))
 	changedFiles := 0
-	for _, path := range paths {
+	for _, session := range files {
 		if err := ctx.Err(); err != nil {
 			partial := statisticsCache{
 				Version:  cacheVersion,
@@ -100,27 +114,20 @@ func updateStatistics(
 			}
 			return StatisticsSnapshot{}, partial, changedFiles > 0, err
 		}
-		fullPath, err := filepath.Abs(path)
+		fullPath, err := filepath.Abs(session.path)
 		if err != nil {
-			continue
+			return StatisticsSnapshot{}, oldCache, false, err
 		}
 		previous, hadPrevious := oldFiles[cachePathKey(fullPath)]
-		info, err := os.Stat(fullPath)
-		if err != nil {
-			if hadPrevious {
-				nextFiles = append(nextFiles, previous)
-			}
-			continue
-		}
-		lastWriteTicks := dotNetTicks(info.ModTime().UTC())
-		if hadPrevious && previous.Length == info.Size() &&
+		lastWriteTicks := dotNetTicks(time.Unix(0, session.modTime).UTC())
+		if hadPrevious && previous.Length == session.size &&
 			previous.LastWriteUTCTicks == lastWriteTicks {
 			nextFiles = append(nextFiles, previous)
 			continue
 		}
 		start := cachedFile{Path: fullPath}
 		canResume := hadPrevious && previous.ParsedLength >= 0 &&
-			previous.ParsedLength <= previous.Length && previous.Length < info.Size()
+			previous.ParsedLength <= previous.Length && previous.Length < session.size
 		if canResume {
 			start = previous
 		}
@@ -129,6 +136,7 @@ func updateStatistics(
 			fullPath,
 			location,
 			start,
+			request.Metrics,
 		)
 		if err != nil {
 			if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
@@ -139,13 +147,10 @@ func updateStatistics(
 				}
 				return StatisticsSnapshot{}, partial, changedFiles > 0, err
 			}
-			if hadPrevious {
-				nextFiles = append(nextFiles, previous)
-			}
-			continue
+			return StatisticsSnapshot{}, oldCache, false, err
 		}
 		parsed.Path = fullPath
-		parsed.Length = info.Size()
+		parsed.Length = session.size
 		parsed.LastWriteUTCTicks = lastWriteTicks
 		nextFiles = append(nextFiles, parsed)
 		workingFiles[cachePathKey(fullPath)] = parsed
@@ -221,6 +226,7 @@ func parseStatisticsFile(
 		path,
 		location,
 		cachedFile{Path: path},
+		nil,
 	)
 	return parsed.Summary, err
 }
@@ -230,6 +236,7 @@ func parseStatisticsFileIncremental(
 	path string,
 	location *time.Location,
 	state cachedFile,
+	metrics *ReadMetrics,
 ) (cachedFile, error) {
 	file, err := os.Open(path)
 	if err != nil {
@@ -244,7 +251,13 @@ func parseStatisticsFileIncremental(
 		return cachedFile{}, err
 	}
 	initializeSessionSummary(&state.Summary)
-	reader := bufio.NewReaderSize(file, 1024*1024)
+	chunkReader := &contextChunkReader{
+		ctx:     ctx,
+		reader:  file,
+		metrics: metrics,
+		kind:    sourceReadStatistics,
+	}
+	reader := bufio.NewReaderSize(chunkReader, contextReadChunk)
 	lineNumber := 0
 	for {
 		lineStart := state.ParsedLength

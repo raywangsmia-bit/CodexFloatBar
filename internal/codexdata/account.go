@@ -2,6 +2,7 @@ package codexdata
 
 import (
 	"bytes"
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"io"
@@ -17,13 +18,31 @@ type identityClaims struct {
 }
 
 func readAccount(path string) AccountSummary {
-	data, err := readLimitedFile(path, maxAuthBytes)
+	result, _ := readAccountContext(context.Background(), path, nil)
+	return result
+}
+
+func readAccountContext(
+	ctx context.Context,
+	path string,
+	metrics *ReadMetrics,
+) (AccountSummary, error) {
+	data, tooLarge, err := readLimitedFileContext(
+		ctx,
+		path,
+		maxAuthBytes,
+		metrics,
+		sourceReadAuth,
+	)
 	if err != nil {
-		return AccountSummary{DisplayText: "Codex: not signed in"}
+		return notSignedInAccount(), err
+	}
+	if tooLarge {
+		return notSignedInAccount(), nil
 	}
 	root, ok := decodeObject(data)
 	if !ok {
-		return AccountSummary{DisplayText: "Codex: not signed in"}
+		return notSignedInAccount(), nil
 	}
 	authMode := exactString(root, "auth_mode")
 	var idToken *string
@@ -41,7 +60,11 @@ func readAccount(path string) AccountSummary {
 	return AccountSummary{
 		AuthMode:    authModeValue,
 		DisplayText: formatAccountDisplay(claims, authMode),
-	}
+	}, nil
+}
+
+func notSignedInAccount() AccountSummary {
+	return AccountSummary{DisplayText: "Codex: not signed in"}
 }
 
 func readLimitedFile(path string, limit int64) ([]byte, error) {
@@ -58,6 +81,34 @@ func readLimitedFile(path string, limit int64) ([]byte, error) {
 		return nil, io.ErrUnexpectedEOF
 	}
 	return data, nil
+}
+
+func readLimitedFileContext(
+	ctx context.Context,
+	path string,
+	limit int64,
+	metrics *ReadMetrics,
+	kind sourceReadKind,
+) ([]byte, bool, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, false, err
+	}
+	defer file.Close()
+	reader := &contextChunkReader{
+		ctx:     ctx,
+		reader:  file,
+		metrics: metrics,
+		kind:    kind,
+	}
+	data, err := io.ReadAll(io.LimitReader(reader, limit+1))
+	if err != nil {
+		return nil, false, err
+	}
+	if int64(len(data)) > limit {
+		return nil, true, nil
+	}
+	return data, false, nil
 }
 
 func decodeIdentityClaims(token string) identityClaims {

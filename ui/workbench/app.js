@@ -1,5 +1,6 @@
 const pageVersion = window.__PAGE_VERSION__;
 const workbenchToken = window.__WORKBENCH_TOKEN__;
+const autoExport = window.__AUTO_EXPORT__ === true;
 const surface = document.querySelector("#exportSurface");
 const statisticsSurface = document.querySelector("#statisticsSurface");
 const usageToastSurface = document.querySelector("#usageToastSurface");
@@ -14,6 +15,7 @@ const toastToggle = document.querySelector("#toastToggle");
 const trayToggle = document.querySelector("#trayToggle");
 const boundaryToggle = document.querySelector("#boundaryToggle");
 const nativePreviewToggle = document.querySelector("#nativePreviewToggle");
+const motionPreviewToggle = document.querySelector("#motionPreviewToggle");
 const exportButton = document.querySelector("#exportButton");
 const exportStatus = document.querySelector("#exportStatus");
 const statisticsPeriod = document.querySelector('[data-bind="statistics.month"]');
@@ -32,6 +34,9 @@ let selectedStatisticsDay = 0;
 let nativePreviewTimer = 0;
 let nativePreviewGeneration = 0;
 const nativePreviewURLs = new Map();
+const previewAnimations = new Map();
+const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+let statisticsMotionAnimations = [];
 
 const exportSurfaces = Object.freeze(
   ["dark", "light"].flatMap((theme) => [
@@ -205,9 +210,9 @@ scenarioSelect.addEventListener("change", () => {
 });
 scaleSelect.addEventListener("change", () => setPreviewScale(scaleSelect.value));
 collapseToggle.addEventListener("change", () => setCollapsePreview(collapseToggle.checked));
-statisticsToggle.addEventListener("change", syncSurfaceVisibility);
-toastToggle.addEventListener("change", syncSurfaceVisibility);
-trayToggle.addEventListener("change", syncSurfaceVisibility);
+statisticsToggle.addEventListener("change", () => syncSurfaceVisibility());
+toastToggle.addEventListener("change", () => syncSurfaceVisibility());
+trayToggle.addEventListener("change", () => syncSurfaceVisibility());
 boundaryToggle.addEventListener("change", () => {
   document.body.classList.toggle("show-slot-boundaries", boundaryToggle.checked);
 });
@@ -216,6 +221,21 @@ nativePreviewToggle.addEventListener("change", () => {
     queueNativePreview();
   } else {
     clearNativePreview();
+  }
+});
+motionPreviewToggle.addEventListener("change", () => {
+  document.body.classList.toggle("motion-preview-enabled", motionPreviewToggle.checked);
+  if (motionPreviewToggle.checked) {
+    playAuxiliaryMotionPreview();
+  } else {
+    cancelPreviewMotion();
+    syncSurfaceVisibility({ animate: false });
+  }
+});
+reducedMotionQuery.addEventListener("change", () => {
+  if (reducedMotionQuery.matches) {
+    cancelPreviewMotion();
+    syncSurfaceVisibility({ animate: false });
   }
 });
 for (const button of document.querySelectorAll("[data-statistics-view]")) {
@@ -241,8 +261,8 @@ setCollapsePreview(collapseToggle.checked);
 syncSurfaceVisibility();
 
 setInterval(checkForStaticChanges, 800);
-if (new URLSearchParams(window.location.search).get("auto-export") === "1") {
-  window.addEventListener("load", () => void exportBundle(), { once: true });
+if (autoExport) {
+  window.addEventListener("load", () => void runAutomaticExport(), { once: true });
 }
 
 function setLayout(layout) {
@@ -274,19 +294,120 @@ function setCollapsePreview(collapsed) {
   syncTrayPreview();
 }
 
-function syncSurfaceVisibility() {
-  document.querySelector("#statisticsPreview").classList.toggle(
-    "preview-suppressed",
-    !statisticsToggle.checked,
+function syncSurfaceVisibility({ animate = true } = {}) {
+  setAuxiliaryPreviewVisibility(
+    document.querySelector("#statisticsPreview"),
+    statisticsToggle.checked,
+    animate,
   );
-  document.querySelector("#toastPreview").classList.toggle(
-    "preview-suppressed",
-    !toastToggle.checked,
+  setAuxiliaryPreviewVisibility(
+    document.querySelector("#toastPreview"),
+    toastToggle.checked,
+    animate,
   );
   document.querySelector("#trayPreview").classList.toggle(
     "preview-suppressed",
     !trayToggle.checked,
   );
+}
+
+function setAuxiliaryPreviewVisibility(element, visible, animate) {
+  cancelElementPreviewAnimation(element);
+  if (!animate || !shouldPreviewMotion()) {
+    element.classList.toggle("preview-suppressed", !visible);
+    return;
+  }
+  if (visible && !element.classList.contains("preview-suppressed")) {
+    return;
+  }
+  if (!visible && element.classList.contains("preview-suppressed")) {
+    return;
+  }
+
+  if (visible) {
+    element.classList.remove("preview-suppressed");
+  }
+  const keyframes = visible
+    ? [
+        { opacity: 0, transform: "translateY(6px)" },
+        { opacity: 1, transform: "translateY(0)" },
+      ]
+    : [
+        { opacity: 1, transform: "translateY(0)" },
+        { opacity: 0, transform: "translateY(0)" },
+      ];
+  const animation = element.animate(keyframes, {
+    duration: visible ? 180 : 130,
+    easing: visible ? "cubic-bezier(.2,.8,.2,1)" : "ease-out",
+  });
+  const record = { animation, visible };
+  previewAnimations.set(element, record);
+  animation.finished
+    .then(() => {
+      if (previewAnimations.get(element) !== record) {
+        return;
+      }
+      previewAnimations.delete(element);
+      element.classList.toggle("preview-suppressed", !visible);
+    })
+    .catch(() => {});
+}
+
+function shouldPreviewMotion() {
+  return Boolean(
+    motionPreviewToggle.checked &&
+      !reducedMotionQuery.matches &&
+      !document.documentElement.classList.contains("export-freeze") &&
+      typeof Element.prototype.animate === "function",
+  );
+}
+
+function playAuxiliaryMotionPreview() {
+  if (!shouldPreviewMotion()) {
+    return;
+  }
+  for (const [selector, visible] of [
+    ["#statisticsPreview", statisticsToggle.checked],
+    ["#toastPreview", toastToggle.checked],
+  ]) {
+    const element = document.querySelector(selector);
+    if (!visible) {
+      continue;
+    }
+    cancelElementPreviewAnimation(element);
+    const animation = element.animate(
+      [
+        { opacity: 0, transform: "translateY(6px)" },
+        { opacity: 1, transform: "translateY(0)" },
+      ],
+      { duration: 180, easing: "cubic-bezier(.2,.8,.2,1)" },
+    );
+    const record = { animation, visible: true };
+    previewAnimations.set(element, record);
+    animation.finished
+      .then(() => {
+        if (previewAnimations.get(element) === record) {
+          previewAnimations.delete(element);
+        }
+      })
+      .catch(() => {});
+  }
+}
+
+function cancelElementPreviewAnimation(element) {
+  const record = previewAnimations.get(element);
+  if (!record) {
+    return;
+  }
+  previewAnimations.delete(element);
+  record.animation.cancel();
+}
+
+function cancelPreviewMotion() {
+  for (const element of [...previewAnimations.keys()]) {
+    cancelElementPreviewAnimation(element);
+  }
+  clearStatisticsCrossfade();
 }
 
 function syncTrayPreview() {
@@ -379,9 +500,12 @@ function renderStatisticsMonthCells() {
 }
 
 function setStatisticsView(view) {
-  selectedStatisticsView = ["month", "week", "cumulative", "detail"].includes(view)
+  const nextView = ["month", "week", "cumulative", "detail"].includes(view)
     ? view
     : "month";
+  const crossfadeGhost =
+    nextView !== selectedStatisticsView ? createStatisticsCrossfadeGhost() : null;
+  selectedStatisticsView = nextView;
   for (const button of document.querySelectorAll("[data-statistics-view]")) {
     button.classList.toggle("active", button.dataset.statisticsView === selectedStatisticsView);
   }
@@ -406,6 +530,66 @@ function setStatisticsView(view) {
     statisticsPeriod.textContent = "最近 13 周";
   } else {
     statisticsPeriod.textContent = "近 12 月累计";
+  }
+  if (crossfadeGhost) {
+    startStatisticsCrossfade(crossfadeGhost);
+  }
+}
+
+function createStatisticsCrossfadeGhost() {
+  if (
+    !shouldPreviewMotion() ||
+    document.querySelector("#statisticsPreview").classList.contains("preview-suppressed")
+  ) {
+    return null;
+  }
+  clearStatisticsCrossfade();
+  const bounds = statisticsSurface.getBoundingClientRect();
+  if (bounds.width <= 0 || bounds.height <= 0) {
+    return null;
+  }
+  const ghost = statisticsSurface.cloneNode(true);
+  ghost.removeAttribute("id");
+  for (const node of ghost.querySelectorAll("[id]")) {
+    node.removeAttribute("id");
+  }
+  ghost.classList.add("statistics-crossfade-ghost");
+  ghost.setAttribute("aria-hidden", "true");
+  ghost.style.left = `${bounds.left}px`;
+  ghost.style.top = `${bounds.top}px`;
+  ghost.style.width = `${statisticsSurface.offsetWidth}px`;
+  ghost.style.height = `${statisticsSurface.offsetHeight}px`;
+  ghost.style.transform = `scale(${bounds.width / statisticsSurface.offsetWidth})`;
+  document.body.append(ghost);
+  return ghost;
+}
+
+function startStatisticsCrossfade(ghost) {
+  const outgoing = ghost.animate([{ opacity: 1 }, { opacity: 0 }], {
+    duration: 120,
+    easing: "ease-out",
+  });
+  const incoming = statisticsSurface.animate([{ opacity: 0 }, { opacity: 1 }], {
+    duration: 120,
+    easing: "ease-out",
+  });
+  statisticsMotionAnimations = [outgoing, incoming];
+  Promise.allSettled([outgoing.finished, incoming.finished]).then(() => {
+    if (statisticsMotionAnimations[0] !== outgoing) {
+      return;
+    }
+    statisticsMotionAnimations = [];
+    ghost.remove();
+  });
+}
+
+function clearStatisticsCrossfade() {
+  for (const animation of statisticsMotionAnimations) {
+    animation.cancel();
+  }
+  statisticsMotionAnimations = [];
+  for (const ghost of document.querySelectorAll(".statistics-crossfade-ghost")) {
+    ghost.remove();
   }
 }
 
@@ -475,7 +659,8 @@ function formatStatisticsMonth(value) {
 
 async function exportBundle() {
   exportButton.disabled = true;
-  setStatus("正在使用浏览器渲染四档 DPI 资源…", "");
+  exportButton.setAttribute("aria-busy", "true");
+  setStatus("正在检查现有导出资源…", "");
 
   const originalLayout = layoutSelect.value;
   const originalTheme = themeSelect.value;
@@ -493,8 +678,18 @@ async function exportBundle() {
   const scales = [1, 1.25, 1.5, 2];
   const surfaces = [];
   const files = [];
+  let exportFrozen = false;
 
   try {
+    const preflight = await requestExportPreflight(defaultSurface);
+    if (preflight.upToDate) {
+      setStatus(`导出已是最新：复用 ${preflight.reused} 个资源`, "success");
+      return successfulExportOutcome(preflight);
+    }
+    const renderer = await requireEdgeWorkbenchExport();
+    setStatus("资源有变化，正在用 Edge 渲染四档 DPI 图集…", "");
+    setExportFreeze(true);
+    exportFrozen = true;
     await document.fonts.ready;
     const stylesheets = await collectStylesheets();
     setPreviewScale("1");
@@ -510,7 +705,7 @@ async function exportBundle() {
 
     for (const definition of exportSurfaces) {
       setTheme(definition.theme);
-    setScenario(definition.scenario);
+      setScenario(definition.scenario);
       if (definition.layout) {
         setLayout(definition.layout);
       }
@@ -582,18 +777,28 @@ async function exportBundle() {
           surfaces,
         },
         files,
+        renderer,
       }),
     });
     if (!response.ok) {
       throw new Error(await response.text());
     }
     const result = await response.json();
+    const atlasSummary = result.atlases > 0 ? `，Edge 图集 ${result.atlases} 张` : "";
+    const fallbackSummary =
+      result.fallback > 0 ? `，${result.fallback} 个资源已显式回退逐图渲染` : "";
     setStatus(
-      `导出完成：重新渲染 ${result.rendered} 个，复用 ${result.reused} 个资源`,
+      `导出完成：重新渲染 ${result.rendered} 个，复用 ${result.reused} 个资源${atlasSummary}${fallbackSummary}`,
       "success",
     );
+    return successfulExportOutcome(result);
   } catch (error) {
-    setStatus(`导出失败：${error instanceof Error ? error.message : String(error)}`, "error");
+    const summary = error instanceof Error ? error.message : String(error);
+    setStatus(
+      `导出失败：${summary}；可再次点击重试`,
+      "error",
+    );
+    return { ok: false, error: summary };
   } finally {
     setLayout(originalLayout);
     setTheme(originalTheme);
@@ -609,11 +814,103 @@ async function exportBundle() {
     trayToggle.checked = originalTrayVisible;
     nativePreviewToggle.checked = originalNativePreview;
     setCollapsePreview(originalCollapsed);
-    syncSurfaceVisibility();
+    syncSurfaceVisibility({ animate: false });
+    if (exportFrozen) {
+      setExportFreeze(false);
+    }
     exportButton.disabled = false;
+    exportButton.removeAttribute("aria-busy");
     if (originalNativePreview) {
       queueNativePreview();
     }
+  }
+}
+
+function successfulExportOutcome(result) {
+  return {
+    ok: true,
+    error: "",
+    upToDate: result.upToDate === true,
+    files: Number(result.files) || 0,
+    rendered: Number(result.rendered) || 0,
+    reused: Number(result.reused) || 0,
+    atlases: Number(result.atlases) || 0,
+    fallback: Number(result.fallback) || 0,
+  };
+}
+
+async function runAutomaticExport() {
+  let outcome;
+  try {
+    outcome = await exportBundle();
+  } catch (error) {
+    outcome = {
+      ok: false,
+      error: error instanceof Error ? error.message : String(error),
+    };
+  }
+  try {
+    const response = await fetch("/api/export/result", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Codex-Workbench-Token": workbenchToken,
+      },
+      body: JSON.stringify(outcome),
+    });
+    if (!response.ok) {
+      throw new Error((await response.text()).trim());
+    }
+  } catch (error) {
+    setStatus(
+      `自动导出结果回报失败：${error instanceof Error ? error.message : String(error)}`,
+      "error",
+    );
+  }
+}
+
+async function requestExportPreflight(defaultSurface) {
+  const response = await fetch("/api/export/preflight", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Codex-Workbench-Token": workbenchToken,
+    },
+    body: JSON.stringify({ defaultSurface, version: pageVersion }),
+  });
+  if (!response.ok) {
+    throw new Error(`导出预检失败：${(await response.text()).trim()}`);
+  }
+  return response.json();
+}
+
+async function requireEdgeWorkbenchExport() {
+  const match = navigator.userAgent.match(/\bEdg\/([0-9]+(?:\.[0-9]+){3})\b/);
+  if (!match) {
+    throw new Error(
+      "资源需要重绘时请用 Microsoft Edge 打开工作台，以保证测量与最终栅格使用同一 Chromium/Edge 引擎",
+    );
+  }
+  if (navigator.userAgentData?.getHighEntropyValues) {
+    const values = await navigator.userAgentData.getHighEntropyValues(["fullVersionList"]);
+    const edge = values.fullVersionList?.find(({ brand }) => brand === "Microsoft Edge");
+    if (edge?.version) {
+      return edge.version;
+    }
+  }
+  if (!match[1].endsWith(".0.0.0")) {
+    return match[1];
+  }
+  throw new Error(
+    "无法读取 Microsoft Edge 完整版本，不能安全地与服务端导出引擎核对；请更新 Edge 后重试",
+  );
+}
+
+function setExportFreeze(frozen) {
+  document.documentElement.classList.toggle("export-freeze", frozen);
+  if (frozen) {
+    cancelPreviewMotion();
+    syncSurfaceVisibility({ animate: false });
   }
 }
 
@@ -869,7 +1166,7 @@ async function renderElement(element, stylesheets, width, height, scale) {
   const outputWidth = Math.round(width * scale);
   const outputHeight = Math.round(height * scale);
   const html = [
-    "<!doctype html><html><head><meta charset=\"utf-8\" /><style>",
+    "<!doctype html><html class=\"export-freeze\"><head><meta charset=\"utf-8\" /><style>",
     stylesheet,
     "</style><style>",
     `html,body{width:${width}px!important;height:${height}px!important;`,

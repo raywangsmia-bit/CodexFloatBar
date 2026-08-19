@@ -1,63 +1,60 @@
-# 原生动效 P0 评估
+# 原生动效 P0 评估与实现
 
-评估日期：2026-08-10
-状态：**窗口级动效建议进入下一步最小原型；内容级通用动效暂不进入正式实现。**
+评估更新：2026-08-19
+状态：**Usage Toast 窗口级动效已通过 P0；统计内容逐元素动画仍不进入正式运行时。**
 
-## 当前架构边界
+## 最终范围
 
-正式程序消费多 DPI PNG、点击区域和受限动态槽，不解析 HTML/CSS，也不包含浏览器
-运行时。现有自动收起已用 `SetWindowPos` 完成 10 步、约 160 ms 的窗口位移动画；
-动画结束后会停止 Win32 timer。
+正式程序继续消费多 DPI PNG、点击区域和受限动态槽，不解析 HTML/CSS，也不包含浏览器
+运行时。本轮只对已经合成的窗口位图做短时窗口级动画：
 
-CSS `transition`、`animation` 和关键帧不会进入当前扁平 PNG/manifest。直接支持任意
-CSS 动画需要引入浏览器内核、逐帧位图或完整场景图，都会破坏当前 P0 的内存、包体积
-或维护成本边界，因此本轮淘汰。
+- Usage Toast 显示：180 ms、6 逻辑像素 fade-slide，含初始帧最多 12 帧。
+- Usage Toast 隐藏：130 ms fade-only；alpha 归零后才隐藏 HWND 和收拢窗口栈。
+- 主窗自动收起/展开：160 ms 时间推进，允许中途反向；反向时长按剩余距离缩放。
+- 统计窗、热图、折线图和文字：不做逐帧重绘。
 
-## 短时帧成本
+Toast 使用 `hidden → showing → visible → hiding` 状态机。显示完成后才启动 4 秒可见
+计时；动画中途反向从当前坐标和 alpha 继续。showing/hiding 阶段返回
+`HTTRANSPARENT`，不会用透明窗口截获底层点击。DPI、主题、资源 reload 和窗口销毁会
+把状态收敛到明确终态。
 
-命令：
+Windows 关闭 client-area animation 或处于远程会话时，程序直接显示最终帧。隐藏主窗
+不保留 250 ms 自动收起 timer；正式运行也默认不启动 UI manifest 热加载轮询。
 
-```powershell
-go test -run '^$' -bench 'Benchmark(ComposeUsageToastFrame|ComposeStatisticsFrame|PrepareUsageToastLayeredPixels)$' -benchmem -benchtime=750ms -count=3 .
-```
+## 性能证据
 
-环境：Windows amd64，AMD Ryzen 7 4800U。该测试是有限次数的微基准，不是窗口压力
-测试或长期空闲性能回归。
+环境：Windows amd64，短时微基准；未执行窗口压力测试或长期空闲回归。
 
-| 路径 | 结果 | 判断 |
+| 路径 | 当前结果 | 判断 |
 | --- | ---: | --- |
-| 提醒窗完整动态合成 | 11.80–12.74 ms/帧，约 186 KiB、47 allocs | 接近 60 FPS 上限，不宜作为常驻逐帧路径 |
-| 统计窗完整动态合成 | 56.33–58.78 ms/帧，约 330 KiB、245 allocs | 不通过实时内容动画门槛 |
-| 提醒窗像素准备（修复前） | 0.85–0.90 ms/帧，44,352 allocs | 分配不可接受 |
-| 提醒窗像素准备（NRGBA 快路径） | 0.21–0.24 ms/帧，0 allocs | 通过窗口级短动画的算法前置门槛 |
+| Usage Toast 完整动态合成 | 0.314–0.475 ms/帧，约 181 KiB、5 allocs | 只在内容变化时合成 |
+| Statistics 完整动态合成 | 1.616–2.212 ms/帧，约 321 KiB、15 allocs | 可用于离散刷新，不用于逐元素动画 |
+| Toast layered 像素准备 | 0.372 ms/帧，0 allocs | 通过窗口级动画门槛 |
+| 真实不可见 layered HWND `UpdateLayeredWindow` | 0.772 ms/帧，296 B、13 allocs | 通过 12 帧短动画门槛 |
 
-## 推荐范围
+真实 HWND 数据来自 100 帧有限基准。动画每帧复用已经合成的 surface，只更新位置与
+`ConstantAlpha`，不会重新生成文字、热图或统计图。
 
-第一阶段只实现窗口级 `fade-slide`：显示时透明度从 0 到 255，并从 6 个逻辑像素偏移
-回目标位置；隐藏时反向。建议 160–200 ms、最多 12 帧，复用已经合成的 surface，
-不得逐帧重新生成文字、热图或统计图。
+## 工作台契约
 
-manifest 只增加受限、可校验的可选契约，例如：
+工作台提供可选“动效预览”：辅助面板使用 180/130 ms fade-slide/fade，统计视图使用
+120 ms 整窗 crossfade。它只用于设计评估，不会写入 manifest，也不会把 CSS keyframes
+带入正式程序。
 
-```json
-{
-  "motion": {
-    "show": { "kind": "fade-slide", "durationMs": 180, "offsetY": 6 },
-    "hide": { "kind": "fade", "durationMs": 140 }
-  }
-}
-```
+导出启用 `export-freeze`，强制关闭 animation、transition 和 smooth scrolling；状态
+切换后等待双 `requestAnimationFrame` 再测量和序列化。`prefers-reduced-motion` 下工作
+台也直接切换最终状态。
 
-运行时必须限制动效类型、时长和偏移；动画 timer 完成、取消或窗口销毁时立即释放。
-系统关闭 UI 动画、远程会话或用户选择“减少动态效果”时直接显示最终帧。
+## 已验证
 
-## 暂不支持
+- Toast 四态、显示/隐藏反向、alpha、完成计时和账号到期内容恢复。
+- showing/hiding 点击穿透，visible 后恢复动作。
+- 主窗时间推进、双向反转、剩余距离时长和终点。
+- Windows 动画策略、远程会话、DPI/reload/destroy 收敛。
+- 统计非月视图不再保留隐形日期点击区，空白区域恢复拖动。
+- 真实 layered HWND 100 帧有限基准。
+- 普通测试、race 和 `go vet`。
 
-- 统计热图、折线图或全部文字的 60 FPS 重绘。
-- 从工作台自动转换任意 CSS keyframes。
-- 循环呼吸、闪烁或闲置时持续运行的动效。
-- 在未完成真实 HWND 淡入淡出、多 DPI 切换和中途反向测试前默认开启动效。
-
-下一步最小行动是制作一个只针对额度提醒窗的真实 `fade-slide` 原型，测量 12 帧的
-实际 `UpdateLayeredWindow`/`SetWindowPos` 开销，并验证中途隐藏、DPI 变化和减少动态
-效果开关。该原型通过后，再决定是否把同一契约扩展到主条显示和统计窗显示。
+未执行窗口压力测试、长期空闲性能回归、正式 GUI EXE 的完整 native self-test，也未给
+统计图表、主窗手动显示或跟随 Codex 显示增加新动画。后续若扩展统计切换，只考虑对
+旧/新已合成整窗位图做一次性 crossfade，不引入通用逐元素动画系统。

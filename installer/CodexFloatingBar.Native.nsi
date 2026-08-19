@@ -9,6 +9,9 @@ RequestExecutionLevel user
 !ifndef OUTPUT_FILE
   !error "OUTPUT_FILE must be the installer output path"
 !endif
+!ifndef APP_ICON
+  !error "APP_ICON must point to the application icon"
+!endif
 !ifndef APP_ID
   !error "APP_ID must be supplied from release metadata"
 !endif
@@ -18,11 +21,17 @@ RequestExecutionLevel user
 !ifndef APP_VERSION
   !error "APP_VERSION must be supplied from release metadata"
 !endif
+!ifndef APP_VERSION_QUAD
+  !error "APP_VERSION_QUAD must be supplied from release metadata"
+!endif
 !ifndef APP_CHANNEL
   !error "APP_CHANNEL must be supplied from release metadata"
 !endif
 !ifndef APP_PUBLISHER
   !error "APP_PUBLISHER must be supplied from release metadata"
+!endif
+!ifndef APP_COPYRIGHT
+  !error "APP_COPYRIGHT must be supplied from release metadata"
 !endif
 !ifndef APP_WEBSITE
   !error "APP_WEBSITE must be supplied from release metadata"
@@ -57,9 +66,19 @@ RequestExecutionLevel user
 Name "${APP_DISPLAY_NAME}"
 BrandingText "${APP_DISPLAY_NAME} ${APP_VERSION}"
 OutFile "${OUTPUT_FILE}"
+Icon "${APP_ICON}"
+UninstallIcon "${APP_ICON}"
 InstallDir "$LOCALAPPDATA\Programs\${INSTALL_DIR_NAME}"
 SetCompressor /SOLID lzma
 SetOverwrite on
+
+VIProductVersion "${APP_VERSION_QUAD}"
+VIAddVersionKey /LANG=0 "ProductName" "${APP_DISPLAY_NAME}"
+VIAddVersionKey /LANG=0 "ProductVersion" "${APP_VERSION}"
+VIAddVersionKey /LANG=0 "FileVersion" "${APP_VERSION}"
+VIAddVersionKey /LANG=0 "FileDescription" "${APP_DISPLAY_NAME} Setup"
+VIAddVersionKey /LANG=0 "CompanyName" "${APP_PUBLISHER}"
+VIAddVersionKey /LANG=0 "LegalCopyright" "${APP_COPYRIGHT}"
 
 Var PreserveStartup
 

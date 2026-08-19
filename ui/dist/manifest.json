@@ -3,9 +3,9 @@
   "project": "codexfloatingbar",
   "defaultSurface": "main-horizontal",
   "version": {
-    "update": "2026-08-11",
-    "build": "2026-08-11 23:41:49",
-    "staticVersion": "codexfloatingbar-8d274710e95b"
+    "update": "2026-08-19",
+    "build": "2026-08-19 15:56:31",
+    "staticVersion": "codexfloatingbar-d5908c973410"
   },
   "surfaces": [
     {
@@ -15,35 +15,35 @@
       "hitRegions": [
         {
           "action": "toggle-theme",
-          "x": 333.3333435058594,
+          "x": 333,
           "y": 14,
           "width": 22,
           "height": 22
         },
         {
           "action": "toggle-statistics",
-          "x": 358.3333435058594,
+          "x": 358,
           "y": 14,
           "width": 22,
           "height": 22
         },
         {
           "action": "toggle-toast",
-          "x": 383.3333435058594,
+          "x": 383,
           "y": 14,
           "width": 22,
           "height": 22
         },
         {
           "action": "toggle-layout",
-          "x": 408.3333435058594,
+          "x": 408,
           "y": 14,
           "width": 22,
           "height": 22
         },
         {
           "action": "hide",
-          "x": 433.3333435058594,
+          "x": 433,
           "y": 14,
           "width": 22,
           "height": 22
@@ -54,10 +54,10 @@
           {
             "bind": "runtime.model",
             "rect": {
-              "x": 10.333343505859375,
-              "y": 22.166656494140625,
-              "width": 89.33333587646484,
-              "height": 12.666666984558105
+              "x": 11,
+              "y": 22.5,
+              "width": 88,
+              "height": 13
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -76,10 +76,10 @@
           {
             "bind": "runtime.effort",
             "rect": {
-              "x": 115.00003051757812,
-              "y": 22.166656494140625,
-              "width": 30.666667938232422,
-              "height": 12.666666984558105
+              "x": 115,
+              "y": 22.5,
+              "width": 30,
+              "height": 13
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -98,10 +98,10 @@
           {
             "bind": "runtime.speed",
             "rect": {
-              "x": 161.00003051757812,
-              "y": 22.166656494140625,
-              "width": 34.66666793823242,
-              "height": 12.666666984558105
+              "x": 161,
+              "y": 22.5,
+              "width": 34,
+              "height": 13
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -120,9 +120,9 @@
           {
             "bind": "quota.plan",
             "rect": {
-              "x": 251.37503051757812,
-              "y": 10.333343505859375,
-              "width": 16.760417938232422,
+              "x": 251.375,
+              "y": 10.5,
+              "width": 16.765625,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -142,10 +142,10 @@
           {
             "bind": "quota.remaining",
             "rect": {
-              "x": 285.6666564941406,
-              "y": 7.666656494140625,
+              "x": 285,
+              "y": 8,
               "width": 34,
-              "height": 15.333333969116211
+              "height": 15
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -169,9 +169,9 @@
           {
             "bind": "quota.reset",
             "rect": {
-              "x": 215.00003051757812,
+              "x": 215,
               "y": 24,
-              "width": 104.66667175292969,
+              "width": 104,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -193,9 +193,9 @@
           {
             "bind": "quota.progress",
             "rect": {
-              "x": 215.00003051757812,
+              "x": 215,
               "y": 37,
-              "width": 104.66667175292969,
+              "width": 104,
               "height": 3
             },
             "color": "#36a370ff",
@@ -211,31 +211,31 @@
       "variants": [
         {
           "scale": 1,
-          "file": "assets/431ecec88a3dc850/main-horizontal@100.png",
+          "file": "assets/79078914f9c3e9c8/main-horizontal@100.png",
           "width": 460,
           "height": 50,
-          "sourceHash": "dd15ea2547d66bb205f506f0bcebb12042af7651a2b60f8dbeb38f7cb77761bb"
+          "sourceHash": "8e9f15b787042ff10f895aab53c4b772ac889fa29ed56d958aca5a776f94caf6"
         },
         {
           "scale": 1.25,
-          "file": "assets/431ecec88a3dc850/main-horizontal@125.png",
+          "file": "assets/79078914f9c3e9c8/main-horizontal@125.png",
           "width": 575,
           "height": 63,
-          "sourceHash": "72f2124fb7a76c342f12de2f67ff847164c1cfb3c6c6a63a6cd5f0cba66390b8"
+          "sourceHash": "8e9f15b787042ff1493f6844c1341fe6aa4bcb5f94f099c64ffa3885e3f0459d"
         },
         {
           "scale": 1.5,
-          "file": "assets/431ecec88a3dc850/main-horizontal@150.png",
+          "file": "assets/79078914f9c3e9c8/main-horizontal@150.png",
           "width": 690,
           "height": 75,
-          "sourceHash": "74b8d524ab2af9cfc144f05b20a491ae7b3be2a5fdfb31afbd1c6fa7498638df"
+          "sourceHash": "8e9f15b787042ff13aaaa052212b6cbfa8a7fcf3de1f6ca6262564aefa19becf"
         },
         {
           "scale": 2,
-          "file": "assets/431ecec88a3dc850/main-horizontal@200.png",
+          "file": "assets/79078914f9c3e9c8/main-horizontal@200.png",
           "width": 920,
           "height": 100,
-          "sourceHash": "919e7df9fae58193ff5ddd609396529858f858096f140f69d1ef5315c69c4243"
+          "sourceHash": "8e9f15b787042ff1c3fdf0a1eb421c302772c7b1ef0a217bf5490f97a39cb7d0"
         }
       ]
     },
@@ -247,35 +247,35 @@
         {
           "action": "toggle-theme",
           "x": 6,
-          "y": 152.66665649414062,
+          "y": 153,
           "width": 22,
           "height": 22
         },
         {
           "action": "toggle-statistics",
           "x": 30,
-          "y": 152.66665649414062,
+          "y": 153,
           "width": 22,
           "height": 22
         },
         {
           "action": "toggle-toast",
           "x": 54,
-          "y": 152.66665649414062,
+          "y": 153,
           "width": 22,
           "height": 22
         },
         {
           "action": "toggle-layout",
           "x": 78,
-          "y": 152.66665649414062,
+          "y": 153,
           "width": 22,
           "height": 22
         },
         {
           "action": "hide",
           "x": 102,
-          "y": 152.66665649414062,
+          "y": 153,
           "width": 22,
           "height": 22
         }
@@ -285,10 +285,10 @@
           {
             "bind": "runtime.model",
             "rect": {
-              "x": 10.33331298828125,
-              "y": 18.333343505859375,
-              "width": 108.66667175292969,
-              "height": 12.666666984558105
+              "x": 11,
+              "y": 19,
+              "width": 108,
+              "height": 12
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -307,10 +307,10 @@
           {
             "bind": "runtime.effort",
             "rect": {
-              "x": 10.33331298828125,
-              "y": 51.333343505859375,
-              "width": 108.66667175292969,
-              "height": 12.666666984558105
+              "x": 11,
+              "y": 52,
+              "width": 108,
+              "height": 12
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -329,10 +329,10 @@
           {
             "bind": "runtime.speed",
             "rect": {
-              "x": 10.33331298828125,
-              "y": 84.33334350585938,
-              "width": 108.66667175292969,
-              "height": 12.666666984558105
+              "x": 11,
+              "y": 85,
+              "width": 108,
+              "height": 12
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -351,9 +351,9 @@
           {
             "bind": "quota.plan",
             "rect": {
-              "x": 47.70831298828125,
-              "y": 111,
-              "width": 16.760417938232422,
+              "x": 48.375,
+              "y": 111.5,
+              "width": 16.765625,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -373,10 +373,10 @@
           {
             "bind": "quota.remaining",
             "rect": {
-              "x": 92.02081298828125,
-              "y": 108.33334350585938,
-              "width": 25.979167938232422,
-              "height": 15.333333969116211
+              "x": 92.015625,
+              "y": 109,
+              "width": 25.984375,
+              "height": 15
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -400,9 +400,9 @@
           {
             "bind": "quota.reset",
             "rect": {
-              "x": 11.33331298828125,
-              "y": 124.66665649414062,
-              "width": 106.66667175292969,
+              "x": 12,
+              "y": 125,
+              "width": 106,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -424,9 +424,9 @@
           {
             "bind": "quota.progress",
             "rect": {
-              "x": 11.33331298828125,
-              "y": 137.66665649414062,
-              "width": 106.66667175292969,
+              "x": 12,
+              "y": 138,
+              "width": 106,
               "height": 3
             },
             "color": "#36a370ff",
@@ -442,31 +442,31 @@
       "variants": [
         {
           "scale": 1,
-          "file": "assets/431ecec88a3dc850/main-vertical@100.png",
+          "file": "assets/79078914f9c3e9c8/main-vertical@100.png",
           "width": 130,
           "height": 180,
-          "sourceHash": "9bf1d7592143adfccecb9300c0e1959927fccdde3a75112cc20e8e73dbda4c82"
+          "sourceHash": "8e9f15b787042ff15bb41091b1a801b91747c7876a02ddd99b2eaa31ce77d7eb"
         },
         {
           "scale": 1.25,
-          "file": "assets/431ecec88a3dc850/main-vertical@125.png",
+          "file": "assets/79078914f9c3e9c8/main-vertical@125.png",
           "width": 163,
           "height": 225,
-          "sourceHash": "16a0fe37028c2254a62f05d56969af7371ee2068f08cd2c6cdda7a782fc034ff"
+          "sourceHash": "8e9f15b787042ff1efaea20bc84fa417e599c591539b943696717bfe8d68e049"
         },
         {
           "scale": 1.5,
-          "file": "assets/431ecec88a3dc850/main-vertical@150.png",
+          "file": "assets/79078914f9c3e9c8/main-vertical@150.png",
           "width": 195,
           "height": 270,
-          "sourceHash": "9c44b8c5c393c1924a4dc2d12b810ab0ced56b697c20cd2e49e5d819d0fc38ad"
+          "sourceHash": "8e9f15b787042ff1faebef978db946b7a3f073a16a0096edefe1f59902d87114"
         },
         {
           "scale": 2,
-          "file": "assets/431ecec88a3dc850/main-vertical@200.png",
+          "file": "assets/79078914f9c3e9c8/main-vertical@200.png",
           "width": 260,
           "height": 360,
-          "sourceHash": "cc9999e7b3197ea946a890f8f3efb6f1f824a143feaec9c8934804381f365bbd"
+          "sourceHash": "8e9f15b787042ff1142a7f7d654629b9b5691f13e4144fc309102a557e57095d"
         }
       ]
     },
@@ -477,339 +477,339 @@
       "hitRegions": [
         {
           "action": "statistics-previous-month",
-          "x": 14.333343505859375,
-          "y": 71.3333740234375,
+          "x": 15,
+          "y": 72,
           "width": 22,
           "height": 22
         },
         {
           "action": "statistics-next-month",
-          "x": 110.33334350585938,
-          "y": 71.3333740234375,
+          "x": 111,
+          "y": 72,
           "width": 22,
           "height": 22
         },
         {
           "action": "statistics-view-month",
-          "x": 195.66665649414062,
-          "y": 74.3333740234375,
+          "x": 195,
+          "y": 75,
           "width": 42,
           "height": 16
         },
         {
           "action": "statistics-view-week",
-          "x": 241.66665649414062,
-          "y": 74.3333740234375,
+          "x": 241,
+          "y": 75,
           "width": 32,
           "height": 16
         },
         {
           "action": "statistics-view-cumulative",
-          "x": 277.6666564941406,
-          "y": 74.3333740234375,
+          "x": 277,
+          "y": 75,
           "width": 32,
           "height": 16
         },
         {
           "action": "statistics-view-detail",
-          "x": 313.6666564941406,
-          "y": 74.3333740234375,
+          "x": 313,
+          "y": 75,
           "width": 32,
           "height": 16
         },
         {
           "action": "statistics-select-day-00",
-          "x": 14.333343505859375,
-          "y": 109.3333740234375,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "x": 15,
+          "y": 110,
+          "width": 44.5625,
+          "height": 13.65625
         },
         {
           "action": "statistics-select-day-01",
-          "x": 62.09375,
-          "y": 109.3333740234375,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "x": 62.5625,
+          "y": 110,
+          "width": 44.578125,
+          "height": 13.65625
         },
         {
           "action": "statistics-select-day-02",
-          "x": 109.85415649414062,
-          "y": 109.3333740234375,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "x": 110.140625,
+          "y": 110,
+          "width": 44.5625,
+          "height": 13.65625
         },
         {
           "action": "statistics-select-day-03",
-          "x": 157.61459350585938,
-          "y": 109.3333740234375,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "x": 157.703125,
+          "y": 110,
+          "width": 44.578125,
+          "height": 13.65625
         },
         {
           "action": "statistics-select-day-04",
-          "x": 205.375,
-          "y": 109.3333740234375,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "x": 205.28125,
+          "y": 110,
+          "width": 44.5625,
+          "height": 13.65625
         },
         {
           "action": "statistics-select-day-05",
-          "x": 253.13540649414062,
-          "y": 109.3333740234375,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "x": 252.84375,
+          "y": 110,
+          "width": 44.578125,
+          "height": 13.65625
         },
         {
           "action": "statistics-select-day-06",
-          "x": 300.8958435058594,
-          "y": 109.3333740234375,
-          "width": 44.770835876464844,
-          "height": 13.885416984558105
+          "x": 300.421875,
+          "y": 110,
+          "width": 44.578125,
+          "height": 13.65625
         },
         {
           "action": "statistics-select-day-07",
-          "x": 14.333343505859375,
-          "y": 126.21875,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "x": 15,
+          "y": 126.65625,
+          "width": 44.5625,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-08",
-          "x": 62.09375,
-          "y": 126.21875,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "x": 62.5625,
+          "y": 126.65625,
+          "width": 44.578125,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-09",
-          "x": 109.85415649414062,
-          "y": 126.21875,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "x": 110.140625,
+          "y": 126.65625,
+          "width": 44.5625,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-10",
-          "x": 157.61459350585938,
-          "y": 126.21875,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "x": 157.703125,
+          "y": 126.65625,
+          "width": 44.578125,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-11",
-          "x": 205.375,
-          "y": 126.21875,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "x": 205.28125,
+          "y": 126.65625,
+          "width": 44.5625,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-12",
-          "x": 253.13540649414062,
-          "y": 126.21875,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "x": 252.84375,
+          "y": 126.65625,
+          "width": 44.578125,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-13",
-          "x": 300.8958435058594,
-          "y": 126.21875,
-          "width": 44.770835876464844,
-          "height": 13.885416984558105
+          "x": 300.421875,
+          "y": 126.65625,
+          "width": 44.578125,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-14",
-          "x": 14.333343505859375,
-          "y": 143.10418701171875,
-          "width": 44.76041793823242,
-          "height": 13.895833969116211
+          "x": 15,
+          "y": 143.328125,
+          "width": 44.5625,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-15",
-          "x": 62.09375,
-          "y": 143.10418701171875,
-          "width": 44.76041793823242,
-          "height": 13.895833969116211
+          "x": 62.5625,
+          "y": 143.328125,
+          "width": 44.578125,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-16",
-          "x": 109.85415649414062,
-          "y": 143.10418701171875,
-          "width": 44.76041793823242,
-          "height": 13.895833969116211
+          "x": 110.140625,
+          "y": 143.328125,
+          "width": 44.5625,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-17",
-          "x": 157.61459350585938,
-          "y": 143.10418701171875,
-          "width": 44.76041793823242,
-          "height": 13.895833969116211
+          "x": 157.703125,
+          "y": 143.328125,
+          "width": 44.578125,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-18",
-          "x": 205.375,
-          "y": 143.10418701171875,
-          "width": 44.76041793823242,
-          "height": 13.895833969116211
+          "x": 205.28125,
+          "y": 143.328125,
+          "width": 44.5625,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-19",
-          "x": 253.13540649414062,
-          "y": 143.10418701171875,
-          "width": 44.76041793823242,
-          "height": 13.895833969116211
+          "x": 252.84375,
+          "y": 143.328125,
+          "width": 44.578125,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-20",
-          "x": 300.8958435058594,
-          "y": 143.10418701171875,
-          "width": 44.770835876464844,
-          "height": 13.895833969116211
+          "x": 300.421875,
+          "y": 143.328125,
+          "width": 44.578125,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-21",
-          "x": 14.333343505859375,
+          "x": 15,
           "y": 160,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "width": 44.5625,
+          "height": 13.65625
         },
         {
           "action": "statistics-select-day-22",
-          "x": 62.09375,
+          "x": 62.5625,
           "y": 160,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "width": 44.578125,
+          "height": 13.65625
         },
         {
           "action": "statistics-select-day-23",
-          "x": 109.85415649414062,
+          "x": 110.140625,
           "y": 160,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "width": 44.5625,
+          "height": 13.65625
         },
         {
           "action": "statistics-select-day-24",
-          "x": 157.61459350585938,
+          "x": 157.703125,
           "y": 160,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "width": 44.578125,
+          "height": 13.65625
         },
         {
           "action": "statistics-select-day-25",
-          "x": 205.375,
+          "x": 205.28125,
           "y": 160,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "width": 44.5625,
+          "height": 13.65625
         },
         {
           "action": "statistics-select-day-26",
-          "x": 253.13540649414062,
+          "x": 252.84375,
           "y": 160,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "width": 44.578125,
+          "height": 13.65625
         },
         {
           "action": "statistics-select-day-27",
-          "x": 300.8958435058594,
+          "x": 300.421875,
           "y": 160,
-          "width": 44.770835876464844,
-          "height": 13.885416984558105
+          "width": 44.578125,
+          "height": 13.65625
         },
         {
           "action": "statistics-select-day-28",
-          "x": 14.333343505859375,
-          "y": 176.88543701171875,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "x": 15,
+          "y": 176.65625,
+          "width": 44.5625,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-29",
-          "x": 62.09375,
-          "y": 176.88543701171875,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "x": 62.5625,
+          "y": 176.65625,
+          "width": 44.578125,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-30",
-          "x": 109.85415649414062,
-          "y": 176.88543701171875,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "x": 110.140625,
+          "y": 176.65625,
+          "width": 44.5625,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-31",
-          "x": 157.61459350585938,
-          "y": 176.88543701171875,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "x": 157.703125,
+          "y": 176.65625,
+          "width": 44.578125,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-32",
-          "x": 205.375,
-          "y": 176.88543701171875,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "x": 205.28125,
+          "y": 176.65625,
+          "width": 44.5625,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-33",
-          "x": 253.13540649414062,
-          "y": 176.88543701171875,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "x": 252.84375,
+          "y": 176.65625,
+          "width": 44.578125,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-34",
-          "x": 300.8958435058594,
-          "y": 176.88543701171875,
-          "width": 44.770835876464844,
-          "height": 13.885416984558105
+          "x": 300.421875,
+          "y": 176.65625,
+          "width": 44.578125,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-35",
-          "x": 14.333343505859375,
-          "y": 193.7708740234375,
-          "width": 44.76041793823242,
-          "height": 13.895833969116211
+          "x": 15,
+          "y": 193.328125,
+          "width": 44.5625,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-36",
-          "x": 62.09375,
-          "y": 193.7708740234375,
-          "width": 44.76041793823242,
-          "height": 13.895833969116211
+          "x": 62.5625,
+          "y": 193.328125,
+          "width": 44.578125,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-37",
-          "x": 109.85415649414062,
-          "y": 193.7708740234375,
-          "width": 44.76041793823242,
-          "height": 13.895833969116211
+          "x": 110.140625,
+          "y": 193.328125,
+          "width": 44.5625,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-38",
-          "x": 157.61459350585938,
-          "y": 193.7708740234375,
-          "width": 44.76041793823242,
-          "height": 13.895833969116211
+          "x": 157.703125,
+          "y": 193.328125,
+          "width": 44.578125,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-39",
-          "x": 205.375,
-          "y": 193.7708740234375,
-          "width": 44.76041793823242,
-          "height": 13.895833969116211
+          "x": 205.28125,
+          "y": 193.328125,
+          "width": 44.5625,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-40",
-          "x": 253.13540649414062,
-          "y": 193.7708740234375,
-          "width": 44.76041793823242,
-          "height": 13.895833969116211
+          "x": 252.84375,
+          "y": 193.328125,
+          "width": 44.578125,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-41",
-          "x": 300.8958435058594,
-          "y": 193.7708740234375,
-          "width": 44.770835876464844,
-          "height": 13.895833969116211
+          "x": 300.421875,
+          "y": 193.328125,
+          "width": 44.578125,
+          "height": 13.671875
         }
       ],
       "dynamic": {
@@ -818,9 +818,9 @@
             "bind": "statistics.total",
             "rect": {
               "x": 15,
-              "y": 15.333343505859375,
+              "y": 15.5,
               "width": 65,
-              "height": 17.33333396911621
+              "height": 18
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -840,9 +840,9 @@
             "bind": "statistics.peak",
             "rect": {
               "x": 80,
-              "y": 15.333343505859375,
+              "y": 15.5,
               "width": 65,
-              "height": 17.33333396911621
+              "height": 18
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -862,9 +862,9 @@
             "bind": "statistics.duration",
             "rect": {
               "x": 145,
-              "y": 15.333343505859375,
+              "y": 15.5,
               "width": 80,
-              "height": 17.33333396911621
+              "height": 18
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -884,9 +884,9 @@
             "bind": "statistics.currentStreak",
             "rect": {
               "x": 225,
-              "y": 15.333343505859375,
+              "y": 15.5,
               "width": 60,
-              "height": 17.33333396911621
+              "height": 18
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -905,10 +905,10 @@
           {
             "bind": "statistics.longestStreak",
             "rect": {
-              "x": 285.0000305175781,
-              "y": 15.333343505859375,
+              "x": 285,
+              "y": 15.5,
               "width": 60,
-              "height": 17.33333396911621
+              "height": 18
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -927,8 +927,8 @@
           {
             "bind": "statistics.previousMonth",
             "rect": {
-              "x": 14.333343505859375,
-              "y": 71.3333740234375,
+              "x": 15,
+              "y": 72,
               "width": 22,
               "height": 22
             },
@@ -949,8 +949,8 @@
           {
             "bind": "statistics.month",
             "rect": {
-              "x": 36.333343505859375,
-              "y": 75.3333740234375,
+              "x": 37,
+              "y": 76,
               "width": 74,
               "height": 14
             },
@@ -971,8 +971,8 @@
           {
             "bind": "statistics.nextMonth",
             "rect": {
-              "x": 110.33334350585938,
-              "y": 71.3333740234375,
+              "x": 111,
+              "y": 72,
               "width": 22,
               "height": 22
             },
@@ -993,8 +993,8 @@
           {
             "bind": "statistics.viewMonth",
             "rect": {
-              "x": 195.66665649414062,
-              "y": 74.3333740234375,
+              "x": 195,
+              "y": 75,
               "width": 42,
               "height": 16
             },
@@ -1020,8 +1020,8 @@
           {
             "bind": "statistics.viewWeek",
             "rect": {
-              "x": 241.66665649414062,
-              "y": 74.3333740234375,
+              "x": 241,
+              "y": 75,
               "width": 32,
               "height": 16
             },
@@ -1047,8 +1047,8 @@
           {
             "bind": "statistics.viewCumulative",
             "rect": {
-              "x": 277.6666564941406,
-              "y": 74.3333740234375,
+              "x": 277,
+              "y": 75,
               "width": 32,
               "height": 16
             },
@@ -1074,8 +1074,8 @@
           {
             "bind": "statistics.viewDetail",
             "rect": {
-              "x": 313.6666564941406,
-              "y": 74.3333740234375,
+              "x": 313,
+              "y": 75,
               "width": 32,
               "height": 16
             },
@@ -1101,10 +1101,10 @@
           {
             "bind": "statistics.detailInput",
             "rect": {
-              "x": 14.333343505859375,
-              "y": 111.0833740234375,
-              "width": 79.83333587646484,
-              "height": 16.666667938232422
+              "x": 15,
+              "y": 111.75,
+              "width": 79.5,
+              "height": 16
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -1123,9 +1123,9 @@
           {
             "bind": "statistics.labelInput",
             "rect": {
-              "x": 14.333343505859375,
+              "x": 15,
               "y": 129.75,
-              "width": 79.83333587646484,
+              "width": 79.5,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -1145,10 +1145,10 @@
           {
             "bind": "statistics.detailOutput",
             "rect": {
-              "x": 98.16665649414062,
-              "y": 111.0833740234375,
-              "width": 79.83333587646484,
-              "height": 16.666667938232422
+              "x": 98.5,
+              "y": 111.75,
+              "width": 79.5,
+              "height": 16
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -1167,9 +1167,9 @@
           {
             "bind": "statistics.labelOutput",
             "rect": {
-              "x": 98.16665649414062,
+              "x": 98.5,
               "y": 129.75,
-              "width": 79.83333587646484,
+              "width": 79.5,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -1190,9 +1190,9 @@
             "bind": "statistics.detailTotal",
             "rect": {
               "x": 182,
-              "y": 111.0833740234375,
-              "width": 79.83333587646484,
-              "height": 16.666667938232422
+              "y": 111.75,
+              "width": 79.5,
+              "height": 16
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -1213,7 +1213,7 @@
             "rect": {
               "x": 182,
               "y": 129.75,
-              "width": 79.83333587646484,
+              "width": 79.5,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -1233,10 +1233,10 @@
           {
             "bind": "statistics.detailCached",
             "rect": {
-              "x": 265.8333435058594,
-              "y": 111.0833740234375,
-              "width": 79.83333587646484,
-              "height": 16.666667938232422
+              "x": 265.5,
+              "y": 111.75,
+              "width": 79.5,
+              "height": 16
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -1255,9 +1255,9 @@
           {
             "bind": "statistics.labelCached",
             "rect": {
-              "x": 265.8333435058594,
+              "x": 265.5,
               "y": 129.75,
-              "width": 79.83333587646484,
+              "width": 79.5,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -1277,10 +1277,10 @@
           {
             "bind": "statistics.detailReasoning",
             "rect": {
-              "x": 14.333343505859375,
+              "x": 15,
               "y": 167.25,
-              "width": 79.83333587646484,
-              "height": 16.666667938232422
+              "width": 79.5,
+              "height": 16
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -1299,9 +1299,9 @@
           {
             "bind": "statistics.labelReasoning",
             "rect": {
-              "x": 14.333343505859375,
-              "y": 185.91668701171875,
-              "width": 79.83333587646484,
+              "x": 15,
+              "y": 185.25,
+              "width": 79.5,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -1321,10 +1321,10 @@
           {
             "bind": "statistics.detailCacheHit",
             "rect": {
-              "x": 98.16665649414062,
+              "x": 98.5,
               "y": 167.25,
-              "width": 79.83333587646484,
-              "height": 16.666667938232422
+              "width": 79.5,
+              "height": 16
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -1343,9 +1343,9 @@
           {
             "bind": "statistics.labelCacheHit",
             "rect": {
-              "x": 98.16665649414062,
-              "y": 185.91668701171875,
-              "width": 79.83333587646484,
+              "x": 98.5,
+              "y": 185.25,
+              "width": 79.5,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -1367,8 +1367,8 @@
             "rect": {
               "x": 182,
               "y": 167.25,
-              "width": 163.6666717529297,
-              "height": 16.666667938232422
+              "width": 163,
+              "height": 16
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -1388,8 +1388,8 @@
             "bind": "statistics.labelCost",
             "rect": {
               "x": 182,
-              "y": 185.91668701171875,
-              "width": 163.6666717529297,
+              "y": 185.25,
+              "width": 163,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -1412,256 +1412,256 @@
             "bind": "statistics.monthCells",
             "rects": [
               {
-                "x": 14.333343505859375,
-                "y": 109.3333740234375,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "x": 15,
+                "y": 110,
+                "width": 44.5625,
+                "height": 13.65625
               },
               {
-                "x": 62.09375,
-                "y": 109.3333740234375,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "x": 62.5625,
+                "y": 110,
+                "width": 44.578125,
+                "height": 13.65625
               },
               {
-                "x": 109.85415649414062,
-                "y": 109.3333740234375,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "x": 110.140625,
+                "y": 110,
+                "width": 44.5625,
+                "height": 13.65625
               },
               {
-                "x": 157.61459350585938,
-                "y": 109.3333740234375,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "x": 157.703125,
+                "y": 110,
+                "width": 44.578125,
+                "height": 13.65625
               },
               {
-                "x": 205.375,
-                "y": 109.3333740234375,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "x": 205.28125,
+                "y": 110,
+                "width": 44.5625,
+                "height": 13.65625
               },
               {
-                "x": 253.13540649414062,
-                "y": 109.3333740234375,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "x": 252.84375,
+                "y": 110,
+                "width": 44.578125,
+                "height": 13.65625
               },
               {
-                "x": 300.8958435058594,
-                "y": 109.3333740234375,
-                "width": 44.770835876464844,
-                "height": 13.885416984558105
+                "x": 300.421875,
+                "y": 110,
+                "width": 44.578125,
+                "height": 13.65625
               },
               {
-                "x": 14.333343505859375,
-                "y": 126.21875,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "x": 15,
+                "y": 126.65625,
+                "width": 44.5625,
+                "height": 13.671875
               },
               {
-                "x": 62.09375,
-                "y": 126.21875,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "x": 62.5625,
+                "y": 126.65625,
+                "width": 44.578125,
+                "height": 13.671875
               },
               {
-                "x": 109.85415649414062,
-                "y": 126.21875,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "x": 110.140625,
+                "y": 126.65625,
+                "width": 44.5625,
+                "height": 13.671875
               },
               {
-                "x": 157.61459350585938,
-                "y": 126.21875,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "x": 157.703125,
+                "y": 126.65625,
+                "width": 44.578125,
+                "height": 13.671875
               },
               {
-                "x": 205.375,
-                "y": 126.21875,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "x": 205.28125,
+                "y": 126.65625,
+                "width": 44.5625,
+                "height": 13.671875
               },
               {
-                "x": 253.13540649414062,
-                "y": 126.21875,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "x": 252.84375,
+                "y": 126.65625,
+                "width": 44.578125,
+                "height": 13.671875
               },
               {
-                "x": 300.8958435058594,
-                "y": 126.21875,
-                "width": 44.770835876464844,
-                "height": 13.885416984558105
+                "x": 300.421875,
+                "y": 126.65625,
+                "width": 44.578125,
+                "height": 13.671875
               },
               {
-                "x": 14.333343505859375,
-                "y": 143.10418701171875,
-                "width": 44.76041793823242,
-                "height": 13.895833969116211
+                "x": 15,
+                "y": 143.328125,
+                "width": 44.5625,
+                "height": 13.671875
               },
               {
-                "x": 62.09375,
-                "y": 143.10418701171875,
-                "width": 44.76041793823242,
-                "height": 13.895833969116211
+                "x": 62.5625,
+                "y": 143.328125,
+                "width": 44.578125,
+                "height": 13.671875
               },
               {
-                "x": 109.85415649414062,
-                "y": 143.10418701171875,
-                "width": 44.76041793823242,
-                "height": 13.895833969116211
+                "x": 110.140625,
+                "y": 143.328125,
+                "width": 44.5625,
+                "height": 13.671875
               },
               {
-                "x": 157.61459350585938,
-                "y": 143.10418701171875,
-                "width": 44.76041793823242,
-                "height": 13.895833969116211
+                "x": 157.703125,
+                "y": 143.328125,
+                "width": 44.578125,
+                "height": 13.671875
               },
               {
-                "x": 205.375,
-                "y": 143.10418701171875,
-                "width": 44.76041793823242,
-                "height": 13.895833969116211
+                "x": 205.28125,
+                "y": 143.328125,
+                "width": 44.5625,
+                "height": 13.671875
               },
               {
-                "x": 253.13540649414062,
-                "y": 143.10418701171875,
-                "width": 44.76041793823242,
-                "height": 13.895833969116211
+                "x": 252.84375,
+                "y": 143.328125,
+                "width": 44.578125,
+                "height": 13.671875
               },
               {
-                "x": 300.8958435058594,
-                "y": 143.10418701171875,
-                "width": 44.770835876464844,
-                "height": 13.895833969116211
+                "x": 300.421875,
+                "y": 143.328125,
+                "width": 44.578125,
+                "height": 13.671875
               },
               {
-                "x": 14.333343505859375,
+                "x": 15,
                 "y": 160,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "width": 44.5625,
+                "height": 13.65625
               },
               {
-                "x": 62.09375,
+                "x": 62.5625,
                 "y": 160,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "width": 44.578125,
+                "height": 13.65625
               },
               {
-                "x": 109.85415649414062,
+                "x": 110.140625,
                 "y": 160,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "width": 44.5625,
+                "height": 13.65625
               },
               {
-                "x": 157.61459350585938,
+                "x": 157.703125,
                 "y": 160,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "width": 44.578125,
+                "height": 13.65625
               },
               {
-                "x": 205.375,
+                "x": 205.28125,
                 "y": 160,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "width": 44.5625,
+                "height": 13.65625
               },
               {
-                "x": 253.13540649414062,
+                "x": 252.84375,
                 "y": 160,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "width": 44.578125,
+                "height": 13.65625
               },
               {
-                "x": 300.8958435058594,
+                "x": 300.421875,
                 "y": 160,
-                "width": 44.770835876464844,
-                "height": 13.885416984558105
+                "width": 44.578125,
+                "height": 13.65625
               },
               {
-                "x": 14.333343505859375,
-                "y": 176.88543701171875,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "x": 15,
+                "y": 176.65625,
+                "width": 44.5625,
+                "height": 13.671875
               },
               {
-                "x": 62.09375,
-                "y": 176.88543701171875,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "x": 62.5625,
+                "y": 176.65625,
+                "width": 44.578125,
+                "height": 13.671875
               },
               {
-                "x": 109.85415649414062,
-                "y": 176.88543701171875,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "x": 110.140625,
+                "y": 176.65625,
+                "width": 44.5625,
+                "height": 13.671875
               },
               {
-                "x": 157.61459350585938,
-                "y": 176.88543701171875,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "x": 157.703125,
+                "y": 176.65625,
+                "width": 44.578125,
+                "height": 13.671875
               },
               {
-                "x": 205.375,
-                "y": 176.88543701171875,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "x": 205.28125,
+                "y": 176.65625,
+                "width": 44.5625,
+                "height": 13.671875
               },
               {
-                "x": 253.13540649414062,
-                "y": 176.88543701171875,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "x": 252.84375,
+                "y": 176.65625,
+                "width": 44.578125,
+                "height": 13.671875
               },
               {
-                "x": 300.8958435058594,
-                "y": 176.88543701171875,
-                "width": 44.770835876464844,
-                "height": 13.885416984558105
+                "x": 300.421875,
+                "y": 176.65625,
+                "width": 44.578125,
+                "height": 13.671875
               },
               {
-                "x": 14.333343505859375,
-                "y": 193.7708740234375,
-                "width": 44.76041793823242,
-                "height": 13.895833969116211
+                "x": 15,
+                "y": 193.328125,
+                "width": 44.5625,
+                "height": 13.671875
               },
               {
-                "x": 62.09375,
-                "y": 193.7708740234375,
-                "width": 44.76041793823242,
-                "height": 13.895833969116211
+                "x": 62.5625,
+                "y": 193.328125,
+                "width": 44.578125,
+                "height": 13.671875
               },
               {
-                "x": 109.85415649414062,
-                "y": 193.7708740234375,
-                "width": 44.76041793823242,
-                "height": 13.895833969116211
+                "x": 110.140625,
+                "y": 193.328125,
+                "width": 44.5625,
+                "height": 13.671875
               },
               {
-                "x": 157.61459350585938,
-                "y": 193.7708740234375,
-                "width": 44.76041793823242,
-                "height": 13.895833969116211
+                "x": 157.703125,
+                "y": 193.328125,
+                "width": 44.578125,
+                "height": 13.671875
               },
               {
-                "x": 205.375,
-                "y": 193.7708740234375,
-                "width": 44.76041793823242,
-                "height": 13.895833969116211
+                "x": 205.28125,
+                "y": 193.328125,
+                "width": 44.5625,
+                "height": 13.671875
               },
               {
-                "x": 253.13540649414062,
-                "y": 193.7708740234375,
-                "width": 44.76041793823242,
-                "height": 13.895833969116211
+                "x": 252.84375,
+                "y": 193.328125,
+                "width": 44.578125,
+                "height": 13.671875
               },
               {
-                "x": 300.8958435058594,
-                "y": 193.7708740234375,
-                "width": 44.770835876464844,
-                "height": 13.895833969116211
+                "x": 300.421875,
+                "y": 193.328125,
+                "width": 44.578125,
+                "height": 13.671875
               }
             ],
             "colors": [
@@ -1679,31 +1679,31 @@
       "variants": [
         {
           "scale": 1,
-          "file": "assets/431ecec88a3dc850/statistics@100.png",
+          "file": "assets/79078914f9c3e9c8/statistics@100.png",
           "width": 360,
           "height": 220,
-          "sourceHash": "32e4c66d57dd32e918578e40d9b28a02e550719468fe2229c407d808388cff5a"
+          "sourceHash": "8e9f15b787042ff1d6e9339d213032483391d127b2047f3f0a5d34c3f3e600b5"
         },
         {
           "scale": 1.25,
-          "file": "assets/431ecec88a3dc850/statistics@125.png",
+          "file": "assets/79078914f9c3e9c8/statistics@125.png",
           "width": 450,
           "height": 275,
-          "sourceHash": "6779f2bca4344fc9643a4a5ca9e64fa19aeb90569d363364197ef8584199ea4c"
+          "sourceHash": "8e9f15b787042ff10fcf778ce56fd2005cd7f28a594edbc18b566fd12b519e9a"
         },
         {
           "scale": 1.5,
-          "file": "assets/431ecec88a3dc850/statistics@150.png",
+          "file": "assets/79078914f9c3e9c8/statistics@150.png",
           "width": 540,
           "height": 330,
-          "sourceHash": "b8e7fa538b799bb98ae7b9fc1114131f5f59913a2e31aa59cc8a1821f450773b"
+          "sourceHash": "8e9f15b787042ff19a7a63bd6eb0d0d16f81ef45a0a2125b69a1784e646b30c3"
         },
         {
           "scale": 2,
-          "file": "assets/431ecec88a3dc850/statistics@200.png",
+          "file": "assets/79078914f9c3e9c8/statistics@200.png",
           "width": 720,
           "height": 440,
-          "sourceHash": "f0000dd1441627ab958233530556940519697d4a2fab4e409046d9e8fbb2e92e"
+          "sourceHash": "8e9f15b787042ff183688022120a09df7bbb75730318ea845be1d767ee8f8c52"
         }
       ]
     },
@@ -1726,9 +1726,9 @@
             "bind": "toast.title",
             "rect": {
               "x": 77,
-              "y": 38.7396240234375,
+              "y": 39.078125,
               "width": 227,
-              "height": 16.666667938232422
+              "height": 16
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -1748,7 +1748,7 @@
             "bind": "toast.message",
             "rect": {
               "x": 77,
-              "y": 58.40625,
+              "y": 58.078125,
               "width": 227,
               "height": 14.84375
             },
@@ -1771,31 +1771,31 @@
       "variants": [
         {
           "scale": 1,
-          "file": "assets/431ecec88a3dc850/usage-toast-good@100.png",
+          "file": "assets/79078914f9c3e9c8/usage-toast-good@100.png",
           "width": 396,
           "height": 112,
-          "sourceHash": "191c7700a0fcbc1f4e69787d13ca2e2e3e196603279fc19f4d1b3e3ffd61f6ca"
+          "sourceHash": "8e9f15b787042ff16421e5b3b51422bb15e679216edc31ea356e117700805338"
         },
         {
           "scale": 1.25,
-          "file": "assets/431ecec88a3dc850/usage-toast-good@125.png",
+          "file": "assets/79078914f9c3e9c8/usage-toast-good@125.png",
           "width": 495,
           "height": 140,
-          "sourceHash": "6ad5f64221991c2e373f5aaf1be29399b0e9090021d168837f7859caab5dbc28"
+          "sourceHash": "8e9f15b787042ff10cfcc04df8582256db4af6f49e264659d443bcf91189db7a"
         },
         {
           "scale": 1.5,
-          "file": "assets/431ecec88a3dc850/usage-toast-good@150.png",
+          "file": "assets/79078914f9c3e9c8/usage-toast-good@150.png",
           "width": 594,
           "height": 168,
-          "sourceHash": "b5eb9545757ea0ab1582e7022da940d335083e52efcbca208992ef71e6ede789"
+          "sourceHash": "8e9f15b787042ff11dcbfa743696f4650ed4724c3410e3e6253eef7fd43a284b"
         },
         {
           "scale": 2,
-          "file": "assets/431ecec88a3dc850/usage-toast-good@200.png",
+          "file": "assets/79078914f9c3e9c8/usage-toast-good@200.png",
           "width": 792,
           "height": 224,
-          "sourceHash": "b04b9acd4beeaa8589644fa959362bec79adfd7ba9027e6d335180806b54b1c5"
+          "sourceHash": "8e9f15b787042ff1bad6d0c4a2028c53f6650184c62314bea3d3feb1a6ad6c77"
         }
       ]
     },
@@ -1818,9 +1818,9 @@
             "bind": "toast.title",
             "rect": {
               "x": 77,
-              "y": 38.7396240234375,
+              "y": 39.078125,
               "width": 227,
-              "height": 16.666667938232422
+              "height": 16
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -1840,7 +1840,7 @@
             "bind": "toast.message",
             "rect": {
               "x": 77,
-              "y": 58.40625,
+              "y": 58.078125,
               "width": 227,
               "height": 14.84375
             },
@@ -1863,31 +1863,31 @@
       "variants": [
         {
           "scale": 1,
-          "file": "assets/431ecec88a3dc850/usage-toast@100.png",
+          "file": "assets/79078914f9c3e9c8/usage-toast@100.png",
           "width": 396,
           "height": 112,
-          "sourceHash": "b868b5144acb6602b990506feda3deea4dd2aab8680dfc0c396f0ca62ff2f138"
+          "sourceHash": "8e9f15b787042ff14005366d2c837fb52fa4dacc3c3ea04ceec6fc3f5bddd252"
         },
         {
           "scale": 1.25,
-          "file": "assets/431ecec88a3dc850/usage-toast@125.png",
+          "file": "assets/79078914f9c3e9c8/usage-toast@125.png",
           "width": 495,
           "height": 140,
-          "sourceHash": "d50a944e196047aa4dcefea35d03f48a3acb7e8a2647c27c89340560134318aa"
+          "sourceHash": "8e9f15b787042ff1d531727cac15637440e4366bff58c1f512e42684d85f7e00"
         },
         {
           "scale": 1.5,
-          "file": "assets/431ecec88a3dc850/usage-toast@150.png",
+          "file": "assets/79078914f9c3e9c8/usage-toast@150.png",
           "width": 594,
           "height": 168,
-          "sourceHash": "88fcd5af8145170d1b8c1246deaf568d07274947be13cdb091e7c1633bf61116"
+          "sourceHash": "8e9f15b787042ff13c7dcc423d83f814c2513617a6027b6e4e35e7a6504ef71a"
         },
         {
           "scale": 2,
-          "file": "assets/431ecec88a3dc850/usage-toast@200.png",
+          "file": "assets/79078914f9c3e9c8/usage-toast@200.png",
           "width": 792,
           "height": 224,
-          "sourceHash": "bed5f5547a03b10cbab10b26a8e459e0c19056b824c1559ab600ae16d417cfa8"
+          "sourceHash": "8e9f15b787042ff1d6378369514bcae7356e37fb851fca16b6ddbee44fcc3c6c"
         }
       ]
     },
@@ -1910,9 +1910,9 @@
             "bind": "toast.title",
             "rect": {
               "x": 77,
-              "y": 38.7396240234375,
+              "y": 39.078125,
               "width": 227,
-              "height": 16.666667938232422
+              "height": 16
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -1932,7 +1932,7 @@
             "bind": "toast.message",
             "rect": {
               "x": 77,
-              "y": 58.40625,
+              "y": 58.078125,
               "width": 227,
               "height": 14.84375
             },
@@ -1955,31 +1955,31 @@
       "variants": [
         {
           "scale": 1,
-          "file": "assets/431ecec88a3dc850/usage-toast-danger@100.png",
+          "file": "assets/79078914f9c3e9c8/usage-toast-danger@100.png",
           "width": 396,
           "height": 112,
-          "sourceHash": "5b6bedfe9d22e965937c132c87983845fd69c7e4d16ee9918179ba100ec20ee0"
+          "sourceHash": "8e9f15b787042ff1d6f82f13bd8f76136ceb634f49da58455040aab18619f7fa"
         },
         {
           "scale": 1.25,
-          "file": "assets/431ecec88a3dc850/usage-toast-danger@125.png",
+          "file": "assets/79078914f9c3e9c8/usage-toast-danger@125.png",
           "width": 495,
           "height": 140,
-          "sourceHash": "438aff2f5e0f8a1c73959a7f3740b262150a83dd7908def02d1a93acb9a81033"
+          "sourceHash": "8e9f15b787042ff1b5c89232ca9e47507b72272e7c116bcdd1272913db1fdcda"
         },
         {
           "scale": 1.5,
-          "file": "assets/431ecec88a3dc850/usage-toast-danger@150.png",
+          "file": "assets/79078914f9c3e9c8/usage-toast-danger@150.png",
           "width": 594,
           "height": 168,
-          "sourceHash": "595c4f22107e60cb16ac62cd702104d6cfa928829dc530adc55e7199240568e3"
+          "sourceHash": "8e9f15b787042ff1583f9cce09e9ac407aed00eb95d282dffc9a42badf3c8c97"
         },
         {
           "scale": 2,
-          "file": "assets/431ecec88a3dc850/usage-toast-danger@200.png",
+          "file": "assets/79078914f9c3e9c8/usage-toast-danger@200.png",
           "width": 792,
           "height": 224,
-          "sourceHash": "2e9b943115995d37990168785e319a76752155662f1ff2abef1da723d2a27702"
+          "sourceHash": "8e9f15b787042ff1f8adeac33b66cd51b60468baaf4eb0bf5e148e4d247a6fc0"
         }
       ]
     },
@@ -2002,9 +2002,9 @@
             "bind": "toast.title",
             "rect": {
               "x": 77,
-              "y": 38.7396240234375,
+              "y": 39.078125,
               "width": 227,
-              "height": 16.666667938232422
+              "height": 16
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -2024,7 +2024,7 @@
             "bind": "toast.message",
             "rect": {
               "x": 77,
-              "y": 58.40625,
+              "y": 58.078125,
               "width": 227,
               "height": 14.84375
             },
@@ -2047,31 +2047,31 @@
       "variants": [
         {
           "scale": 1,
-          "file": "assets/431ecec88a3dc850/usage-toast-offline@100.png",
+          "file": "assets/79078914f9c3e9c8/usage-toast-offline@100.png",
           "width": 396,
           "height": 112,
-          "sourceHash": "51e80deb98f453c35115bfab16376eda43e2028581a548c967b36abe1e16314f"
+          "sourceHash": "8e9f15b787042ff10663b132b52502b27cd70652a724c0ba1d286a6569c4ff7b"
         },
         {
           "scale": 1.25,
-          "file": "assets/431ecec88a3dc850/usage-toast-offline@125.png",
+          "file": "assets/79078914f9c3e9c8/usage-toast-offline@125.png",
           "width": 495,
           "height": 140,
-          "sourceHash": "9ba5bf8839755a032ed42bba754bf56e76646889da079c87891f5a6cb0e332cf"
+          "sourceHash": "8e9f15b787042ff1957e3dd8c16ba2943b8913ff4ab12580b5c2d57aff893efd"
         },
         {
           "scale": 1.5,
-          "file": "assets/431ecec88a3dc850/usage-toast-offline@150.png",
+          "file": "assets/79078914f9c3e9c8/usage-toast-offline@150.png",
           "width": 594,
           "height": 168,
-          "sourceHash": "72b228a3d7ddbbe6b4bbef7a86e3b8fd9b76c75cf9267bc11bf5d09bbbe5aaec"
+          "sourceHash": "8e9f15b787042ff15b16ddebe4b9110a6b67bc9c09d59409019be0a7e9e5c6d9"
         },
         {
           "scale": 2,
-          "file": "assets/431ecec88a3dc850/usage-toast-offline@200.png",
+          "file": "assets/79078914f9c3e9c8/usage-toast-offline@200.png",
           "width": 792,
           "height": 224,
-          "sourceHash": "4a20853b5b3d87a086804be301d7b74d5dc103e8efe07828d70c818952910132"
+          "sourceHash": "8e9f15b787042ff154e6330648392f4d1ef0928df6c1c1a312c7c364eedd744c"
         }
       ]
     },
@@ -2082,35 +2082,35 @@
       "hitRegions": [
         {
           "action": "toggle-theme",
-          "x": 333.3333435058594,
+          "x": 333,
           "y": 14,
           "width": 22,
           "height": 22
         },
         {
           "action": "toggle-statistics",
-          "x": 358.3333435058594,
+          "x": 358,
           "y": 14,
           "width": 22,
           "height": 22
         },
         {
           "action": "toggle-toast",
-          "x": 383.3333435058594,
+          "x": 383,
           "y": 14,
           "width": 22,
           "height": 22
         },
         {
           "action": "toggle-layout",
-          "x": 408.3333435058594,
+          "x": 408,
           "y": 14,
           "width": 22,
           "height": 22
         },
         {
           "action": "hide",
-          "x": 433.3333435058594,
+          "x": 433,
           "y": 14,
           "width": 22,
           "height": 22
@@ -2121,10 +2121,10 @@
           {
             "bind": "runtime.model",
             "rect": {
-              "x": 10.333343505859375,
-              "y": 22.166656494140625,
-              "width": 89.33333587646484,
-              "height": 12.666666984558105
+              "x": 11,
+              "y": 22.5,
+              "width": 88,
+              "height": 13
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -2143,10 +2143,10 @@
           {
             "bind": "runtime.effort",
             "rect": {
-              "x": 115.00003051757812,
-              "y": 22.166656494140625,
-              "width": 30.666667938232422,
-              "height": 12.666666984558105
+              "x": 115,
+              "y": 22.5,
+              "width": 30,
+              "height": 13
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -2165,10 +2165,10 @@
           {
             "bind": "runtime.speed",
             "rect": {
-              "x": 161.00003051757812,
-              "y": 22.166656494140625,
-              "width": 34.66666793823242,
-              "height": 12.666666984558105
+              "x": 161,
+              "y": 22.5,
+              "width": 34,
+              "height": 13
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -2187,9 +2187,9 @@
           {
             "bind": "quota.plan",
             "rect": {
-              "x": 251.37503051757812,
-              "y": 10.333343505859375,
-              "width": 16.760417938232422,
+              "x": 251.375,
+              "y": 10.5,
+              "width": 16.765625,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -2209,10 +2209,10 @@
           {
             "bind": "quota.remaining",
             "rect": {
-              "x": 285.6666564941406,
-              "y": 7.666656494140625,
+              "x": 285,
+              "y": 8,
               "width": 34,
-              "height": 15.333333969116211
+              "height": 15
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -2236,9 +2236,9 @@
           {
             "bind": "quota.reset",
             "rect": {
-              "x": 215.00003051757812,
+              "x": 215,
               "y": 24,
-              "width": 104.66667175292969,
+              "width": 104,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -2260,9 +2260,9 @@
           {
             "bind": "quota.progress",
             "rect": {
-              "x": 215.00003051757812,
+              "x": 215,
               "y": 37,
-              "width": 104.66667175292969,
+              "width": 104,
               "height": 3
             },
             "color": "#36a370ff",
@@ -2278,31 +2278,31 @@
       "variants": [
         {
           "scale": 1,
-          "file": "assets/431ecec88a3dc850/main-horizontal-light@100.png",
+          "file": "assets/79078914f9c3e9c8/main-horizontal-light@100.png",
           "width": 460,
           "height": 50,
-          "sourceHash": "8001f716060efe4916f8b249ce5c76f9c6673fb83059719467be9d31e2b2f667"
+          "sourceHash": "8e9f15b787042ff1d662b3e6d51b263fa296e8b5fefe2ae6ca25ef7872dac9c4"
         },
         {
           "scale": 1.25,
-          "file": "assets/431ecec88a3dc850/main-horizontal-light@125.png",
+          "file": "assets/79078914f9c3e9c8/main-horizontal-light@125.png",
           "width": 575,
           "height": 63,
-          "sourceHash": "4b99efa94893522e2036ead473b7f61646a14b614aeeaea0438096c777518db5"
+          "sourceHash": "8e9f15b787042ff1e6b1a3256ac9ee127b3d19663e885f2a83b201b29664a08a"
         },
         {
           "scale": 1.5,
-          "file": "assets/431ecec88a3dc850/main-horizontal-light@150.png",
+          "file": "assets/79078914f9c3e9c8/main-horizontal-light@150.png",
           "width": 690,
           "height": 75,
-          "sourceHash": "cde3a15334d324bd58e3631e509b57a8b45d306b1fe2668cfcaeb0befe2c1d6f"
+          "sourceHash": "8e9f15b787042ff17a024fd860d63a37880d1cfbf96fdbb01e1abf92bb90674c"
         },
         {
           "scale": 2,
-          "file": "assets/431ecec88a3dc850/main-horizontal-light@200.png",
+          "file": "assets/79078914f9c3e9c8/main-horizontal-light@200.png",
           "width": 920,
           "height": 100,
-          "sourceHash": "b86b08facadf5b01c73466a7084fa85511286defbde4be19bae8206ad5ca39f7"
+          "sourceHash": "8e9f15b787042ff16fd7fc76e124ac17610bddbfc7a585de4f3f2d213107d7cc"
         }
       ]
     },
@@ -2314,35 +2314,35 @@
         {
           "action": "toggle-theme",
           "x": 6,
-          "y": 152.66665649414062,
+          "y": 153,
           "width": 22,
           "height": 22
         },
         {
           "action": "toggle-statistics",
           "x": 30,
-          "y": 152.66665649414062,
+          "y": 153,
           "width": 22,
           "height": 22
         },
         {
           "action": "toggle-toast",
           "x": 54,
-          "y": 152.66665649414062,
+          "y": 153,
           "width": 22,
           "height": 22
         },
         {
           "action": "toggle-layout",
           "x": 78,
-          "y": 152.66665649414062,
+          "y": 153,
           "width": 22,
           "height": 22
         },
         {
           "action": "hide",
           "x": 102,
-          "y": 152.66665649414062,
+          "y": 153,
           "width": 22,
           "height": 22
         }
@@ -2352,10 +2352,10 @@
           {
             "bind": "runtime.model",
             "rect": {
-              "x": 10.33331298828125,
-              "y": 18.333343505859375,
-              "width": 108.66667175292969,
-              "height": 12.666666984558105
+              "x": 11,
+              "y": 19,
+              "width": 108,
+              "height": 12
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -2374,10 +2374,10 @@
           {
             "bind": "runtime.effort",
             "rect": {
-              "x": 10.33331298828125,
-              "y": 51.333343505859375,
-              "width": 108.66667175292969,
-              "height": 12.666666984558105
+              "x": 11,
+              "y": 52,
+              "width": 108,
+              "height": 12
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -2396,10 +2396,10 @@
           {
             "bind": "runtime.speed",
             "rect": {
-              "x": 10.33331298828125,
-              "y": 84.33334350585938,
-              "width": 108.66667175292969,
-              "height": 12.666666984558105
+              "x": 11,
+              "y": 85,
+              "width": 108,
+              "height": 12
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -2418,9 +2418,9 @@
           {
             "bind": "quota.plan",
             "rect": {
-              "x": 47.70831298828125,
-              "y": 111,
-              "width": 16.760417938232422,
+              "x": 48.375,
+              "y": 111.5,
+              "width": 16.765625,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -2440,10 +2440,10 @@
           {
             "bind": "quota.remaining",
             "rect": {
-              "x": 92.02081298828125,
-              "y": 108.33334350585938,
-              "width": 25.979167938232422,
-              "height": 15.333333969116211
+              "x": 92.015625,
+              "y": 109,
+              "width": 25.984375,
+              "height": 15
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -2467,9 +2467,9 @@
           {
             "bind": "quota.reset",
             "rect": {
-              "x": 11.33331298828125,
-              "y": 124.66665649414062,
-              "width": 106.66667175292969,
+              "x": 12,
+              "y": 125,
+              "width": 106,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -2491,9 +2491,9 @@
           {
             "bind": "quota.progress",
             "rect": {
-              "x": 11.33331298828125,
-              "y": 137.66665649414062,
-              "width": 106.66667175292969,
+              "x": 12,
+              "y": 138,
+              "width": 106,
               "height": 3
             },
             "color": "#36a370ff",
@@ -2509,31 +2509,31 @@
       "variants": [
         {
           "scale": 1,
-          "file": "assets/431ecec88a3dc850/main-vertical-light@100.png",
+          "file": "assets/79078914f9c3e9c8/main-vertical-light@100.png",
           "width": 130,
           "height": 180,
-          "sourceHash": "0feae25a8a4d1c0f86599e40ea6a05146b090e4fccd9fed2bff540d4880487df"
+          "sourceHash": "8e9f15b787042ff1fed18e24cd92f7e8e794fbd24ff0a38c0ca13f61464fc8fa"
         },
         {
           "scale": 1.25,
-          "file": "assets/431ecec88a3dc850/main-vertical-light@125.png",
+          "file": "assets/79078914f9c3e9c8/main-vertical-light@125.png",
           "width": 163,
           "height": 225,
-          "sourceHash": "d832119d3697487ad304d28e18dfaf4f3b20822048f3957f9bc08f1a84a68a3a"
+          "sourceHash": "8e9f15b787042ff18684490e051ea7b510a1b798188d4498f235b27653d78f98"
         },
         {
           "scale": 1.5,
-          "file": "assets/431ecec88a3dc850/main-vertical-light@150.png",
+          "file": "assets/79078914f9c3e9c8/main-vertical-light@150.png",
           "width": 195,
           "height": 270,
-          "sourceHash": "5843c9b8455536ce4feafca6bd75872af9db97e7ce430c90010326b334053baf"
+          "sourceHash": "8e9f15b787042ff1da6255ee0ca53031b818e79e0af5fe97465dd06a3d2fca8f"
         },
         {
           "scale": 2,
-          "file": "assets/431ecec88a3dc850/main-vertical-light@200.png",
+          "file": "assets/79078914f9c3e9c8/main-vertical-light@200.png",
           "width": 260,
           "height": 360,
-          "sourceHash": "4f545182351aa7aef3adbc72cb6dc1b44a8033d7fbd9aead279211a2e045618a"
+          "sourceHash": "8e9f15b787042ff104251b1a59cfe3b772a6f99324b811c9efb7a7e82c20d28b"
         }
       ]
     },
@@ -2544,339 +2544,339 @@
       "hitRegions": [
         {
           "action": "statistics-previous-month",
-          "x": 14.333343505859375,
-          "y": 71.3333740234375,
+          "x": 15,
+          "y": 72,
           "width": 22,
           "height": 22
         },
         {
           "action": "statistics-next-month",
-          "x": 110.33334350585938,
-          "y": 71.3333740234375,
+          "x": 111,
+          "y": 72,
           "width": 22,
           "height": 22
         },
         {
           "action": "statistics-view-month",
-          "x": 195.66665649414062,
-          "y": 74.3333740234375,
+          "x": 195,
+          "y": 75,
           "width": 42,
           "height": 16
         },
         {
           "action": "statistics-view-week",
-          "x": 241.66665649414062,
-          "y": 74.3333740234375,
+          "x": 241,
+          "y": 75,
           "width": 32,
           "height": 16
         },
         {
           "action": "statistics-view-cumulative",
-          "x": 277.6666564941406,
-          "y": 74.3333740234375,
+          "x": 277,
+          "y": 75,
           "width": 32,
           "height": 16
         },
         {
           "action": "statistics-view-detail",
-          "x": 313.6666564941406,
-          "y": 74.3333740234375,
+          "x": 313,
+          "y": 75,
           "width": 32,
           "height": 16
         },
         {
           "action": "statistics-select-day-00",
-          "x": 14.333343505859375,
-          "y": 109.3333740234375,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "x": 15,
+          "y": 110,
+          "width": 44.5625,
+          "height": 13.65625
         },
         {
           "action": "statistics-select-day-01",
-          "x": 62.09375,
-          "y": 109.3333740234375,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "x": 62.5625,
+          "y": 110,
+          "width": 44.578125,
+          "height": 13.65625
         },
         {
           "action": "statistics-select-day-02",
-          "x": 109.85415649414062,
-          "y": 109.3333740234375,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "x": 110.140625,
+          "y": 110,
+          "width": 44.5625,
+          "height": 13.65625
         },
         {
           "action": "statistics-select-day-03",
-          "x": 157.61459350585938,
-          "y": 109.3333740234375,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "x": 157.703125,
+          "y": 110,
+          "width": 44.578125,
+          "height": 13.65625
         },
         {
           "action": "statistics-select-day-04",
-          "x": 205.375,
-          "y": 109.3333740234375,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "x": 205.28125,
+          "y": 110,
+          "width": 44.5625,
+          "height": 13.65625
         },
         {
           "action": "statistics-select-day-05",
-          "x": 253.13540649414062,
-          "y": 109.3333740234375,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "x": 252.84375,
+          "y": 110,
+          "width": 44.578125,
+          "height": 13.65625
         },
         {
           "action": "statistics-select-day-06",
-          "x": 300.8958435058594,
-          "y": 109.3333740234375,
-          "width": 44.770835876464844,
-          "height": 13.885416984558105
+          "x": 300.421875,
+          "y": 110,
+          "width": 44.578125,
+          "height": 13.65625
         },
         {
           "action": "statistics-select-day-07",
-          "x": 14.333343505859375,
-          "y": 126.21875,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "x": 15,
+          "y": 126.65625,
+          "width": 44.5625,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-08",
-          "x": 62.09375,
-          "y": 126.21875,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "x": 62.5625,
+          "y": 126.65625,
+          "width": 44.578125,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-09",
-          "x": 109.85415649414062,
-          "y": 126.21875,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "x": 110.140625,
+          "y": 126.65625,
+          "width": 44.5625,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-10",
-          "x": 157.61459350585938,
-          "y": 126.21875,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "x": 157.703125,
+          "y": 126.65625,
+          "width": 44.578125,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-11",
-          "x": 205.375,
-          "y": 126.21875,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "x": 205.28125,
+          "y": 126.65625,
+          "width": 44.5625,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-12",
-          "x": 253.13540649414062,
-          "y": 126.21875,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "x": 252.84375,
+          "y": 126.65625,
+          "width": 44.578125,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-13",
-          "x": 300.8958435058594,
-          "y": 126.21875,
-          "width": 44.770835876464844,
-          "height": 13.885416984558105
+          "x": 300.421875,
+          "y": 126.65625,
+          "width": 44.578125,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-14",
-          "x": 14.333343505859375,
-          "y": 143.10418701171875,
-          "width": 44.76041793823242,
-          "height": 13.895833969116211
+          "x": 15,
+          "y": 143.328125,
+          "width": 44.5625,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-15",
-          "x": 62.09375,
-          "y": 143.10418701171875,
-          "width": 44.76041793823242,
-          "height": 13.895833969116211
+          "x": 62.5625,
+          "y": 143.328125,
+          "width": 44.578125,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-16",
-          "x": 109.85415649414062,
-          "y": 143.10418701171875,
-          "width": 44.76041793823242,
-          "height": 13.895833969116211
+          "x": 110.140625,
+          "y": 143.328125,
+          "width": 44.5625,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-17",
-          "x": 157.61459350585938,
-          "y": 143.10418701171875,
-          "width": 44.76041793823242,
-          "height": 13.895833969116211
+          "x": 157.703125,
+          "y": 143.328125,
+          "width": 44.578125,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-18",
-          "x": 205.375,
-          "y": 143.10418701171875,
-          "width": 44.76041793823242,
-          "height": 13.895833969116211
+          "x": 205.28125,
+          "y": 143.328125,
+          "width": 44.5625,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-19",
-          "x": 253.13540649414062,
-          "y": 143.10418701171875,
-          "width": 44.76041793823242,
-          "height": 13.895833969116211
+          "x": 252.84375,
+          "y": 143.328125,
+          "width": 44.578125,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-20",
-          "x": 300.8958435058594,
-          "y": 143.10418701171875,
-          "width": 44.770835876464844,
-          "height": 13.895833969116211
+          "x": 300.421875,
+          "y": 143.328125,
+          "width": 44.578125,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-21",
-          "x": 14.333343505859375,
+          "x": 15,
           "y": 160,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "width": 44.5625,
+          "height": 13.65625
         },
         {
           "action": "statistics-select-day-22",
-          "x": 62.09375,
+          "x": 62.5625,
           "y": 160,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "width": 44.578125,
+          "height": 13.65625
         },
         {
           "action": "statistics-select-day-23",
-          "x": 109.85415649414062,
+          "x": 110.140625,
           "y": 160,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "width": 44.5625,
+          "height": 13.65625
         },
         {
           "action": "statistics-select-day-24",
-          "x": 157.61459350585938,
+          "x": 157.703125,
           "y": 160,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "width": 44.578125,
+          "height": 13.65625
         },
         {
           "action": "statistics-select-day-25",
-          "x": 205.375,
+          "x": 205.28125,
           "y": 160,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "width": 44.5625,
+          "height": 13.65625
         },
         {
           "action": "statistics-select-day-26",
-          "x": 253.13540649414062,
+          "x": 252.84375,
           "y": 160,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "width": 44.578125,
+          "height": 13.65625
         },
         {
           "action": "statistics-select-day-27",
-          "x": 300.8958435058594,
+          "x": 300.421875,
           "y": 160,
-          "width": 44.770835876464844,
-          "height": 13.885416984558105
+          "width": 44.578125,
+          "height": 13.65625
         },
         {
           "action": "statistics-select-day-28",
-          "x": 14.333343505859375,
-          "y": 176.88543701171875,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "x": 15,
+          "y": 176.65625,
+          "width": 44.5625,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-29",
-          "x": 62.09375,
-          "y": 176.88543701171875,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "x": 62.5625,
+          "y": 176.65625,
+          "width": 44.578125,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-30",
-          "x": 109.85415649414062,
-          "y": 176.88543701171875,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "x": 110.140625,
+          "y": 176.65625,
+          "width": 44.5625,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-31",
-          "x": 157.61459350585938,
-          "y": 176.88543701171875,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "x": 157.703125,
+          "y": 176.65625,
+          "width": 44.578125,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-32",
-          "x": 205.375,
-          "y": 176.88543701171875,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "x": 205.28125,
+          "y": 176.65625,
+          "width": 44.5625,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-33",
-          "x": 253.13540649414062,
-          "y": 176.88543701171875,
-          "width": 44.76041793823242,
-          "height": 13.885416984558105
+          "x": 252.84375,
+          "y": 176.65625,
+          "width": 44.578125,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-34",
-          "x": 300.8958435058594,
-          "y": 176.88543701171875,
-          "width": 44.770835876464844,
-          "height": 13.885416984558105
+          "x": 300.421875,
+          "y": 176.65625,
+          "width": 44.578125,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-35",
-          "x": 14.333343505859375,
-          "y": 193.7708740234375,
-          "width": 44.76041793823242,
-          "height": 13.895833969116211
+          "x": 15,
+          "y": 193.328125,
+          "width": 44.5625,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-36",
-          "x": 62.09375,
-          "y": 193.7708740234375,
-          "width": 44.76041793823242,
-          "height": 13.895833969116211
+          "x": 62.5625,
+          "y": 193.328125,
+          "width": 44.578125,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-37",
-          "x": 109.85415649414062,
-          "y": 193.7708740234375,
-          "width": 44.76041793823242,
-          "height": 13.895833969116211
+          "x": 110.140625,
+          "y": 193.328125,
+          "width": 44.5625,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-38",
-          "x": 157.61459350585938,
-          "y": 193.7708740234375,
-          "width": 44.76041793823242,
-          "height": 13.895833969116211
+          "x": 157.703125,
+          "y": 193.328125,
+          "width": 44.578125,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-39",
-          "x": 205.375,
-          "y": 193.7708740234375,
-          "width": 44.76041793823242,
-          "height": 13.895833969116211
+          "x": 205.28125,
+          "y": 193.328125,
+          "width": 44.5625,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-40",
-          "x": 253.13540649414062,
-          "y": 193.7708740234375,
-          "width": 44.76041793823242,
-          "height": 13.895833969116211
+          "x": 252.84375,
+          "y": 193.328125,
+          "width": 44.578125,
+          "height": 13.671875
         },
         {
           "action": "statistics-select-day-41",
-          "x": 300.8958435058594,
-          "y": 193.7708740234375,
-          "width": 44.770835876464844,
-          "height": 13.895833969116211
+          "x": 300.421875,
+          "y": 193.328125,
+          "width": 44.578125,
+          "height": 13.671875
         }
       ],
       "dynamic": {
@@ -2885,9 +2885,9 @@
             "bind": "statistics.total",
             "rect": {
               "x": 15,
-              "y": 15.333343505859375,
+              "y": 15.5,
               "width": 65,
-              "height": 17.33333396911621
+              "height": 18
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -2907,9 +2907,9 @@
             "bind": "statistics.peak",
             "rect": {
               "x": 80,
-              "y": 15.333343505859375,
+              "y": 15.5,
               "width": 65,
-              "height": 17.33333396911621
+              "height": 18
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -2929,9 +2929,9 @@
             "bind": "statistics.duration",
             "rect": {
               "x": 145,
-              "y": 15.333343505859375,
+              "y": 15.5,
               "width": 80,
-              "height": 17.33333396911621
+              "height": 18
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -2951,9 +2951,9 @@
             "bind": "statistics.currentStreak",
             "rect": {
               "x": 225,
-              "y": 15.333343505859375,
+              "y": 15.5,
               "width": 60,
-              "height": 17.33333396911621
+              "height": 18
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -2972,10 +2972,10 @@
           {
             "bind": "statistics.longestStreak",
             "rect": {
-              "x": 285.0000305175781,
-              "y": 15.333343505859375,
+              "x": 285,
+              "y": 15.5,
               "width": 60,
-              "height": 17.33333396911621
+              "height": 18
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -2994,8 +2994,8 @@
           {
             "bind": "statistics.previousMonth",
             "rect": {
-              "x": 14.333343505859375,
-              "y": 71.3333740234375,
+              "x": 15,
+              "y": 72,
               "width": 22,
               "height": 22
             },
@@ -3016,8 +3016,8 @@
           {
             "bind": "statistics.month",
             "rect": {
-              "x": 36.333343505859375,
-              "y": 75.3333740234375,
+              "x": 37,
+              "y": 76,
               "width": 74,
               "height": 14
             },
@@ -3038,8 +3038,8 @@
           {
             "bind": "statistics.nextMonth",
             "rect": {
-              "x": 110.33334350585938,
-              "y": 71.3333740234375,
+              "x": 111,
+              "y": 72,
               "width": 22,
               "height": 22
             },
@@ -3060,8 +3060,8 @@
           {
             "bind": "statistics.viewMonth",
             "rect": {
-              "x": 195.66665649414062,
-              "y": 74.3333740234375,
+              "x": 195,
+              "y": 75,
               "width": 42,
               "height": 16
             },
@@ -3087,8 +3087,8 @@
           {
             "bind": "statistics.viewWeek",
             "rect": {
-              "x": 241.66665649414062,
-              "y": 74.3333740234375,
+              "x": 241,
+              "y": 75,
               "width": 32,
               "height": 16
             },
@@ -3114,8 +3114,8 @@
           {
             "bind": "statistics.viewCumulative",
             "rect": {
-              "x": 277.6666564941406,
-              "y": 74.3333740234375,
+              "x": 277,
+              "y": 75,
               "width": 32,
               "height": 16
             },
@@ -3141,8 +3141,8 @@
           {
             "bind": "statistics.viewDetail",
             "rect": {
-              "x": 313.6666564941406,
-              "y": 74.3333740234375,
+              "x": 313,
+              "y": 75,
               "width": 32,
               "height": 16
             },
@@ -3168,10 +3168,10 @@
           {
             "bind": "statistics.detailInput",
             "rect": {
-              "x": 14.333343505859375,
-              "y": 111.0833740234375,
-              "width": 79.83333587646484,
-              "height": 16.666667938232422
+              "x": 15,
+              "y": 111.75,
+              "width": 79.5,
+              "height": 16
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -3190,9 +3190,9 @@
           {
             "bind": "statistics.labelInput",
             "rect": {
-              "x": 14.333343505859375,
+              "x": 15,
               "y": 129.75,
-              "width": 79.83333587646484,
+              "width": 79.5,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -3212,10 +3212,10 @@
           {
             "bind": "statistics.detailOutput",
             "rect": {
-              "x": 98.16665649414062,
-              "y": 111.0833740234375,
-              "width": 79.83333587646484,
-              "height": 16.666667938232422
+              "x": 98.5,
+              "y": 111.75,
+              "width": 79.5,
+              "height": 16
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -3234,9 +3234,9 @@
           {
             "bind": "statistics.labelOutput",
             "rect": {
-              "x": 98.16665649414062,
+              "x": 98.5,
               "y": 129.75,
-              "width": 79.83333587646484,
+              "width": 79.5,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -3257,9 +3257,9 @@
             "bind": "statistics.detailTotal",
             "rect": {
               "x": 182,
-              "y": 111.0833740234375,
-              "width": 79.83333587646484,
-              "height": 16.666667938232422
+              "y": 111.75,
+              "width": 79.5,
+              "height": 16
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -3280,7 +3280,7 @@
             "rect": {
               "x": 182,
               "y": 129.75,
-              "width": 79.83333587646484,
+              "width": 79.5,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -3300,10 +3300,10 @@
           {
             "bind": "statistics.detailCached",
             "rect": {
-              "x": 265.8333435058594,
-              "y": 111.0833740234375,
-              "width": 79.83333587646484,
-              "height": 16.666667938232422
+              "x": 265.5,
+              "y": 111.75,
+              "width": 79.5,
+              "height": 16
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -3322,9 +3322,9 @@
           {
             "bind": "statistics.labelCached",
             "rect": {
-              "x": 265.8333435058594,
+              "x": 265.5,
               "y": 129.75,
-              "width": 79.83333587646484,
+              "width": 79.5,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -3344,10 +3344,10 @@
           {
             "bind": "statistics.detailReasoning",
             "rect": {
-              "x": 14.333343505859375,
+              "x": 15,
               "y": 167.25,
-              "width": 79.83333587646484,
-              "height": 16.666667938232422
+              "width": 79.5,
+              "height": 16
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -3366,9 +3366,9 @@
           {
             "bind": "statistics.labelReasoning",
             "rect": {
-              "x": 14.333343505859375,
-              "y": 185.91668701171875,
-              "width": 79.83333587646484,
+              "x": 15,
+              "y": 185.25,
+              "width": 79.5,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -3388,10 +3388,10 @@
           {
             "bind": "statistics.detailCacheHit",
             "rect": {
-              "x": 98.16665649414062,
+              "x": 98.5,
               "y": 167.25,
-              "width": 79.83333587646484,
-              "height": 16.666667938232422
+              "width": 79.5,
+              "height": 16
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -3410,9 +3410,9 @@
           {
             "bind": "statistics.labelCacheHit",
             "rect": {
-              "x": 98.16665649414062,
-              "y": 185.91668701171875,
-              "width": 79.83333587646484,
+              "x": 98.5,
+              "y": 185.25,
+              "width": 79.5,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -3434,8 +3434,8 @@
             "rect": {
               "x": 182,
               "y": 167.25,
-              "width": 163.6666717529297,
-              "height": 16.666667938232422
+              "width": 163,
+              "height": 16
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -3455,8 +3455,8 @@
             "bind": "statistics.labelCost",
             "rect": {
               "x": 182,
-              "y": 185.91668701171875,
-              "width": 163.6666717529297,
+              "y": 185.25,
+              "width": 163,
               "height": 10
             },
             "fontFamily": "Microsoft YaHei UI",
@@ -3479,256 +3479,256 @@
             "bind": "statistics.monthCells",
             "rects": [
               {
-                "x": 14.333343505859375,
-                "y": 109.3333740234375,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "x": 15,
+                "y": 110,
+                "width": 44.5625,
+                "height": 13.65625
               },
               {
-                "x": 62.09375,
-                "y": 109.3333740234375,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "x": 62.5625,
+                "y": 110,
+                "width": 44.578125,
+                "height": 13.65625
               },
               {
-                "x": 109.85415649414062,
-                "y": 109.3333740234375,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "x": 110.140625,
+                "y": 110,
+                "width": 44.5625,
+                "height": 13.65625
               },
               {
-                "x": 157.61459350585938,
-                "y": 109.3333740234375,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "x": 157.703125,
+                "y": 110,
+                "width": 44.578125,
+                "height": 13.65625
               },
               {
-                "x": 205.375,
-                "y": 109.3333740234375,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "x": 205.28125,
+                "y": 110,
+                "width": 44.5625,
+                "height": 13.65625
               },
               {
-                "x": 253.13540649414062,
-                "y": 109.3333740234375,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "x": 252.84375,
+                "y": 110,
+                "width": 44.578125,
+                "height": 13.65625
               },
               {
-                "x": 300.8958435058594,
-                "y": 109.3333740234375,
-                "width": 44.770835876464844,
-                "height": 13.885416984558105
+                "x": 300.421875,
+                "y": 110,
+                "width": 44.578125,
+                "height": 13.65625
               },
               {
-                "x": 14.333343505859375,
-                "y": 126.21875,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "x": 15,
+                "y": 126.65625,
+                "width": 44.5625,
+                "height": 13.671875
               },
               {
-                "x": 62.09375,
-                "y": 126.21875,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "x": 62.5625,
+                "y": 126.65625,
+                "width": 44.578125,
+                "height": 13.671875
               },
               {
-                "x": 109.85415649414062,
-                "y": 126.21875,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "x": 110.140625,
+                "y": 126.65625,
+                "width": 44.5625,
+                "height": 13.671875
               },
               {
-                "x": 157.61459350585938,
-                "y": 126.21875,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "x": 157.703125,
+                "y": 126.65625,
+                "width": 44.578125,
+                "height": 13.671875
               },
               {
-                "x": 205.375,
-                "y": 126.21875,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "x": 205.28125,
+                "y": 126.65625,
+                "width": 44.5625,
+                "height": 13.671875
               },
               {
-                "x": 253.13540649414062,
-                "y": 126.21875,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "x": 252.84375,
+                "y": 126.65625,
+                "width": 44.578125,
+                "height": 13.671875
               },
               {
-                "x": 300.8958435058594,
-                "y": 126.21875,
-                "width": 44.770835876464844,
-                "height": 13.885416984558105
+                "x": 300.421875,
+                "y": 126.65625,
+                "width": 44.578125,
+                "height": 13.671875
               },
               {
-                "x": 14.333343505859375,
-                "y": 143.10418701171875,
-                "width": 44.76041793823242,
-                "height": 13.895833969116211
+                "x": 15,
+                "y": 143.328125,
+                "width": 44.5625,
+                "height": 13.671875
               },
               {
-                "x": 62.09375,
-                "y": 143.10418701171875,
-                "width": 44.76041793823242,
-                "height": 13.895833969116211
+                "x": 62.5625,
+                "y": 143.328125,
+                "width": 44.578125,
+                "height": 13.671875
               },
               {
-                "x": 109.85415649414062,
-                "y": 143.10418701171875,
-                "width": 44.76041793823242,
-                "height": 13.895833969116211
+                "x": 110.140625,
+                "y": 143.328125,
+                "width": 44.5625,
+                "height": 13.671875
               },
               {
-                "x": 157.61459350585938,
-                "y": 143.10418701171875,
-                "width": 44.76041793823242,
-                "height": 13.895833969116211
+                "x": 157.703125,
+                "y": 143.328125,
+                "width": 44.578125,
+                "height": 13.671875
               },
               {
-                "x": 205.375,
-                "y": 143.10418701171875,
-                "width": 44.76041793823242,
-                "height": 13.895833969116211
+                "x": 205.28125,
+                "y": 143.328125,
+                "width": 44.5625,
+                "height": 13.671875
               },
               {
-                "x": 253.13540649414062,
-                "y": 143.10418701171875,
-                "width": 44.76041793823242,
-                "height": 13.895833969116211
+                "x": 252.84375,
+                "y": 143.328125,
+                "width": 44.578125,
+                "height": 13.671875
               },
               {
-                "x": 300.8958435058594,
-                "y": 143.10418701171875,
-                "width": 44.770835876464844,
-                "height": 13.895833969116211
+                "x": 300.421875,
+                "y": 143.328125,
+                "width": 44.578125,
+                "height": 13.671875
               },
               {
-                "x": 14.333343505859375,
+                "x": 15,
                 "y": 160,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "width": 44.5625,
+                "height": 13.65625
               },
               {
-                "x": 62.09375,
+                "x": 62.5625,
                 "y": 160,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "width": 44.578125,
+                "height": 13.65625
               },
               {
-                "x": 109.85415649414062,
+                "x": 110.140625,
                 "y": 160,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "width": 44.5625,
+                "height": 13.65625
               },
               {
-                "x": 157.61459350585938,
+                "x": 157.703125,
                 "y": 160,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "width": 44.578125,
+                "height": 13.65625
               },
               {
-                "x": 205.375,
+                "x": 205.28125,
                 "y": 160,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "width": 44.5625,
+                "height": 13.65625
               },
               {
-                "x": 253.13540649414062,
+                "x": 252.84375,
                 "y": 160,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "width": 44.578125,
+                "height": 13.65625
               },
               {
-                "x": 300.8958435058594,
+                "x": 300.421875,
                 "y": 160,
-                "width": 44.770835876464844,
-                "height": 13.885416984558105
+                "width": 44.578125,
+                "height": 13.65625
               },
               {
-                "x": 14.333343505859375,
-                "y": 176.88543701171875,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "x": 15,
+                "y": 176.65625,
+                "width": 44.5625,
+                "height": 13.671875
               },
               {
-                "x": 62.09375,
-                "y": 176.88543701171875,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "x": 62.5625,
+                "y": 176.65625,
+                "width": 44.578125,
+                "height": 13.671875
               },
               {
-                "x": 109.85415649414062,
-                "y": 176.88543701171875,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "x": 110.140625,
+                "y": 176.65625,
+                "width": 44.5625,
+                "height": 13.671875
               },
               {
-                "x": 157.61459350585938,
-                "y": 176.88543701171875,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "x": 157.703125,
+                "y": 176.65625,
+                "width": 44.578125,
+                "height": 13.671875
               },
               {
-                "x": 205.375,
-                "y": 176.88543701171875,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "x": 205.28125,
+                "y": 176.65625,
+                "width": 44.5625,
+                "height": 13.671875
               },
               {
-                "x": 253.13540649414062,
-                "y": 176.88543701171875,
-                "width": 44.76041793823242,
-                "height": 13.885416984558105
+                "x": 252.84375,
+                "y": 176.65625,
+                "width": 44.578125,
+                "height": 13.671875
               },
               {
-                "x": 300.8958435058594,
-                "y": 176.88543701171875,
-                "width": 44.770835876464844,
-                "height": 13.885416984558105
+                "x": 300.421875,
+                "y": 176.65625,
+                "width": 44.578125,
+                "height": 13.671875
               },
               {
-                "x": 14.333343505859375,
-                "y": 193.7708740234375,
-                "width": 44.76041793823242,
-                "height": 13.895833969116211
+                "x": 15,
+                "y": 193.328125,
+                "width": 44.5625,
+                "height": 13.671875
               },
               {
-                "x": 62.09375,
-                "y": 193.7708740234375,
-                "width": 44.76041793823242,
-                "height": 13.895833969116211
+                "x": 62.5625,
+                "y": 193.328125,
+                "width": 44.578125,
+                "height": 13.671875
               },
               {
-                "x": 109.85415649414062,
-                "y": 193.7708740234375,
-                "width": 44.76041793823242,
-                "height": 13.895833969116211
+                "x": 110.140625,
+                "y": 193.328125,
+                "width": 44.5625,
+                "height": 13.671875
               },
               {
-                "x": 157.61459350585938,
-                "y": 193.7708740234375,
-                "width": 44.76041793823242,
-                "height": 13.895833969116211
+                "x": 157.703125,
+                "y": 193.328125,
+                "width": 44.578125,
+                "height": 13.671875
               },
               {
-                "x": 205.375,
-                "y": 193.7708740234375,
-                "width": 44.76041793823242,
-                "height": 13.895833969116211
+                "x": 205.28125,
+                "y": 193.328125,
+                "width": 44.5625,
+                "height": 13.671875
               },
               {
-                "x": 253.13540649414062,
-                "y": 193.7708740234375,
-                "width": 44.76041793823242,
-                "height": 13.895833969116211
+                "x": 252.84375,
+                "y": 193.328125,
+                "width": 44.578125,
+                "height": 13.671875
               },
               {
-                "x": 300.8958435058594,
-                "y": 193.7708740234375,
-                "width": 44.770835876464844,
-                "height": 13.895833969116211
+                "x": 300.421875,
+                "y": 193.328125,
+                "width": 44.578125,
+                "height": 13.671875
               }
             ],
             "colors": [
@@ -3746,31 +3746,31 @@
       "variants": [
         {
           "scale": 1,
-          "file": "assets/431ecec88a3dc850/statistics-light@100.png",
+          "file": "assets/79078914f9c3e9c8/statistics-light@100.png",
           "width": 360,
           "height": 220,
-          "sourceHash": "58baffb226588927e66ae1bbf5e8ea9e982dcd76ff48ad9af4bcf501f7d5e162"
+          "sourceHash": "8e9f15b787042ff1341f7fe16d134694b39e6b145ab2719bb20ff0d5f0730f0b"
         },
         {
           "scale": 1.25,
-          "file": "assets/431ecec88a3dc850/statistics-light@125.png",
+          "file": "assets/79078914f9c3e9c8/statistics-light@125.png",
           "width": 450,
           "height": 275,
-          "sourceHash": "6589c537eb5a93bf90c713134691e32ac16761f797328976f119a3aefec58765"
+          "sourceHash": "8e9f15b787042ff115a01031dc74258a8a4d6b24f9892b99f176c77326c28f58"
         },
         {
           "scale": 1.5,
-          "file": "assets/431ecec88a3dc850/statistics-light@150.png",
+          "file": "assets/79078914f9c3e9c8/statistics-light@150.png",
           "width": 540,
           "height": 330,
-          "sourceHash": "91039dd263f89876f953ab7fd99876701e4f99fd19ab083e005cc2890d58881d"
+          "sourceHash": "8e9f15b787042ff1d1fb892b7c837770467b282d2dbe76041d2132b7ecf2962a"
         },
         {
           "scale": 2,
-          "file": "assets/431ecec88a3dc850/statistics-light@200.png",
+          "file": "assets/79078914f9c3e9c8/statistics-light@200.png",
           "width": 720,
           "height": 440,
-          "sourceHash": "95511fcbc0e491c95c847d548322d205db41ab0125a6d2b6521476b947cfb7ed"
+          "sourceHash": "8e9f15b787042ff1f0495b94942435ddbfdcfdd2f496ae866fd1f7057de950df"
         }
       ]
     },
@@ -3793,9 +3793,9 @@
             "bind": "toast.title",
             "rect": {
               "x": 77,
-              "y": 38.7396240234375,
+              "y": 39.078125,
               "width": 227,
-              "height": 16.666667938232422
+              "height": 16
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -3815,7 +3815,7 @@
             "bind": "toast.message",
             "rect": {
               "x": 77,
-              "y": 58.40625,
+              "y": 58.078125,
               "width": 227,
               "height": 14.84375
             },
@@ -3838,31 +3838,31 @@
       "variants": [
         {
           "scale": 1,
-          "file": "assets/431ecec88a3dc850/usage-toast-good-light@100.png",
+          "file": "assets/79078914f9c3e9c8/usage-toast-good-light@100.png",
           "width": 396,
           "height": 112,
-          "sourceHash": "ca3163eb310e5ed6d65423db3e2b2ceade8385ca4a16d0fe7f0d00a37eaf1da2"
+          "sourceHash": "8e9f15b787042ff1649e8d28797b4fa8db3734f648c9c2ab9e4cdbd63a7e9ddb"
         },
         {
           "scale": 1.25,
-          "file": "assets/431ecec88a3dc850/usage-toast-good-light@125.png",
+          "file": "assets/79078914f9c3e9c8/usage-toast-good-light@125.png",
           "width": 495,
           "height": 140,
-          "sourceHash": "bee393448ada766293bb6de778bbe04e3d66a675bdfc4414672df63f9fb44046"
+          "sourceHash": "8e9f15b787042ff1cc70300fbe9fbdd675bde008602263c17a18e6b81405d931"
         },
         {
           "scale": 1.5,
-          "file": "assets/431ecec88a3dc850/usage-toast-good-light@150.png",
+          "file": "assets/79078914f9c3e9c8/usage-toast-good-light@150.png",
           "width": 594,
           "height": 168,
-          "sourceHash": "9410c269776f6f2ff353c2c214b21e351644fff750f007dd859624d89ea43eb5"
+          "sourceHash": "8e9f15b787042ff1cfe8b0e918bb74c988084c5b967c51696c5a38fa7475c873"
         },
         {
           "scale": 2,
-          "file": "assets/431ecec88a3dc850/usage-toast-good-light@200.png",
+          "file": "assets/79078914f9c3e9c8/usage-toast-good-light@200.png",
           "width": 792,
           "height": 224,
-          "sourceHash": "52adea859cf1b0be0dc61369491802dc9cf1ea210861014b823addcfe6528e11"
+          "sourceHash": "8e9f15b787042ff1472f61dad8bc76f1763a4cc70bbcedd5298fcfa543618a6a"
         }
       ]
     },
@@ -3885,9 +3885,9 @@
             "bind": "toast.title",
             "rect": {
               "x": 77,
-              "y": 38.7396240234375,
+              "y": 39.078125,
               "width": 227,
-              "height": 16.666667938232422
+              "height": 16
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -3907,7 +3907,7 @@
             "bind": "toast.message",
             "rect": {
               "x": 77,
-              "y": 58.40625,
+              "y": 58.078125,
               "width": 227,
               "height": 14.84375
             },
@@ -3930,31 +3930,31 @@
       "variants": [
         {
           "scale": 1,
-          "file": "assets/431ecec88a3dc850/usage-toast-light@100.png",
+          "file": "assets/79078914f9c3e9c8/usage-toast-light@100.png",
           "width": 396,
           "height": 112,
-          "sourceHash": "2807be2b1c06974d17e7159d5905426dfe30b4424171c8d9b467ec8076805897"
+          "sourceHash": "8e9f15b787042ff188465f01a6936fff600ccbc10f37d3e99d76357f71afbb33"
         },
         {
           "scale": 1.25,
-          "file": "assets/431ecec88a3dc850/usage-toast-light@125.png",
+          "file": "assets/79078914f9c3e9c8/usage-toast-light@125.png",
           "width": 495,
           "height": 140,
-          "sourceHash": "d6f072ba134d15794743a1877879c58d76eb7e2fa38fef26d1c8ac210f469bc2"
+          "sourceHash": "8e9f15b787042ff18313986327f3053f9b59b9d6e811c68ab12fd2fe94c6985e"
         },
         {
           "scale": 1.5,
-          "file": "assets/431ecec88a3dc850/usage-toast-light@150.png",
+          "file": "assets/79078914f9c3e9c8/usage-toast-light@150.png",
           "width": 594,
           "height": 168,
-          "sourceHash": "1fb63d0a643ae17000f411c88a3abf171c64d869f05e940e4bcead4f6e38f84c"
+          "sourceHash": "8e9f15b787042ff16b9f9e1af3613ac72a9faa12e8ec108873104770d9ac45af"
         },
         {
           "scale": 2,
-          "file": "assets/431ecec88a3dc850/usage-toast-light@200.png",
+          "file": "assets/79078914f9c3e9c8/usage-toast-light@200.png",
           "width": 792,
           "height": 224,
-          "sourceHash": "43ad8680931637d466eecc9c3e999dfd005fb7250b30ff1e55f0acf3dfee55ea"
+          "sourceHash": "8e9f15b787042ff18b50c0af3e40692610b98697fdb243c711a97eb8b5e88c33"
         }
       ]
     },
@@ -3977,9 +3977,9 @@
             "bind": "toast.title",
             "rect": {
               "x": 77,
-              "y": 38.7396240234375,
+              "y": 39.078125,
               "width": 227,
-              "height": 16.666667938232422
+              "height": 16
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -3999,7 +3999,7 @@
             "bind": "toast.message",
             "rect": {
               "x": 77,
-              "y": 58.40625,
+              "y": 58.078125,
               "width": 227,
               "height": 14.84375
             },
@@ -4022,31 +4022,31 @@
       "variants": [
         {
           "scale": 1,
-          "file": "assets/431ecec88a3dc850/usage-toast-danger-light@100.png",
+          "file": "assets/79078914f9c3e9c8/usage-toast-danger-light@100.png",
           "width": 396,
           "height": 112,
-          "sourceHash": "debe6fb0d1aaadec2ced5bdea56246d96e9ab1cc739e3c49bc9aae80a36d4fa5"
+          "sourceHash": "8e9f15b787042ff11a16bd094afcd318c5343f1b1307b38b755b3608ad71fc72"
         },
         {
           "scale": 1.25,
-          "file": "assets/431ecec88a3dc850/usage-toast-danger-light@125.png",
+          "file": "assets/79078914f9c3e9c8/usage-toast-danger-light@125.png",
           "width": 495,
           "height": 140,
-          "sourceHash": "ef12c1f5a54d63d6477cf73be7c831079d0b189228ddc9bd5083fe073b5e8870"
+          "sourceHash": "8e9f15b787042ff1c3e96dfff5a9a062ce97d7b9f1a7e13502f9b47a45761401"
         },
         {
           "scale": 1.5,
-          "file": "assets/431ecec88a3dc850/usage-toast-danger-light@150.png",
+          "file": "assets/79078914f9c3e9c8/usage-toast-danger-light@150.png",
           "width": 594,
           "height": 168,
-          "sourceHash": "fe5334f5eb0f249d83c1bad3560f27306e0ba411ded0e68f9f3bc8e42ca77627"
+          "sourceHash": "8e9f15b787042ff11c42e4cf22de75b1d6867879f4c7c48425fe9053374ee50f"
         },
         {
           "scale": 2,
-          "file": "assets/431ecec88a3dc850/usage-toast-danger-light@200.png",
+          "file": "assets/79078914f9c3e9c8/usage-toast-danger-light@200.png",
           "width": 792,
           "height": 224,
-          "sourceHash": "51fc178ca3137672e130bb6cd9a9146ca31fdd7ce25c87527f6bd774bfe5f77c"
+          "sourceHash": "8e9f15b787042ff1578580541f15c51d34414b859f9b6ec5d4edd3bfb70cab1a"
         }
       ]
     },
@@ -4069,9 +4069,9 @@
             "bind": "toast.title",
             "rect": {
               "x": 77,
-              "y": 38.7396240234375,
+              "y": 39.078125,
               "width": 227,
-              "height": 16.666667938232422
+              "height": 16
             },
             "fontFamily": "Microsoft YaHei UI",
             "fontFamilies": [
@@ -4091,7 +4091,7 @@
             "bind": "toast.message",
             "rect": {
               "x": 77,
-              "y": 58.40625,
+              "y": 58.078125,
               "width": 227,
               "height": 14.84375
             },
@@ -4114,31 +4114,31 @@
       "variants": [
         {
           "scale": 1,
-          "file": "assets/431ecec88a3dc850/usage-toast-offline-light@100.png",
+          "file": "assets/79078914f9c3e9c8/usage-toast-offline-light@100.png",
           "width": 396,
           "height": 112,
-          "sourceHash": "4b9d9695e29bb12611b87535610aaa7bb6fdc904349e84f9a92712e6d7a2cde8"
+          "sourceHash": "8e9f15b787042ff1f0b00b071d2ebfb87ff0cc7fa82a2f277005327a8c372aeb"
         },
         {
           "scale": 1.25,
-          "file": "assets/431ecec88a3dc850/usage-toast-offline-light@125.png",
+          "file": "assets/79078914f9c3e9c8/usage-toast-offline-light@125.png",
           "width": 495,
           "height": 140,
-          "sourceHash": "35b3bc5bd2ee8f7468916c334e4746507b03169c4c33a2fa785c5fc69d7d6e24"
+          "sourceHash": "8e9f15b787042ff18fbf0ea3c5c1208c7da8004c0a4c878f6652c3efab8aa242"
         },
         {
           "scale": 1.5,
-          "file": "assets/431ecec88a3dc850/usage-toast-offline-light@150.png",
+          "file": "assets/79078914f9c3e9c8/usage-toast-offline-light@150.png",
           "width": 594,
           "height": 168,
-          "sourceHash": "7ae3e27b7f3ccf549243628b31dc8bbe52169f531a99a0ad55d742b403e036f0"
+          "sourceHash": "8e9f15b787042ff1881a2ae87648fc885e40b6641619811f242bf993cf6b082a"
         },
         {
           "scale": 2,
-          "file": "assets/431ecec88a3dc850/usage-toast-offline-light@200.png",
+          "file": "assets/79078914f9c3e9c8/usage-toast-offline-light@200.png",
           "width": 792,
           "height": 224,
-          "sourceHash": "caa2f373d949cbd004281b74587c6bbe7ee296443b4802e1c8242935551b7653"
+          "sourceHash": "8e9f15b787042ff128227da4b7a00fc8e84f7c5b40a89300e6cfaec3c1163370"
         }
       ]
     }

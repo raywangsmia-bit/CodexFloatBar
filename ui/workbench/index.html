@@ -8,6 +8,7 @@
     <script>
       window.__PAGE_VERSION__ = {{PAGE_VERSION_JSON}};
       window.__WORKBENCH_TOKEN__ = {{WORKBENCH_TOKEN_JSON}};
+      window.__AUTO_EXPORT__ = {{AUTO_EXPORT_JSON}};
     </script>
     <script defer src="/assets/app.js?v={{STATIC_VERSION}}"></script>
   </head>
@@ -65,6 +66,9 @@
       <label class="toggle-control"><input id="trayToggle" type="checkbox" checked /> 托盘示意</label>
       <label class="toggle-control"><input id="boundaryToggle" type="checkbox" /> 槽边界</label>
       <label class="toggle-control"><input id="nativePreviewToggle" type="checkbox" /> 原生合成预览</label>
+      <label class="toggle-control">
+        <input id="motionPreviewToggle" type="checkbox" /> 动效预览
+      </label>
       <button id="exportButton" type="button">导出到 Go 程序</button>
       <span id="exportStatus" role="status">修改 HTML/CSS 后刷新即可预览</span>
     </section>
@@ -256,7 +260,8 @@
 
     <aside class="editing-note">
       正式程序不解析 HTML。保存 <code>ui/workbench/index.html</code> 或
-      <code>styles.css</code> 后页面会自动刷新；点击导出即可让运行中的 Go 窗口热加载。
+      <code>styles.css</code> 后刷新页面查看；点击导出后，以 <code>--watch-ui</code>
+      启动的 Go 窗口会热加载新资源。
     </aside>
   </body>
 </html>

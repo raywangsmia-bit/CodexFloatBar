@@ -107,6 +107,10 @@ if (-not $installerSource.Contains('"QuietUninstallString"') -or
     -not $installerSource.Contains('--quiet-uninstall')) {
     throw "installer does not register the synchronous running-instance guard"
 }
+if (-not $installerSource.Contains('Icon "${APP_ICON}"') -or
+    -not $installerSource.Contains('UninstallIcon "${APP_ICON}"')) {
+    throw "installer and uninstaller do not use the application icon"
+}
 foreach ($noticeName in @("LICENSE", "THIRD_PARTY_NOTICES.txt")) {
     if (-not $installerSource.Contains("File `"`${SOURCE_DIR}\$noticeName`"")) {
         throw "installer does not package $noticeName"
@@ -145,13 +149,31 @@ if ($expandedRC -notmatch '\bVERSIONINFO\b') {
     throw "expanded Windows resource does not contain VERSIONINFO"
 }
 if ($expandedRC -notmatch '(?im)^\s*101\s+ICON\s+"[^"]+app-icon\.ico"') {
-    throw "expanded Windows resource does not contain the legacy application icon"
+    throw "expanded Windows resource does not contain the application icon"
 }
 if (-not $expandedManifest.Contains("name=`"$($metadata.AppId)`"")) {
     throw "expanded manifest does not contain the release application identity"
 }
 if (-not $expandedManifest.Contains("version=`"$($metadata.VersionQuad)`"")) {
     throw "expanded manifest does not contain the release numeric version"
+}
+
+$iconPath = Join-Path $projectRoot "resources\app-icon.ico"
+$iconSourcePath = Join-Path $projectRoot "resources\app-icon-source.png"
+$iconHash = (Get-FileHash -LiteralPath $iconPath -Algorithm SHA256).
+    Hash.ToLowerInvariant()
+$iconSourceHash = (Get-FileHash -LiteralPath $iconSourcePath -Algorithm SHA256).
+    Hash.ToLowerInvariant()
+foreach ($declarationPath in @(
+    (Join-Path $projectRoot "docs\asset-provenance.md"),
+    (Join-Path $projectRoot "THIRD_PARTY_NOTICES.txt")
+)) {
+    $declaration = [IO.File]::ReadAllText($declarationPath).ToLowerInvariant()
+    foreach ($expectedHash in @($iconHash, $iconSourceHash)) {
+        if (-not $declaration.Contains($expectedHash)) {
+            throw "icon provenance declaration does not contain $expectedHash`: $declarationPath"
+        }
+    }
 }
 
 $makensisPath = Get-NativeMakensisPath -ProjectRoot $projectRoot
@@ -162,6 +184,7 @@ $nsisArguments = New-NativeNsisArguments `
     -Metadata $metadata `
     -SourceDirectory $sourceDirectory `
     -OutputFile $installerPath `
+    -IconPath $iconPath `
     -InstallerScript (Join-Path $projectRoot "installer\CodexFloatingBar.Native.nsi")
 & $makensisPath @nsisArguments
 if ($LASTEXITCODE -ne 0) {
@@ -169,6 +192,13 @@ if ($LASTEXITCODE -ne 0) {
 }
 if (-not (Test-Path -LiteralPath $installerPath -PathType Leaf)) {
     throw "static NSIS compilation did not produce an installer"
+}
+$installerVersionInfo = (Get-Item -LiteralPath $installerPath).VersionInfo
+if ($installerVersionInfo.FileVersion -cne $metadata.Version -or
+    $installerVersionInfo.ProductVersion -cne $metadata.Version -or
+    $installerVersionInfo.ProductName -cne $metadata.ProductName -or
+    $installerVersionInfo.LegalCopyright -cne $metadata.Copyright) {
+    throw "static NSIS VERSIONINFO does not match release metadata"
 }
 
 $checksumsPath = Join-Path $validationRoot "SHA256SUMS.txt"
@@ -201,6 +231,11 @@ foreach ($artifact in @(
     version = $metadata.Version
     versionQuad = $metadata.VersionQuad
     iconResourceIncluded = $true
+    installerIconIncluded = $true
+    installerVersionInfoVerified = $true
+    iconProvenanceVerified = $true
+    iconSha256 = $iconHash
+    iconSourceSha256 = $iconSourceHash
     windowsResource = $resourceResult.compiledResource
     installer = $installerPath
     checksums = $checksumsPath

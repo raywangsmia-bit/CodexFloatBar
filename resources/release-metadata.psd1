@@ -1,12 +1,13 @@
 @{
     SchemaVersion         = 1
     Channel               = "Beta"
-    Version               = "0.1.0-beta.3"
-    VersionQuad           = "0.1.0.2"
+    Version               = "0.1.0-beta.4"
+    VersionQuad           = "0.1.0.3"
     AppId                 = "CodexFloatingBar.Next"
     ProductName           = "CodexFloatingBar Next Beta"
     FileDescription       = "CodexFloatingBar Next Beta floating status bar"
     Publisher             = "CodexFloatingBar"
+    Copyright             = "Copyright (c) 2026 CodexFloatingBar contributors"
     Website               = "https://github.com/raywangsmia-bit/CodexFloatBar"
     ExecutableName        = "CodexFloatingBar.Next.exe"
     PortableDirectoryName = "CodexFloatingBar.Next"

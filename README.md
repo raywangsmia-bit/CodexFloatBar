@@ -41,8 +41,9 @@ Node.js、React、.NET、Wails 或 CGO。HTML/CSS/JavaScript 仅供独立的设�
 
 本项目是原
 [CodexFloatingBar](https://github.com/liuguoqiang0730-svg/CodexFloatingBar)
-的 Go/Win32 原生重写。它保留原项目的 MIT License、应用/托盘图标、旧设置迁移能力
-和数据行为对照结果；原 WPF/C# 源码及运行时依赖未包含在当前实现中。完整资源来源见
+的 Go/Win32 原生重写。它保留原项目的 MIT License、旧设置迁移能力和数据行为对照
+结果；应用/托盘图标已替换为本项目生成的新资源。原 WPF/C# 源码及运行时依赖未包含
+在当前实现中。完整资源来源见
 [资源来源与继承说明](docs/asset-provenance.md)。
 
 ## 功能详情
@@ -54,6 +55,8 @@ Node.js、React、.NET、Wails 或 CGO。HTML/CSS/JavaScript 仅供独立的设�
 - 点击月历日期可查看单日数据；未选择日期时显示当前浏览月份汇总。
 - 历史 session 统计写入本地缓存；未变化文件不会重复扫描，只分析新增或追加内容。
 - 支持统计窗口、额度提醒、自动收起、位置记忆和多显示器负坐标。
+- 额度提醒使用受系统“动画效果”设置约束的短时 fade-slide；远程会话和减少动态效果时
+  直接显示最终帧，不对统计图表做逐元素重绘。
 - 支持托盘菜单、单实例唤醒、开机启动以及跟随 Codex 显示、最小化或被其他窗口完全遮挡的状态。
 - 正式运行时仅使用 Go、Win32、DirectWrite/Direct2D 和预导出的静态 UI 资产。
 
@@ -110,7 +113,7 @@ go build -trimpath -ldflags "-H=windowsgui" -o bin\CodexFloatingBar.Next-dev.exe
 设计时
 ui/workbench HTML + CSS + JavaScript
              │
-             ├─ Edge 渲染 14 个 surface、4 档 DPI
+             ├─ Edge 按 4 档 DPI 渲染 atlas，再裁为 14 个 surface
              ▼
 ui/dist/manifest.json + 56 张 PNG
 
@@ -141,13 +144,28 @@ UI。UI 只接收经过聚合的最小数据对象。
 浏览器访问 <http://127.0.0.1:9315/>。常用流程：
 
 1. 修改 `ui/workbench/index.html`、`styles.css` 或 `app.js`。
-2. 在工作台检查主题、布局、缩放和原生合成预览。
-3. 点击“导出到 Go 程序”。
+2. 在工作台检查主题、布局、缩放、动效预览和原生合成预览。
+3. 资源有变化时使用 Microsoft Edge 打开工作台，并点击“导出到 Go 程序”。
 4. 确认 `ui/dist/manifest.json` 和新资源 generation 已更新。
 5. 运行测试和生产构建。
 
+也可以让工作台使用受控的无头 Edge 完成一次导出并自动退出：
+
+```powershell
+& .\bin\CodexFloatingBar.Workbench.exe `
+  --export-once `
+  '--listen-address=127.0.0.1:0'
+```
+
 工作台会根据 `ui/workbench` 内全部静态文件的规范化路径和内容计算 SHA-256 指纹。
-导出采用临时目录和原子切换；导出失败时保留上一份可用 UI。
+导出会先做 preflight；资源未变化时直接复用现有 56 张 PNG。冷路径最多启动 4 个
+Edge atlas 渲染，再按固定矩形裁图；导出采用临时目录、完整回读验证和原子 manifest
+切换；失败会自动恢复旧 manifest。成功后只保留当前与上一代资产，不持久化上一份
+manifest，因此不把它当作跨重启的一键版本回滚。
+
+动效预览只属于设计工作台。导出前会强制冻结动画和 transition，并等待双帧稳定后
+测量；正式程序不会解释 CSS keyframes。开发时如需让正在运行的原生浮条监视 manifest，
+可显式传入 `--watch-ui`；正式运行默认不启动 300 ms 热加载轮询。
 
 工作台通过 `workbench` 构建标签生成独立 EXE。正式 Floating Bar 默认构建不会编译
 工作台服务器、导出端点或 Edge 进程管理代码；工作台也不会启动原生浮条、托盘、
@@ -179,8 +197,11 @@ Codex 数据监控或读取真实账户/session 数据。
 %LOCALAPPDATA%\CodexFloatingBar.Next\usage-statistics-cache.json
 ```
 
-缓存按 session 文件大小和修改时间复用结果。文件追加时从上次安全偏移继续解析；历史
-文件不会重复全量统计。缓存损坏或版本不兼容时会自动重建。
+每轮刷新只建立一次 session 文件清单，运行状态、额度和统计共享该清单。最近 session
+共用一个增量尾索引；文件追加时只读取安全偏移后的新增字节，partial line、truncate 和
+原子替换会自动回退到安全重读。config、auth、session 和 logs 分字段失效，session 已
+提供某字段时不会因备用日志变化而重读日志尾部。历史统计按文件元数据复用；缓存损坏
+或版本不兼容时会自动重建。
 
 ## 项目结构
 
@@ -202,6 +223,8 @@ Codex 数据监控或读取真实账户/session 数据。
 - [P0 架构验证](docs/native-p0-report.md)
 - [P2 数据与 UI 合成](docs/native-p2-report.md)
 - [P3 系统集成](docs/native-p3-report.md)
+- [CPU、缓存、导出与动效优化评估](docs/optimization-evaluation-2026-08-19.md)
+- [原生动效评估](docs/native-motion-evaluation.md)
 - [Beta 发布与回滚](docs/native-beta-release.md)
 
 ## 发布

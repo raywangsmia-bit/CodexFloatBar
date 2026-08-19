@@ -31,12 +31,19 @@ const (
 	usageToastSurfaceID          = "usage-toast"
 	pollTimerID                  = 1
 	animationTimerID             = 2
+	usageToastAnimationTimerID   = 3
 	usageToastTimerID            = 4
 	trayRetryTimerID             = 5
 	accountExpiryReminderTimerID = 6
-	animationSteps               = 10
 	auxiliaryGapLogical          = 8
+	usageToastOffsetLogical      = 6
 	trayRetryLimit               = 5
+	mainWindowAnimationDuration  = 160 * time.Millisecond
+	usageToastShowDuration       = 180 * time.Millisecond
+	usageToastHideDuration       = 130 * time.Millisecond
+	usageToastVisibleDuration    = 4 * time.Second
+	mainWindowAnimationTick      = 16 * time.Millisecond
+	usageToastAnimationTick      = 17 * time.Millisecond
 )
 
 type windowRole uint8
@@ -54,6 +61,72 @@ type auxiliaryWindow struct {
 	SurfaceID      string
 	Title          string
 	CurrentSurface *renderedSurface
+	Visibility     auxiliaryVisibility
+	Dirty          bool
+}
+
+type auxiliaryVisibility uint8
+
+const (
+	auxiliaryHidden auxiliaryVisibility = iota
+	auxiliaryShowing
+	auxiliaryVisible
+	auxiliaryHiding
+)
+
+type toastVisibilityEvent uint8
+
+const (
+	toastShowRequested toastVisibilityEvent = iota
+	toastHideRequested
+	toastAnimationCompleted
+)
+
+func transitionToastVisibility(
+	current auxiliaryVisibility,
+	event toastVisibilityEvent,
+) auxiliaryVisibility {
+	switch event {
+	case toastShowRequested:
+		if current == auxiliaryHidden || current == auxiliaryHiding {
+			return auxiliaryShowing
+		}
+	case toastHideRequested:
+		if current == auxiliaryShowing || current == auxiliaryVisible {
+			return auxiliaryHiding
+		}
+	case toastAnimationCompleted:
+		if current == auxiliaryShowing {
+			return auxiliaryVisible
+		}
+		if current == auxiliaryHiding {
+			return auxiliaryHidden
+		}
+	}
+	return current
+}
+
+type timerSyncAction uint8
+
+const (
+	timerSyncNone timerSyncAction = iota
+	timerSyncStart
+	timerSyncStop
+)
+
+func autoCollapseTimerSyncAction(
+	enabled bool,
+	mainVisible bool,
+	running bool,
+) timerSyncAction {
+	shouldRun := enabled && mainVisible
+	if shouldRun && !running {
+		return timerSyncStart
+	}
+	if !shouldRun && running {
+		return timerSyncStop
+	}
+	return timerSyncNone
 }
 
 type nativeApp struct {
@@ -72,12 +145,16 @@ type nativeApp struct {
 	lastManifestState             fileState
 	stopWatching                  chan struct{}
 	stopOnce                      sync.Once
+	watchBundleEnabled            bool
 	autoCollapseEnabled           bool
+	autoCollapseTimerRunning      bool
 	collapsed                     bool
 	expandedPosition              geometryPoint
 	hasExpandedPosition           bool
 	awayPolls                     int
 	animation                     windowAnimation
+	usageToastAnimation           toastWindowAnimation
+	animationsEnabled             bool
 	windowClass                   string
 	mutexName                     string
 	placementDisabled             bool
@@ -110,8 +187,34 @@ type windowAnimation struct {
 	active        bool
 	start         geometryPoint
 	target        geometryPoint
-	step          int
+	startedAt     time.Time
+	duration      time.Duration
 	endsCollapsed bool
+}
+
+type toastWindowAnimation struct {
+	active          bool
+	startedAt       time.Time
+	duration        time.Duration
+	startPosition   geometryPoint
+	targetPosition  geometryPoint
+	stablePosition  geometryPoint
+	currentPosition geometryPoint
+	startAlpha      byte
+	targetAlpha     byte
+	currentAlpha    byte
+	targetState     auxiliaryVisibility
+}
+
+type toastAnimationRequest struct {
+	startedAt      time.Time
+	startPosition  geometryPoint
+	targetPosition geometryPoint
+	stablePosition geometryPoint
+	startAlpha     byte
+	targetAlpha    byte
+	targetState    auxiliaryVisibility
+	baseDuration   time.Duration
 }
 
 type fileState struct {
@@ -143,6 +246,7 @@ func newNativeApp(bundleRoot string, surfaceID string, startedAt time.Time) *nat
 		process:            newProcessRuntime(),
 		appearance:         newAppearanceRuntime(),
 		startedAt:          startedAt,
+		animationsEnabled:  true,
 		followCodexEnabled: true,
 		statisticsWindow: auxiliaryWindow{
 			Role:      windowRoleStatistics,
@@ -189,6 +293,7 @@ func (app *nativeApp) run() error {
 	defer windows.CloseHandle(app.mutex)
 
 	setProcessDPIAware()
+	app.animationsEnabled = nativeAnimationsEnabled()
 	startupDPI := systemDPI()
 	if app.appearance != nil {
 		if err := app.appearance.load(startupDPI); err != nil {
@@ -231,12 +336,6 @@ func (app *nativeApp) run() error {
 	if err := app.createWindow(initial); err != nil {
 		return err
 	}
-	if app.autoCollapseEnabled && !setNativeTimer(app.window, pollTimerID, 250) {
-		app.autoCollapseEnabled = false
-		if app.appearance != nil {
-			app.appearance.setAutoCollapse(false)
-		}
-	}
 	app.scheduleAccountExpiryReminder(time.Now())
 	app.savePlacement()
 	if err := app.startStatusMonitor(); err != nil {
@@ -255,6 +354,7 @@ func (app *nativeApp) run() error {
 	previouslyVisible, _, _ := procShowWindow.Call(app.window, swShow)
 	valid, _, _ := procIsWindow.Call(app.window)
 	visible, _, _ := procIsWindowVisible.Call(app.window)
+	app.syncAutoCollapseTimer(visible != 0)
 	log.Printf(
 		"window ready hwnd=0x%x previously-visible=%t valid=%t visible=%t",
 		app.window,
@@ -264,7 +364,7 @@ func (app *nativeApp) run() error {
 	)
 	defer app.deleteTrayIcon()
 	procPostMessageW.Call(app.window, wmNativeInitialize, 0, 0)
-	go app.watchBundle()
+	app.startBundleWatcher()
 
 	if err := runMessageLoop(); err != nil {
 		return err
@@ -439,6 +539,14 @@ func (app *nativeApp) reloadSurface() {
 }
 
 func (app *nativeApp) reloadSurfaceAtDPI(dpi uint32) {
+	app.reloadSurfaceAtDPIWithMode(dpi, false)
+}
+
+func (app *nativeApp) reloadStatusSurfaces() {
+	app.reloadSurfaceAtDPIWithMode(app.windowDPI(app.window), true)
+}
+
+func (app *nativeApp) reloadSurfaceAtDPIWithMode(dpi uint32, statusOnly bool) {
 	manifest, err := readManifest(app.bundleRoot)
 	if err != nil {
 		log.Printf("keeping previous UI after reload error: %v", err)
@@ -450,28 +558,63 @@ func (app *nativeApp) reloadSurfaceAtDPI(dpi uint32) {
 		log.Printf("keeping previous UI after reload error: %v", err)
 		return
 	}
-	nextStatistics, err := app.loadAuxiliarySurface(
-		manifest,
-		&app.statisticsWindow,
-		app.auxiliaryDPI(&app.statisticsWindow, dpi),
-	)
-	if err != nil {
-		log.Printf("keeping previous UI after statistics reload error: %v", err)
-		return
+	if !statusOnly {
+		app.settleUsageToastAnimation()
 	}
-	nextUsageToast, err := app.loadAuxiliarySurface(
-		manifest,
-		&app.usageToastWindow,
-		app.auxiliaryDPI(&app.usageToastWindow, dpi),
-	)
-	if err != nil {
-		log.Printf("keeping previous UI after usage toast reload error: %v", err)
-		return
+	var nextStatistics *renderedSurface
+	if !statusOnly || app.shouldComposeAuxiliaryStatus(&app.statisticsWindow) {
+		nextStatistics, err = app.loadAuxiliarySurface(
+			manifest,
+			&app.statisticsWindow,
+			app.auxiliaryDPI(&app.statisticsWindow, dpi),
+		)
+		if err != nil {
+			log.Printf("keeping previous UI after statistics reload error: %v", err)
+			return
+		}
+	} else if app.statisticsWindow.Handle != 0 {
+		app.statisticsWindow.Dirty = true
 	}
-
-	wasAnimating := app.animation.active
-	keepCollapsed := app.collapsed && !wasAnimating && app.hasExpandedPosition
-	clearCollapsedState := wasAnimating || (app.collapsed && !keepCollapsed)
+	var nextUsageToast *renderedSurface
+	nextUsageToastSurfaceID := app.usageToastWindow.SurfaceID
+	if !statusOnly || app.shouldComposeAuxiliaryStatus(&app.usageToastWindow) {
+		if !statusOnly && app.accountExpiryToastActive &&
+			app.usageToastWindow.Handle != 0 {
+			theme := appsettings.ThemeDark
+			if app.appearance != nil {
+				theme = app.appearance.current.Theme
+			}
+			nextUsageToastSurfaceID = resolveUsageToastSurfaceID(
+				manifest,
+				theme,
+				quotaToneWarn,
+			)
+			presentation := app.accountExpiryToastPresentation()
+			nextUsageToast, err = app.loadComposedSurfaceWithPresentation(
+				manifest,
+				nextUsageToastSurfaceID,
+				app.auxiliaryDPI(&app.usageToastWindow, dpi),
+				&presentation,
+			)
+		} else {
+			nextUsageToast, err = app.loadAuxiliarySurface(
+				manifest,
+				&app.usageToastWindow,
+				app.auxiliaryDPI(&app.usageToastWindow, dpi),
+			)
+		}
+		if err != nil {
+			log.Printf("keeping previous UI after usage toast reload error: %v", err)
+			return
+		}
+	} else if app.usageToastWindow.Handle != 0 {
+		app.usageToastWindow.Dirty = true
+	}
+	animationInProgress := app.animation.active
+	wasAnimating := animationInProgress && !statusOnly
+	keepCollapsed := app.collapsed && !animationInProgress && app.hasExpandedPosition
+	clearCollapsedState := !statusOnly &&
+		(wasAnimating || (app.collapsed && !keepCollapsed))
 	nextExpandedPosition := app.expandedPosition
 	updateExpandedPosition := false
 	geometry, ok := app.currentGeometry()
@@ -479,19 +622,24 @@ func (app *nativeApp) reloadSurfaceAtDPI(dpi uint32) {
 		log.Print("keeping previous UI because the window geometry is unavailable")
 		return
 	}
-	if (app.collapsed || wasAnimating) && app.hasExpandedPosition {
+	if ((app.collapsed && !animationInProgress) || wasAnimating) && app.hasExpandedPosition {
 		geometry.X = app.expandedPosition.X
 		geometry.Y = app.expandedPosition.Y
 	}
 	areas := enumerateWorkAreas()
 	area, foundArea := bestIntersectingWorkArea(geometry, areas)
 	if foundArea {
-		geometry = resizeGeometryPreservingDock(
-			geometry,
-			surface.Variant.Width,
-			surface.Variant.Height,
-			area,
-		)
+		if statusOnly && animationInProgress {
+			geometry.Width = surface.Variant.Width
+			geometry.Height = surface.Variant.Height
+		} else {
+			geometry = resizeGeometryPreservingDock(
+				geometry,
+				surface.Variant.Width,
+				surface.Variant.Height,
+				area,
+			)
+		}
 		expandedPosition := geometryPoint{X: geometry.X, Y: geometry.Y}
 		if keepCollapsed {
 			collapsed, canCollapse := collapsedPositionForWorkAreas(
@@ -524,12 +672,20 @@ func (app *nativeApp) reloadSurfaceAtDPI(dpi uint32) {
 	}}
 	auxiliaryPositions := map[windowRole]windowGeometry{}
 	if foundArea {
+		statisticsLayoutSurface := nextStatistics
+		if statisticsLayoutSurface == nil {
+			statisticsLayoutSurface = app.statisticsWindow.CurrentSurface
+		}
+		usageToastLayoutSurface := nextUsageToast
+		if usageToastLayoutSurface == nil {
+			usageToastLayoutSurface = app.usageToastWindow.CurrentSurface
+		}
 		auxiliaryPositions = app.dockedAuxiliaryPositions(
 			geometry,
 			area,
 			surface,
-			nextStatistics,
-			nextUsageToast,
+			statisticsLayoutSurface,
+			usageToastLayoutSurface,
 			windowRoleUnknown,
 		)
 	}
@@ -565,10 +721,12 @@ func (app *nativeApp) reloadSurfaceAtDPI(dpi uint32) {
 	app.currentSurface = surface
 	if nextStatistics != nil {
 		app.statisticsWindow.CurrentSurface = nextStatistics
+		app.statisticsWindow.Dirty = false
 	}
 	if nextUsageToast != nil {
+		app.usageToastWindow.SurfaceID = nextUsageToastSurfaceID
 		app.usageToastWindow.CurrentSurface = nextUsageToast
-		app.accountExpiryToastActive = false
+		app.usageToastWindow.Dirty = false
 	}
 	log.Printf(
 		"loaded %s at %.0f%% (%dx%d), page BUILD %s, static %s, windows=%d",
@@ -580,6 +738,16 @@ func (app *nativeApp) reloadSurfaceAtDPI(dpi uint32) {
 		surface.Manifest.Version.StaticVersion,
 		len(updates),
 	)
+}
+
+func (app *nativeApp) shouldComposeAuxiliaryStatus(auxiliary *auxiliaryWindow) bool {
+	if auxiliary == nil || auxiliary.Handle == 0 {
+		return false
+	}
+	if auxiliary.Role == windowRoleUsageToast {
+		return auxiliary.Visibility == auxiliaryVisible && !app.accountExpiryToastActive
+	}
+	return auxiliary.Visibility == auxiliaryVisible
 }
 
 func (app *nativeApp) loadAuxiliarySurface(
@@ -734,10 +902,15 @@ func (app *nativeApp) ensureAuxiliaryWindow(auxiliary *auxiliaryWindow) error {
 	if auxiliary.Handle != 0 {
 		valid, _, _ := procIsWindow.Call(auxiliary.Handle)
 		if valid != 0 {
+			if auxiliary.Dirty {
+				return app.refreshAuxiliaryWindow(auxiliary)
+			}
 			return nil
 		}
 		auxiliary.Handle = 0
 		auxiliary.CurrentSurface = nil
+		auxiliary.Visibility = auxiliaryHidden
+		auxiliary.Dirty = false
 	}
 	if app.currentSurface == nil {
 		return errors.New("the main surface is unavailable")
@@ -843,6 +1016,8 @@ func (app *nativeApp) ensureAuxiliaryWindow(auxiliary *auxiliaryWindow) error {
 		return err
 	}
 	auxiliary.CurrentSurface = surface
+	auxiliary.Visibility = auxiliaryHidden
+	auxiliary.Dirty = false
 	log.Printf(
 		"created %s hwnd=0x%x at %.0f%%, page BUILD %s, static %s",
 		auxiliary.SurfaceID,
@@ -854,24 +1029,59 @@ func (app *nativeApp) ensureAuxiliaryWindow(auxiliary *auxiliaryWindow) error {
 	return nil
 }
 
+func (app *nativeApp) refreshAuxiliaryWindow(auxiliary *auxiliaryWindow) error {
+	if auxiliary == nil || auxiliary.Handle == 0 || app.currentSurface == nil {
+		return errors.New("the auxiliary window is unavailable")
+	}
+	surface, err := app.loadComposedSurface(
+		app.currentSurface.Manifest,
+		auxiliary.SurfaceID,
+		app.windowDPI(auxiliary.Handle),
+	)
+	if err != nil {
+		return err
+	}
+	position := app.currentWindowPosition(auxiliary.Handle)
+	alpha := byte(255)
+	if auxiliary.Role == windowRoleUsageToast && app.usageToastAnimation.active {
+		alpha = app.usageToastAnimation.currentAlpha
+	}
+	if err := updateLayeredWindowWithAlpha(
+		auxiliary.Handle,
+		surface.Image,
+		position,
+		alpha,
+	); err != nil {
+		return err
+	}
+	auxiliary.CurrentSurface = surface
+	auxiliary.Dirty = false
+	return nil
+}
+
 func (app *nativeApp) toggleStatistics() {
 	app.expandImmediately()
 	if err := app.ensureAuxiliaryWindow(&app.statisticsWindow); err != nil {
 		log.Printf("showing statistics: %v", err)
 		return
 	}
-	if nativeWindowVisible(app.statisticsWindow.Handle) {
+	if app.statisticsWindow.Visibility != auxiliaryHidden ||
+		nativeWindowVisible(app.statisticsWindow.Handle) {
 		app.hideAuxiliaryWindow(&app.statisticsWindow)
 		return
 	}
 	app.repositionAuxiliaryWindows(windowRoleStatistics)
 	procShowWindow.Call(app.statisticsWindow.Handle, swShow)
+	app.statisticsWindow.Visibility = auxiliaryVisible
 	app.repositionAuxiliaryWindows(windowRoleUnknown)
 }
 
 func (app *nativeApp) showUsageToast() {
 	if app.accountExpiryToastActive {
 		app.restoreAccountExpiryToast()
+		if app.usageToastWindow.Visibility != auxiliaryHidden {
+			app.adoptRenderedUsageToastAsVisible()
+		}
 	}
 	app.displayUsageToast()
 }
@@ -882,15 +1092,34 @@ func (app *nativeApp) displayUsageToast() {
 		log.Printf("showing usage toast: %v", err)
 		return
 	}
-	app.repositionAuxiliaryWindows(windowRoleUsageToast)
-	procShowWindow.Call(app.usageToastWindow.Handle, swShowNoActivate)
-	procKillTimer.Call(app.usageToastWindow.Handle, usageToastTimerID)
-	setNativeTimer(app.usageToastWindow.Handle, usageToastTimerID, 4000)
-	app.repositionAuxiliaryWindows(windowRoleUnknown)
+	if app.accountExpiryToastActive &&
+		app.usageToastWindow.Visibility != auxiliaryHidden {
+		app.adoptRenderedUsageToastAsVisible()
+		return
+	}
+	app.startUsageToastShow(time.Now())
+}
+
+func (app *nativeApp) adoptRenderedUsageToastAsVisible() {
+	toast := &app.usageToastWindow
+	if toast.Handle == 0 {
+		return
+	}
+	procKillTimer.Call(toast.Handle, usageToastAnimationTimerID)
+	position := app.currentWindowPosition(toast.Handle)
+	toast.Visibility = auxiliaryVisible
+	app.usageToastAnimation = toastWindowAnimation{
+		stablePosition:  position,
+		currentPosition: position,
+		currentAlpha:    255,
+	}
+	procShowWindow.Call(toast.Handle, swShowNoActivate)
+	app.startUsageToastAutoHideTimer()
 }
 
 func (app *nativeApp) toggleUsageToast() {
-	if nativeWindowVisible(app.usageToastWindow.Handle) {
+	if app.usageToastWindow.Visibility == auxiliaryShowing ||
+		app.usageToastWindow.Visibility == auxiliaryVisible {
 		app.hideAuxiliaryWindow(&app.usageToastWindow)
 		return
 	}
@@ -902,13 +1131,321 @@ func (app *nativeApp) hideAuxiliaryWindow(auxiliary *auxiliaryWindow) {
 		return
 	}
 	if auxiliary.Role == windowRoleUsageToast {
-		procKillTimer.Call(auxiliary.Handle, usageToastTimerID)
+		app.startUsageToastHide(time.Now())
+		return
 	}
 	procShowWindow.Call(auxiliary.Handle, swHide)
-	if auxiliary.Role == windowRoleUsageToast && app.accountExpiryToastActive {
+	auxiliary.Visibility = auxiliaryHidden
+	app.repositionAuxiliaryWindows(windowRoleUnknown)
+}
+
+func (app *nativeApp) startUsageToastShow(now time.Time) {
+	toast := &app.usageToastWindow
+	if toast.Handle == 0 || toast.CurrentSurface == nil {
+		return
+	}
+	procKillTimer.Call(toast.Handle, usageToastTimerID)
+	nextVisibility := transitionToastVisibility(toast.Visibility, toastShowRequested)
+	if nextVisibility == toast.Visibility {
+		switch toast.Visibility {
+		case auxiliaryVisible:
+			app.startUsageToastAutoHideTimer()
+		case auxiliaryShowing:
+		}
+		return
+	}
+
+	stable := app.usageToastAnimation.stablePosition
+	start := app.currentWindowPosition(toast.Handle)
+	startAlpha := byte(0)
+	if toast.Visibility == auxiliaryHiding && app.usageToastAnimation.active {
+		start = app.usageToastAnimation.currentPosition
+		startAlpha = app.usageToastAnimation.currentAlpha
+	} else {
+		app.repositionAuxiliaryWindows(windowRoleUsageToast)
+		stable = app.currentWindowPosition(toast.Handle)
+		if !app.animationsEnabled {
+			app.showUsageToastImmediately(stable)
+			return
+		}
+		distance := max(
+			1,
+			int(float64(usageToastOffsetLogical)*toast.CurrentSurface.Variant.Scale+0.5),
+		)
+		mainGeometry, ok := app.currentGeometry()
+		if ok {
+			start = toastShowStartPosition(
+				stable,
+				mainGeometry,
+				geometrySize{
+					Width:  toast.CurrentSurface.Variant.Width,
+					Height: toast.CurrentSurface.Variant.Height,
+				},
+				distance,
+			)
+		} else {
+			start = stable
+		}
+		if err := updateLayeredWindowWithAlpha(
+			toast.Handle,
+			toast.CurrentSurface.Image,
+			start,
+			0,
+		); err != nil {
+			log.Printf("preparing usage toast animation: %v", err)
+			app.showUsageToastImmediately(stable)
+			return
+		}
+		procShowWindow.Call(toast.Handle, swShowNoActivate)
+	}
+
+	if !app.animationsEnabled {
+		app.showUsageToastImmediately(stable)
+		return
+	}
+	app.beginUsageToastAnimation(toastAnimationRequest{
+		startedAt:      now,
+		startPosition:  start,
+		targetPosition: stable,
+		stablePosition: stable,
+		startAlpha:     startAlpha,
+		targetAlpha:    255,
+		targetState:    auxiliaryVisible,
+		baseDuration:   usageToastShowDuration,
+	})
+}
+
+func (app *nativeApp) startUsageToastHide(now time.Time) {
+	toast := &app.usageToastWindow
+	if toast.Handle == 0 ||
+		transitionToastVisibility(toast.Visibility, toastHideRequested) == toast.Visibility {
+		return
+	}
+	procKillTimer.Call(toast.Handle, usageToastTimerID)
+	position := app.currentWindowPosition(toast.Handle)
+	alpha := byte(255)
+	stable := position
+	if app.usageToastAnimation.active {
+		position = app.usageToastAnimation.currentPosition
+		alpha = app.usageToastAnimation.currentAlpha
+		stable = app.usageToastAnimation.stablePosition
+	}
+	if !app.animationsEnabled {
+		app.hideUsageToastImmediately()
+		return
+	}
+	app.beginUsageToastAnimation(toastAnimationRequest{
+		startedAt:      now,
+		startPosition:  position,
+		targetPosition: position,
+		stablePosition: stable,
+		startAlpha:     alpha,
+		targetAlpha:    0,
+		targetState:    auxiliaryHidden,
+		baseDuration:   usageToastHideDuration,
+	})
+}
+
+func (app *nativeApp) beginUsageToastAnimation(request toastAnimationRequest) {
+	duration := scaledAlphaDuration(
+		request.baseDuration,
+		request.startAlpha,
+		request.targetAlpha,
+	)
+	app.usageToastAnimation = toastWindowAnimation{
+		active:          true,
+		startedAt:       request.startedAt,
+		duration:        duration,
+		startPosition:   request.startPosition,
+		targetPosition:  request.targetPosition,
+		stablePosition:  request.stablePosition,
+		currentPosition: request.startPosition,
+		startAlpha:      request.startAlpha,
+		targetAlpha:     request.targetAlpha,
+		currentAlpha:    request.startAlpha,
+		targetState:     request.targetState,
+	}
+	if request.targetState == auxiliaryVisible {
+		app.usageToastWindow.Visibility = transitionToastVisibility(
+			app.usageToastWindow.Visibility,
+			toastShowRequested,
+		)
+	} else {
+		app.usageToastWindow.Visibility = transitionToastVisibility(
+			app.usageToastWindow.Visibility,
+			toastHideRequested,
+		)
+	}
+	interval := uint32(usageToastAnimationTick / time.Millisecond)
+	if !setNativeTimer(app.usageToastWindow.Handle, usageToastAnimationTimerID, interval) {
+		app.settleUsageToastAnimation()
+	}
+}
+
+func scaledAlphaDuration(base time.Duration, start byte, target byte) time.Duration {
+	distance := abs(int(target) - int(start))
+	if distance == 0 {
+		return 0
+	}
+	return max(time.Millisecond, time.Duration(int64(base)*int64(distance)/255))
+}
+
+func (app *nativeApp) advanceUsageToastAnimation() {
+	app.advanceUsageToastAnimationAt(time.Now())
+}
+
+func (app *nativeApp) advanceUsageToastAnimationAt(now time.Time) {
+	animation := app.usageToastAnimation
+	if !animation.active {
+		procKillTimer.Call(app.usageToastWindow.Handle, usageToastAnimationTimerID)
+		return
+	}
+	position, alpha, complete := toastAnimationFrame(animation, now)
+	if app.usageToastWindow.CurrentSurface == nil {
+		app.settleUsageToastAnimation()
+		return
+	}
+	if err := updateLayeredWindowWithAlpha(
+		app.usageToastWindow.Handle,
+		app.usageToastWindow.CurrentSurface.Image,
+		position,
+		alpha,
+	); err != nil {
+		log.Printf("animating usage toast: %v", err)
+		app.settleUsageToastAnimation()
+		return
+	}
+	app.usageToastAnimation.currentPosition = position
+	app.usageToastAnimation.currentAlpha = alpha
+	if complete {
+		app.settleUsageToastAnimation()
+	}
+}
+
+func toastAnimationFrame(
+	animation toastWindowAnimation,
+	now time.Time,
+) (geometryPoint, byte, bool) {
+	progress := timedAnimationProgress(animation.startedAt, animation.duration, now)
+	position := interpolateAnimationPosition(
+		animation.startPosition,
+		animation.targetPosition,
+		progress,
+	)
+	alpha := interpolateAnimationAlpha(animation.startAlpha, animation.targetAlpha, progress)
+	return position, alpha, progress >= 1
+}
+
+func interpolateAnimationAlpha(start byte, target byte, progress float64) byte {
+	progress = max(0, min(progress, 1))
+	value := float64(start) + float64(int(target)-int(start))*progress
+	return byte(max(0, min(255, int(value+0.5))))
+}
+
+func toastShowStartPosition(
+	stable geometryPoint,
+	anchor windowGeometry,
+	toast geometrySize,
+	distance int,
+) geometryPoint {
+	distance = max(0, distance)
+	anchorCenterX := anchor.X*2 + anchor.Width
+	anchorCenterY := anchor.Y*2 + anchor.Height
+	toastCenterX := stable.X*2 + toast.Width
+	toastCenterY := stable.Y*2 + toast.Height
+	deltaX := toastCenterX - anchorCenterX
+	deltaY := toastCenterY - anchorCenterY
+	start := stable
+	if abs(deltaX) > abs(deltaY) {
+		if deltaX < 0 {
+			start.X += distance
+		} else {
+			start.X -= distance
+		}
+		return start
+	}
+	if deltaY < 0 {
+		start.Y += distance
+	} else {
+		start.Y -= distance
+	}
+	return start
+}
+
+func (app *nativeApp) settleUsageToastAnimation() {
+	if !app.usageToastAnimation.active {
+		return
+	}
+	if app.usageToastAnimation.targetState == auxiliaryVisible {
+		app.showUsageToastImmediately(app.usageToastAnimation.stablePosition)
+		return
+	}
+	app.hideUsageToastImmediately()
+}
+
+func (app *nativeApp) showUsageToastImmediately(position geometryPoint) {
+	toast := &app.usageToastWindow
+	procKillTimer.Call(toast.Handle, usageToastAnimationTimerID)
+	if toast.Handle == 0 || toast.CurrentSurface == nil {
+		toast.Visibility = auxiliaryHidden
+		app.usageToastAnimation = toastWindowAnimation{}
+		return
+	}
+	if toast.Dirty && !app.accountExpiryToastActive {
+		if err := app.refreshAuxiliaryWindow(toast); err != nil {
+			log.Printf("refreshing usage toast before show completion: %v", err)
+		}
+	}
+	if err := updateLayeredWindowWithAlpha(
+		toast.Handle,
+		toast.CurrentSurface.Image,
+		position,
+		255,
+	); err != nil {
+		log.Printf("finishing usage toast show: %v", err)
+	}
+	procShowWindow.Call(toast.Handle, swShowNoActivate)
+	toast.Visibility = auxiliaryVisible
+	app.usageToastAnimation = toastWindowAnimation{
+		stablePosition:  position,
+		currentPosition: position,
+		currentAlpha:    255,
+	}
+	app.startUsageToastAutoHideTimer()
+}
+
+func (app *nativeApp) hideUsageToastImmediately() {
+	toast := &app.usageToastWindow
+	if toast.Handle == 0 {
+		toast.Visibility = auxiliaryHidden
+		app.usageToastAnimation = toastWindowAnimation{}
+		return
+	}
+	procKillTimer.Call(toast.Handle, usageToastAnimationTimerID)
+	procKillTimer.Call(toast.Handle, usageToastTimerID)
+	procShowWindow.Call(toast.Handle, swHide)
+	toast.Visibility = auxiliaryHidden
+	app.usageToastAnimation = toastWindowAnimation{}
+	if app.accountExpiryToastActive {
 		app.restoreAccountExpiryToast()
+		if !app.accountExpiryToastActive {
+			toast.Dirty = false
+		}
 	}
 	app.repositionAuxiliaryWindows(windowRoleUnknown)
+}
+
+func (app *nativeApp) startUsageToastAutoHideTimer() {
+	if app.usageToastWindow.Handle == 0 ||
+		app.usageToastWindow.Visibility != auxiliaryVisible {
+		return
+	}
+	procKillTimer.Call(app.usageToastWindow.Handle, usageToastTimerID)
+	setNativeTimer(
+		app.usageToastWindow.Handle,
+		usageToastTimerID,
+		uint32(usageToastVisibleDuration/time.Millisecond),
+	)
 }
 
 func (app *nativeApp) hideAllWindows() {
@@ -923,7 +1460,8 @@ func (app *nativeApp) hideForCodexUnavailable() {
 func (app *nativeApp) hideWindows() {
 	app.expandImmediately()
 	app.hideAuxiliaryWindow(&app.statisticsWindow)
-	app.hideAuxiliaryWindow(&app.usageToastWindow)
+	app.hideUsageToastImmediately()
+	app.syncAutoCollapseTimer(false)
 	procShowWindow.Call(app.window, swHide)
 }
 
@@ -932,6 +1470,7 @@ func (app *nativeApp) showMainWindow() {
 	app.expandImmediately()
 	procShowWindow.Call(app.window, swRestore)
 	procShowWindow.Call(app.window, swShow)
+	app.syncAutoCollapseTimer(nativeWindowVisible(app.window))
 	procSetForegroundWindow.Call(app.window)
 }
 
@@ -941,6 +1480,7 @@ func (app *nativeApp) showMainWindowForCodex() {
 	}
 	app.expandImmediately()
 	procShowWindow.Call(app.window, swShowNoActivate)
+	app.syncAutoCollapseTimer(nativeWindowVisible(app.window))
 }
 
 func (app *nativeApp) applyCodexProcessStatus(running bool, visible bool) {
@@ -975,6 +1515,12 @@ func (app *nativeApp) destroyAuxiliaryWindows() {
 		if auxiliary.Handle == 0 {
 			continue
 		}
+		if auxiliary.Role == windowRoleUsageToast {
+			procKillTimer.Call(auxiliary.Handle, usageToastAnimationTimerID)
+			procKillTimer.Call(auxiliary.Handle, usageToastTimerID)
+			auxiliary.Visibility = auxiliaryHidden
+			app.usageToastAnimation = toastWindowAnimation{}
+		}
 		procDestroyWindow.Call(auxiliary.Handle)
 	}
 }
@@ -1004,6 +1550,11 @@ func (app *nativeApp) repositionAuxiliaryWindows(pending windowRole) {
 		if auxiliary == nil || auxiliary.Handle == 0 {
 			continue
 		}
+		position := geometryPoint{X: geometry.X, Y: geometry.Y}
+		if role == windowRoleUsageToast && app.usageToastAnimation.active {
+			app.retargetUsageToastAnimation(position)
+			continue
+		}
 		procSetWindowPos.Call(
 			auxiliary.Handle,
 			0,
@@ -1013,6 +1564,39 @@ func (app *nativeApp) repositionAuxiliaryWindows(pending windowRole) {
 			0,
 			swpNoSize|swpNoZOrder|swpNoActivate,
 		)
+		if role == windowRoleUsageToast && auxiliary.Visibility == auxiliaryVisible {
+			app.usageToastAnimation.stablePosition = position
+			app.usageToastAnimation.currentPosition = position
+		}
+	}
+}
+
+func (app *nativeApp) retargetUsageToastAnimation(stable geometryPoint) {
+	animation := &app.usageToastAnimation
+	if !animation.active {
+		return
+	}
+	delta := geometryPoint{
+		X: stable.X - animation.stablePosition.X,
+		Y: stable.Y - animation.stablePosition.Y,
+	}
+	animation.stablePosition = stable
+	animation.startPosition.X += delta.X
+	animation.startPosition.Y += delta.Y
+	animation.targetPosition.X += delta.X
+	animation.targetPosition.Y += delta.Y
+	animation.currentPosition.X += delta.X
+	animation.currentPosition.Y += delta.Y
+	if app.usageToastWindow.CurrentSurface == nil {
+		return
+	}
+	if err := updateLayeredWindowWithAlpha(
+		app.usageToastWindow.Handle,
+		app.usageToastWindow.CurrentSurface.Image,
+		animation.currentPosition,
+		animation.currentAlpha,
+	); err != nil {
+		log.Printf("retargeting usage toast animation: %v", err)
 	}
 }
 
@@ -1036,7 +1620,7 @@ func (app *nativeApp) dockedAuxiliaryPositions(
 		if auxiliary.Role == windowRoleStatistics && app.statisticsDetached {
 			return
 		}
-		visible := auxiliary.Handle != 0 && nativeWindowVisible(auxiliary.Handle)
+		visible := auxiliary.Handle != 0 && auxiliary.Visibility != auxiliaryHidden
 		if !visible && auxiliary.Role != pending {
 			return
 		}
@@ -1153,6 +1737,17 @@ func (app *nativeApp) watchBundle() {
 			return
 		}
 	}
+}
+
+func (app *nativeApp) startBundleWatcher() {
+	if !app.watchBundleEnabled {
+		return
+	}
+	manifestPath := filepath.Join(app.bundleRoot, "manifest.json")
+	if state, err := statFile(manifestPath); err == nil {
+		app.lastManifestState = state
+	}
+	go app.watchBundle()
 }
 
 func (app *nativeApp) stopWatcher() {
@@ -1576,7 +2171,34 @@ func (app *nativeApp) actionAt(clientX int32, clientY int32) string {
 }
 
 func (app *nativeApp) actionAtWindow(window uintptr, clientX int32, clientY int32) string {
-	return actionAtSurface(app.surfaceForWindow(window), clientX, clientY)
+	action := actionAtSurface(app.surfaceForWindow(window), clientX, clientY)
+	role := app.roleForWindow(window)
+	if role == windowRoleUsageToast &&
+		toastAnimationBlocksInput(app.usageToastWindow.Visibility) {
+		return ""
+	}
+	if role == windowRoleStatistics &&
+		strings.HasPrefix(action, "statistics-select-day-") &&
+		!app.statisticsDateActionEnabled(action) {
+		return ""
+	}
+	return action
+}
+
+func toastAnimationBlocksInput(visibility auxiliaryVisibility) bool {
+	return visibility == auxiliaryShowing || visibility == auxiliaryHiding
+}
+
+func (app *nativeApp) statisticsDateActionEnabled(action string) bool {
+	if app.status == nil {
+		return false
+	}
+	selection := normalizeStatisticsSelection(
+		app.status.current,
+		app.status.statistics,
+	)
+	_, valid := app.status.statisticsDayForAction(selection, action)
+	return valid
 }
 
 func actionAtSurface(surface *renderedSurface, clientX int32, clientY int32) string {
@@ -1602,6 +2224,10 @@ func (app *nativeApp) executeAction(action string) {
 }
 
 func (app *nativeApp) executeWindowAction(window uintptr, action string) {
+	if app.roleForWindow(window) == windowRoleUsageToast &&
+		toastAnimationBlocksInput(app.usageToastWindow.Visibility) {
+		return
+	}
 	if strings.HasPrefix(action, "statistics-select-day-") {
 		if app.status != nil && app.status.applyStatisticsAction(action) {
 			app.reloadSurface()
@@ -1651,8 +2277,7 @@ func (app *nativeApp) toggleAutoCollapse() {
 	app.autoCollapseEnabled = !app.autoCollapseEnabled
 	app.awayPolls = 0
 	if app.autoCollapseEnabled {
-		if !setNativeTimer(app.window, pollTimerID, 250) {
-			app.autoCollapseEnabled = false
+		if !app.syncAutoCollapseTimer(nativeWindowVisible(app.window)) {
 			return
 		}
 		log.Print("automatic edge collapse enabled")
@@ -1660,12 +2285,36 @@ func (app *nativeApp) toggleAutoCollapse() {
 		return
 	}
 
-	procKillTimer.Call(app.window, pollTimerID)
+	app.syncAutoCollapseTimer(nativeWindowVisible(app.window))
 	if app.collapsed || app.animation.active {
 		app.startExpandAnimation()
 	}
 	log.Print("automatic edge collapse disabled")
 	app.persistAutoCollapse()
+}
+
+func (app *nativeApp) syncAutoCollapseTimer(mainVisible bool) bool {
+	action := autoCollapseTimerSyncAction(
+		app.autoCollapseEnabled,
+		mainVisible,
+		app.autoCollapseTimerRunning,
+	)
+	switch action {
+	case timerSyncStart:
+		if setNativeTimer(app.window, pollTimerID, 250) {
+			app.autoCollapseTimerRunning = true
+			return true
+		}
+		app.autoCollapseEnabled = false
+		if app.appearance != nil {
+			app.appearance.setAutoCollapse(false)
+		}
+		return false
+	case timerSyncStop:
+		procKillTimer.Call(app.window, pollTimerID)
+		app.autoCollapseTimerRunning = false
+	}
+	return true
 }
 
 func (app *nativeApp) persistAutoCollapse() {
@@ -1825,7 +2474,7 @@ func setNativeTimer(window uintptr, timerID uintptr, interval uint32) bool {
 }
 
 func (app *nativeApp) pollAutoCollapse() {
-	if !app.autoCollapseEnabled || app.animation.active {
+	if !app.autoCollapseEnabled {
 		return
 	}
 	if !nativeWindowVisible(app.window) {
@@ -1846,6 +2495,27 @@ func (app *nativeApp) pollAutoCollapse() {
 	procGetCursorPos.Call(uintptr(unsafe.Pointer(&cursor)))
 	inside := int(cursor.X) >= geometry.X && int(cursor.X) < geometry.X+geometry.Width
 	inside = inside && int(cursor.Y) >= geometry.Y && int(cursor.Y) < geometry.Y+geometry.Height
+	if app.animation.active {
+		if app.animation.endsCollapsed {
+			if inside {
+				app.startExpandAnimation()
+			}
+			return
+		}
+		if inside {
+			app.awayPolls = 0
+			return
+		}
+		app.awayPolls++
+		if app.awayPolls < 6 {
+			return
+		}
+		area, ok := app.currentWorkArea()
+		if ok {
+			app.startCollapseAnimation(geometry, area)
+		}
+		return
+	}
 	if app.collapsed {
 		if inside {
 			app.startExpandAnimation()
@@ -1869,7 +2539,8 @@ func (app *nativeApp) pollAutoCollapse() {
 }
 
 func (app *nativeApp) startCollapseAnimation(geometry windowGeometry, area workArea) {
-	if app.collapsed || app.animation.active {
+	if (app.collapsed && !app.animation.active) ||
+		(app.animation.active && app.animation.endsCollapsed) {
 		return
 	}
 	target, ok := collapsedPositionForWorkAreas(
@@ -1881,13 +2552,34 @@ func (app *nativeApp) startCollapseAnimation(geometry windowGeometry, area workA
 		return
 	}
 	expandedPosition := geometryPoint{X: geometry.X, Y: geometry.Y}
+	if app.hasExpandedPosition && app.animation.active {
+		expandedPosition = app.expandedPosition
+	}
+	if !app.animationsEnabled {
+		app.expandedPosition = expandedPosition
+		app.hasExpandedPosition = true
+		app.moveMainWindow(target)
+		app.animation = windowAnimation{}
+		app.collapsed = true
+		app.awayPolls = 0
+		return
+	}
 	animation := windowAnimation{
-		active:        true,
-		start:         expandedPosition,
-		target:        target,
+		active:    true,
+		start:     expandedPosition,
+		target:    target,
+		startedAt: time.Now(),
+		duration: scaledWindowAnimationDuration(
+			geometryPoint{X: geometry.X, Y: geometry.Y},
+			target,
+			expandedPosition,
+			target,
+			mainWindowAnimationDuration,
+		),
 		endsCollapsed: true,
 	}
-	if !setNativeTimer(app.window, animationTimerID, 16) {
+	animation.start = geometryPoint{X: geometry.X, Y: geometry.Y}
+	if !setNativeTimer(app.window, animationTimerID, uint32(mainWindowAnimationTick/time.Millisecond)) {
 		return
 	}
 	app.expandedPosition = expandedPosition
@@ -1897,48 +2589,60 @@ func (app *nativeApp) startCollapseAnimation(geometry windowGeometry, area workA
 }
 
 func (app *nativeApp) startExpandAnimation() {
-	if !app.hasExpandedPosition {
+	if !app.hasExpandedPosition || (app.animation.active && !app.animation.endsCollapsed) {
 		return
 	}
 	geometry, ok := app.currentGeometry()
 	if !ok {
 		return
 	}
+	start := geometryPoint{X: geometry.X, Y: geometry.Y}
+	collapsedTarget := start
+	if app.animation.active && app.animation.endsCollapsed {
+		collapsedTarget = app.animation.target
+	}
+	if !app.animationsEnabled {
+		app.moveMainWindow(app.expandedPosition)
+		app.animation = windowAnimation{}
+		app.collapsed = false
+		app.awayPolls = 0
+		app.savePlacement()
+		return
+	}
 	animation := windowAnimation{
-		active:        true,
-		start:         geometryPoint{X: geometry.X, Y: geometry.Y},
-		target:        app.expandedPosition,
+		active:    true,
+		start:     start,
+		target:    app.expandedPosition,
+		startedAt: time.Now(),
+		duration: scaledWindowAnimationDuration(
+			start,
+			app.expandedPosition,
+			collapsedTarget,
+			app.expandedPosition,
+			mainWindowAnimationDuration,
+		),
 		endsCollapsed: false,
 	}
-	if !setNativeTimer(app.window, animationTimerID, 16) {
+	if !setNativeTimer(app.window, animationTimerID, uint32(mainWindowAnimationTick/time.Millisecond)) {
 		return
 	}
 	app.animation = animation
+	app.awayPolls = 0
 }
 
 func (app *nativeApp) advanceAnimation() {
+	app.advanceAnimationAt(time.Now())
+}
+
+func (app *nativeApp) advanceAnimationAt(now time.Time) {
 	if !app.animation.active {
 		procKillTimer.Call(app.window, animationTimerID)
 		return
 	}
 
-	app.animation.step++
-	position := interpolate(
-		app.animation.start,
-		app.animation.target,
-		app.animation.step,
-		animationSteps,
-	)
-	procSetWindowPos.Call(
-		app.window,
-		0,
-		signed(int32(position.X)),
-		signed(int32(position.Y)),
-		0,
-		0,
-		swpNoSize|swpNoZOrder|swpNoActivate,
-	)
-	if app.animation.step < animationSteps {
+	position, complete := windowAnimationFrame(app.animation, now)
+	app.moveMainWindow(position)
+	if !complete {
 		return
 	}
 
@@ -1948,6 +2652,78 @@ func (app *nativeApp) advanceAnimation() {
 	if !app.collapsed {
 		app.savePlacement()
 	}
+}
+
+func windowAnimationFrame(animation windowAnimation, now time.Time) (geometryPoint, bool) {
+	progress := timedAnimationProgress(animation.startedAt, animation.duration, now)
+	return interpolateAnimationPosition(animation.start, animation.target, progress), progress >= 1
+}
+
+func timedAnimationProgress(startedAt time.Time, duration time.Duration, now time.Time) float64 {
+	if duration <= 0 || !now.Before(startedAt.Add(duration)) {
+		return 1
+	}
+	if !now.After(startedAt) {
+		return 0
+	}
+	return float64(now.Sub(startedAt)) / float64(duration)
+}
+
+func scaledWindowAnimationDuration(
+	start geometryPoint,
+	target geometryPoint,
+	fullStart geometryPoint,
+	fullTarget geometryPoint,
+	fullDuration time.Duration,
+) time.Duration {
+	if fullDuration <= 0 {
+		return 0
+	}
+	fullDistance := windowAnimationDistance(fullStart, fullTarget)
+	remainingDistance := windowAnimationDistance(start, target)
+	if fullDistance <= 0 || remainingDistance <= 0 {
+		return 0
+	}
+	duration := time.Duration(
+		int64(fullDuration) * int64(remainingDistance) / int64(fullDistance),
+	)
+	return max(time.Millisecond, min(fullDuration, duration))
+}
+
+func windowAnimationDistance(start geometryPoint, target geometryPoint) int {
+	return max(abs(target.X-start.X), abs(target.Y-start.Y))
+}
+
+func interpolateAnimationPosition(
+	start geometryPoint,
+	target geometryPoint,
+	progress float64,
+) geometryPoint {
+	progress = max(0, min(progress, 1))
+	eased := 1 - (1-progress)*(1-progress)*(1-progress)
+	return geometryPoint{
+		X: start.X + int(float64(target.X-start.X)*eased+roundingBias(target.X-start.X)),
+		Y: start.Y + int(float64(target.Y-start.Y)*eased+roundingBias(target.Y-start.Y)),
+	}
+}
+
+func roundingBias(delta int) float64 {
+	if delta < 0 {
+		return -0.5
+	}
+	return 0.5
+}
+
+func (app *nativeApp) moveMainWindow(position geometryPoint) {
+	procSetWindowPos.Call(
+		app.window,
+		0,
+		signed(int32(position.X)),
+		signed(int32(position.Y)),
+		0,
+		0,
+		swpNoSize|swpNoZOrder|swpNoActivate,
+	)
 }
 
 func (app *nativeApp) expandImmediately() {
@@ -1960,15 +2736,7 @@ func (app *nativeApp) expandImmediately() {
 		return
 	}
 	procKillTimer.Call(app.window, animationTimerID)
-	procSetWindowPos.Call(
-		app.window,
-		0,
-		signed(int32(app.expandedPosition.X)),
-		signed(int32(app.expandedPosition.Y)),
-		0,
-		0,
-		swpNoSize|swpNoZOrder|swpNoActivate,
-	)
+	app.moveMainWindow(app.expandedPosition)
 	app.animation = windowAnimation{}
 	app.collapsed = false
 }
@@ -2115,7 +2883,7 @@ func nativeWindowProc(window uintptr, message uint32, wParam uintptr, lParam uin
 		}
 		if app.status != nil && app.status.acceptPending() {
 			showUsageToast := app.status.shouldShowUsageToast()
-			app.reloadSurface()
+			app.reloadStatusSurfaces()
 			if showUsageToast {
 				app.showUsageToast()
 			}
@@ -2165,6 +2933,10 @@ func nativeWindowProc(window uintptr, message uint32, wParam uintptr, lParam uin
 		if role == windowRoleUnknown {
 			break
 		}
+		if role == windowRoleUsageToast &&
+			toastAnimationBlocksInput(app.usageToastWindow.Visibility) {
+			return htTransparent
+		}
 		var windowRect winRect
 		result, _, _ := procGetWindowRect.Call(window, uintptr(unsafe.Pointer(&windowRect)))
 		if result == 0 {
@@ -2213,12 +2985,19 @@ func nativeWindowProc(window uintptr, message uint32, wParam uintptr, lParam uin
 			app.handleTimer(wParam)
 			return 0
 		}
-		if role == windowRoleUsageToast && wParam == usageToastTimerID {
-			app.hideAuxiliaryWindow(&app.usageToastWindow)
-			return 0
+		if role == windowRoleUsageToast {
+			switch wParam {
+			case usageToastAnimationTimerID:
+				app.advanceUsageToastAnimation()
+				return 0
+			case usageToastTimerID:
+				app.hideAuxiliaryWindow(&app.usageToastWindow)
+				return 0
+			}
 		}
 	case wmMouseMove, wmNCMouseMove:
-		if isMain && app.collapsed && !app.animation.active {
+		if isMain && (app.collapsed ||
+			(app.animation.active && app.animation.endsCollapsed)) {
 			app.startExpandAnimation()
 		}
 	case wmDisplayChange:
@@ -2252,6 +3031,9 @@ func nativeWindowProc(window uintptr, message uint32, wParam uintptr, lParam uin
 			return 0
 		}
 		if auxiliary := app.auxiliaryForWindow(window); auxiliary != nil {
+			if auxiliary.Role == windowRoleUsageToast {
+				app.settleUsageToastAnimation()
+			}
 			if lParam != 0 {
 				var suggested winRect
 				readErr := windows.ReadProcessMemory(
@@ -2309,11 +3091,15 @@ func nativeWindowProc(window uintptr, message uint32, wParam uintptr, lParam uin
 		log.Printf("WM_DESTROY hwnd=0x%x role=%d", window, role)
 		if !isMain {
 			if role == windowRoleUsageToast {
+				procKillTimer.Call(window, usageToastAnimationTimerID)
 				procKillTimer.Call(window, usageToastTimerID)
+				app.usageToastWindow.Visibility = auxiliaryHidden
+				app.usageToastAnimation = toastWindowAnimation{}
 			}
 			return 0
 		}
 		procKillTimer.Call(window, pollTimerID)
+		app.autoCollapseTimerRunning = false
 		procKillTimer.Call(window, animationTimerID)
 		procKillTimer.Call(window, selfTestTimerID)
 		procKillTimer.Call(window, trayRetryTimerID)
@@ -2331,6 +3117,8 @@ func nativeWindowProc(window uintptr, message uint32, wParam uintptr, lParam uin
 		if auxiliary := app.auxiliaryForWindow(window); auxiliary != nil {
 			auxiliary.Handle = 0
 			auxiliary.CurrentSurface = nil
+			auxiliary.Visibility = auxiliaryHidden
+			auxiliary.Dirty = false
 		}
 	}
 
