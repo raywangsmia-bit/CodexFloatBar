@@ -18,6 +18,7 @@ BEGIN
             VALUE "FileDescription", "@@FILE_DESCRIPTION@@\0"
             VALUE "FileVersion", "@@DISPLAY_VERSION@@\0"
             VALUE "InternalName", "@@APP_ID@@\0"
+            VALUE "LegalCopyright", "@@COPYRIGHT@@\0"
             VALUE "OriginalFilename", "@@EXECUTABLE_NAME@@\0"
             VALUE "ProductName", "@@PRODUCT_NAME@@\0"
             VALUE "ProductVersion", "@@DISPLAY_VERSION@@\0"

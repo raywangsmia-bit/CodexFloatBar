@@ -9,6 +9,15 @@ import (
 )
 
 func updateLayeredWindow(window uintptr, source image.Image, destination geometryPoint) error {
+	return updateLayeredWindowWithAlpha(window, source, destination, 255)
+}
+
+func updateLayeredWindowWithAlpha(
+	window uintptr,
+	source image.Image,
+	destination geometryPoint,
+	constantAlpha byte,
+) error {
 	bounds := source.Bounds()
 	width := bounds.Dx()
 	height := bounds.Dy()
@@ -63,11 +72,7 @@ func updateLayeredWindow(window uintptr, source image.Image, destination geometr
 	destinationPoint := winPoint{X: int32(destination.X), Y: int32(destination.Y)}
 	size := winSize{CX: int32(width), CY: int32(height)}
 	sourcePoint := winPoint{}
-	blend := blendFunction{
-		Operation:     acSrcOver,
-		ConstantAlpha: 255,
-		AlphaFormat:   acSrcAlpha,
-	}
+	blend := layeredBlendFunction(constantAlpha)
 	result, _, lastErr := procUpdateLayeredWindow.Call(
 		window,
 		screenDC,
@@ -83,6 +88,14 @@ func updateLayeredWindow(window uintptr, source image.Image, destination geometr
 		return callError("UpdateLayeredWindow", lastErr)
 	}
 	return nil
+}
+
+func layeredBlendFunction(constantAlpha byte) blendFunction {
+	return blendFunction{
+		Operation:     acSrcOver,
+		ConstantAlpha: constantAlpha,
+		AlphaFormat:   acSrcAlpha,
+	}
 }
 
 func copyPremultipliedBGRA(destination []byte, source image.Image) {

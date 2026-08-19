@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"math"
+	"os"
 	"sort"
 	"strconv"
 	"strings"
@@ -21,7 +22,9 @@ const (
 )
 
 type rateLimitCandidate struct {
-	json        string
+	primary     *RateLimitWindow
+	secondary   *RateLimitWindow
+	planType    string
 	observedAt  *int64
 	pathIndex   int
 	markerIndex int
@@ -45,26 +48,44 @@ func readLatestLogRateLimit(
 	logPaths []string,
 	location *time.Location,
 ) RateLimitSummary {
+	summary, _ := readLatestLogRateLimitWithMetrics(ctx, logPaths, location, nil)
+	return summary
+}
+
+func readLatestLogRateLimitWithMetrics(
+	ctx context.Context,
+	logPaths []string,
+	location *time.Location,
+	metrics *ReadMetrics,
+) (RateLimitSummary, error) {
 	var latest *rateLimitCandidate
 	for pathIndex, path := range logPaths {
 		if err := ctx.Err(); err != nil {
-			return unavailableRateLimit("等待 Codex 用量记录")
+			return unavailableRateLimit("等待 Codex 用量记录"), err
 		}
-		for _, candidate := range findLogRateLimitCandidates(
+		candidates, err := findLogRateLimitCandidates(
 			ctx,
 			path,
 			pathIndex,
-		) {
+			metrics,
+		)
+		if err != nil {
+			return unavailableRateLimit("等待 Codex 用量记录"), err
+		}
+		for _, candidate := range candidates {
 			if newerRateLimitCandidate(candidate, latest) {
 				copy := candidate
 				latest = &copy
 			}
 		}
 	}
-	if latest == nil {
-		return unavailableRateLimit("等待 Codex 用量记录")
+	if err := ctx.Err(); err != nil {
+		return unavailableRateLimit("等待 Codex 用量记录"), err
 	}
-	return summarizeRateLimit(*latest, location)
+	if latest == nil {
+		return unavailableRateLimit("等待 Codex 用量记录"), nil
+	}
+	return summarizeRateLimit(*latest, location), nil
 }
 
 func findLatestSessionRateLimit(
@@ -95,7 +116,7 @@ func findSessionRateLimit(
 ) *rateLimitCandidate {
 	var latest *rateLimitCandidate
 	linesVisited := 0
-	err := visitTailBytes(path, rateSessionTailBytes, func(text []byte) {
+	err := visitTailBytesContext(ctx, path, rateSessionTailBytes, nil, func(text []byte) {
 		if len(bytes.TrimSpace(text)) == 0 {
 			return
 		}
@@ -107,18 +128,9 @@ func findSessionRateLimit(
 			if !bytes.Contains(line, []byte(`"rate_limits"`)) {
 				return true
 			}
-			root, ok := decodeObject(line)
-			if !ok {
+			latest = parseRateLimitCandidate(line, fileIndex, offset)
+			if latest == nil {
 				return true
-			}
-			if _, _, ok := getRateLimits(root); !ok {
-				return true
-			}
-			latest = &rateLimitCandidate{
-				json:        string(line),
-				observedAt:  observedAt(root),
-				pathIndex:   fileIndex,
-				markerIndex: offset,
 			}
 			return false
 		})
@@ -133,23 +145,31 @@ func findLogRateLimitCandidates(
 	ctx context.Context,
 	path string,
 	pathIndex int,
-) []rateLimitCandidate {
-	text, err := readTail(path, rateLogTailBytes)
-	if err != nil || strings.TrimSpace(text) == "" {
-		return []rateLimitCandidate{}
+	metrics *ReadMetrics,
+) ([]rateLimitCandidate, error) {
+	text, err := readTailContext(ctx, path, rateLogTailBytes, metrics)
+	if err != nil {
+		if ctxErr := ctx.Err(); ctxErr != nil {
+			return []rateLimitCandidate{}, ctxErr
+		}
+		if os.IsNotExist(err) {
+			return []rateLimitCandidate{}, nil
+		}
+		return []rateLimitCandidate{}, err
+	}
+	if strings.TrimSpace(text) == "" {
+		return []rateLimitCandidate{}, nil
 	}
 
 	type objectScan struct {
-		end        int
-		json       string
-		observedAt *int64
-		valid      bool
+		end       int
+		candidate *rateLimitCandidate
 	}
 	bracePositions := make([]int, 0, strings.Count(text, "{"))
 	markerPositions := []int{}
 	for index := 0; index < len(text); index++ {
 		if index&0xffff == 0 && ctx.Err() != nil {
-			return []rateLimitCandidate{}
+			return []rateLimitCandidate{}, ctx.Err()
 		}
 		if text[index] == '{' {
 			bracePositions = append(bracePositions, index)
@@ -165,7 +185,7 @@ func findLogRateLimitCandidates(
 	ringWrapped := false
 	for _, markerIndex := range markerPositions {
 		if ctx.Err() != nil {
-			return []rateLimitCandidate{}
+			return []rateLimitCandidate{}, ctx.Err()
 		}
 		braceIndex := sort.SearchInts(bracePositions, markerIndex) - 1
 		for attempt := 0; braceIndex >= 0 && attempt < maxRateBraceAttempts; attempt++ {
@@ -179,26 +199,25 @@ func findLogRateLimitCandidates(
 					start,
 					maxRateObjectBytes,
 				)
-				scan = objectScan{end: end, json: candidateJSON}
+				scan = objectScan{end: end}
 				if ok {
 					root, decoded := decodeObject([]byte(candidateJSON))
-					scan.valid = decoded && isRateLimitEvent(root)
-					if scan.valid {
-						scan.observedAt = observedAt(root)
+					if decoded && isRateLimitEvent(root) {
+						scan.candidate = rateLimitCandidateFromRoot(
+							root,
+							pathIndex,
+							markerIndex,
+						)
 					}
 				}
 				scans[start] = scan
 			}
 			markerEnd := markerIndex + len(rateEventMarker)
-			if !scan.valid || scan.end < markerEnd {
+			if scan.candidate == nil || scan.end < markerEnd {
 				continue
 			}
-			candidate := rateLimitCandidate{
-				json:        scan.json,
-				observedAt:  scan.observedAt,
-				pathIndex:   pathIndex,
-				markerIndex: markerIndex,
-			}
+			candidate := *scan.candidate
+			candidate.markerIndex = markerIndex
 			candidates, ringIndex, ringWrapped = appendRateCandidate(
 				candidates,
 				candidate,
@@ -212,9 +231,12 @@ func findLogRateLimitCandidates(
 		ordered := make([]rateLimitCandidate, 0, len(candidates))
 		ordered = append(ordered, candidates[ringIndex:]...)
 		ordered = append(ordered, candidates[:ringIndex]...)
-		return ordered
+		return ordered, nil
 	}
-	return candidates
+	if err := ctx.Err(); err != nil {
+		return []rateLimitCandidate{}, err
+	}
+	return candidates, nil
 }
 
 func appendRateCandidate(
@@ -279,16 +301,8 @@ func summarizeRateLimit(
 	candidate rateLimitCandidate,
 	location *time.Location,
 ) RateLimitSummary {
-	root, ok := decodeObject([]byte(candidate.json))
-	if !ok {
-		return unavailableRateLimit("等待有效用量记录")
-	}
-	limits, planType, ok := getRateLimits(root)
-	if !ok {
-		return unavailableRateLimit("等待有效用量记录")
-	}
-	primary := readRateLimitWindow(limits, "primary")
-	secondary := readRateLimitWindow(limits, "secondary")
+	primary := cloneRateLimitWindow(candidate.primary)
+	secondary := cloneRateLimitWindow(candidate.secondary)
 	if primary == nil && secondary == nil {
 		return unavailableRateLimit("等待额度窗口记录")
 	}
@@ -301,8 +315,8 @@ func summarizeRateLimit(
 		parts = append(parts, formatRateLimitWindow(secondary, location))
 	}
 	formattedPlan := ""
-	if strings.TrimSpace(planType) != "" {
-		formattedPlan = formatPlanType(planType)
+	if strings.TrimSpace(candidate.planType) != "" {
+		formattedPlan = formatPlanType(candidate.planType)
 	}
 	message := strings.Join(parts, " | ")
 	if formattedPlan != "" {
@@ -315,6 +329,45 @@ func summarizeRateLimit(
 		Primary:   primary,
 		Secondary: secondary,
 	}
+}
+
+func parseRateLimitCandidate(
+	data []byte,
+	pathIndex int,
+	markerIndex int,
+) *rateLimitCandidate {
+	root, ok := decodeObject(data)
+	if !ok {
+		return nil
+	}
+	return rateLimitCandidateFromRoot(root, pathIndex, markerIndex)
+}
+
+func rateLimitCandidateFromRoot(
+	root map[string]json.RawMessage,
+	pathIndex int,
+	markerIndex int,
+) *rateLimitCandidate {
+	limits, planType, ok := getRateLimits(root)
+	if !ok {
+		return nil
+	}
+	return &rateLimitCandidate{
+		primary:     readRateLimitWindow(limits, "primary"),
+		secondary:   readRateLimitWindow(limits, "secondary"),
+		planType:    planType,
+		observedAt:  observedAt(root),
+		pathIndex:   pathIndex,
+		markerIndex: markerIndex,
+	}
+}
+
+func cloneRateLimitWindow(window *RateLimitWindow) *RateLimitWindow {
+	if window == nil {
+		return nil
+	}
+	copy := *window
+	return &copy
 }
 
 func unavailableRateLimit(message string) RateLimitSummary {

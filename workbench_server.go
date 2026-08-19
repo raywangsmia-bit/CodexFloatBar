@@ -11,6 +11,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	stdhtml "html"
 	"image"
 	"image/draw"
 	"image/png"
@@ -26,14 +27,19 @@ import (
 	"path/filepath"
 	"runtime"
 	"slices"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
+	"unsafe"
+
+	"golang.org/x/sys/windows"
 )
 
 const (
 	maxExportSize              = 32 << 20
 	maxExportPreflightSize     = 1 << 10
+	maxAutoExportReportSize    = 8 << 10
 	maxExportFiles             = 64
 	maxExportPixels            = 64 << 20
 	maxNativePreviewSize       = 64 << 10
@@ -45,6 +51,10 @@ const (
 	headlessMinimumHeight      = 600
 	minimumStrongAlphaCoverage = 0.25
 	maximumScaleCoverageDelta  = 0.08
+	exportAtlasGutter          = 8
+	maxExportAtlasDimension    = 16384
+	maxExportAtlasHTML         = 64 << 20
+	exportRendererStampLength  = 16
 )
 
 var workbenchVariantScales = [...]float64{1, 1.25, 1.5, 2}
@@ -116,11 +126,34 @@ type workbenchServer struct {
 	origin        string
 	exportToken   string
 	exportMu      sync.Mutex
+	resolveEdge   func() (edgeRendererIdentity, error)
+	autoExport    bool
+	autoReportMu  sync.Mutex
+	autoReported  bool
+	autoReports   chan autoExportReport
+	autoSuccess   *exportResult
+}
+
+type workbenchServerOptions struct {
+	AutoExport bool
+}
+
+type runningWorkbenchServer struct {
+	URL         string
+	AutoReports <-chan autoExportReport
+	httpServer  *http.Server
+	serveDone   <-chan error
 }
 
 type exportRequest struct {
 	Manifest bundleManifest `json:"manifest"`
 	Files    []exportFile   `json:"files"`
+	Renderer string         `json:"renderer"`
+}
+
+type edgeRendererIdentity struct {
+	Version     string
+	Fingerprint string
 }
 
 type exportFile struct {
@@ -149,6 +182,23 @@ type exportRenderOutcome struct {
 	err      error
 }
 
+type exportAtlasPlacement struct {
+	job  exportRenderJob
+	rect image.Rectangle
+}
+
+type exportAtlas struct {
+	scaleIndex int
+	file       exportFile
+	placements []exportAtlasPlacement
+}
+
+type exportAtlasOutcome struct {
+	atlas    exportAtlas
+	contents []exportRenderOutcome
+	err      error
+}
+
 type exportResult struct {
 	OK       bool `json:"ok"`
 	UpToDate bool `json:"upToDate"`
@@ -156,10 +206,24 @@ type exportResult struct {
 	Files    int  `json:"files"`
 	Rendered int  `json:"rendered"`
 	Reused   int  `json:"reused"`
+	Atlases  int  `json:"atlases"`
+	Fallback int  `json:"fallback"`
+}
+
+type autoExportReport struct {
+	OK       bool   `json:"ok"`
+	Error    string `json:"error,omitempty"`
+	UpToDate bool   `json:"upToDate,omitempty"`
+	Files    int    `json:"files,omitempty"`
+	Rendered int    `json:"rendered,omitempty"`
+	Reused   int    `json:"reused,omitempty"`
+	Atlases  int    `json:"atlases,omitempty"`
+	Fallback int    `json:"fallback,omitempty"`
 }
 
 type exportPreflightRequest struct {
-	DefaultSurface string `json:"defaultSurface"`
+	DefaultSurface string      `json:"defaultSurface"`
+	Version        pageVersion `json:"version"`
 }
 
 type nativePreviewRequest struct {
@@ -191,34 +255,49 @@ func startWorkbenchServer(
 	workbenchRoot string,
 	bundleRoot string,
 ) (string, error) {
-	if err := requireLoopbackAddress(address); err != nil {
+	running, err := startWorkbenchServerWithOptions(
+		address,
+		startedAt,
+		workbenchRoot,
+		bundleRoot,
+		workbenchServerOptions{},
+	)
+	if err != nil {
 		return "", err
+	}
+	return running.URL, nil
+}
+
+func startWorkbenchServerWithOptions(
+	address string,
+	startedAt time.Time,
+	workbenchRoot string,
+	bundleRoot string,
+	options workbenchServerOptions,
+) (*runningWorkbenchServer, error) {
+	if err := requireLoopbackAddress(address); err != nil {
+		return nil, err
 	}
 	token, err := newWorkbenchToken()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	server := &workbenchServer{
 		startedAt:     startedAt,
 		workbenchRoot: workbenchRoot,
 		bundleRoot:    bundleRoot,
 		exportToken:   token,
+		autoExport:    options.AutoExport,
+	}
+	if options.AutoExport {
+		server.autoReports = make(chan autoExportReport, 1)
 	}
 
-	mux := http.NewServeMux()
-	mux.HandleFunc("GET /", server.serveIndex)
-	mux.HandleFunc("GET /api/meta", server.serveMeta)
-	mux.HandleFunc("POST /api/export/preflight", server.receiveExportPreflight)
-	mux.HandleFunc("POST /api/export", server.receiveExport)
-	mux.HandleFunc("POST /api/native-preview", server.receiveNativePreview)
-	mux.Handle(
-		"GET /assets/",
-		http.StripPrefix("/assets/", noCacheFiles(http.Dir(workbenchRoot))),
-	)
+	mux := server.routes()
 
 	listener, err := net.Listen("tcp", address)
 	if err != nil {
-		return "", fmt.Errorf("starting workbench listener: %w", err)
+		return nil, fmt.Errorf("starting workbench listener: %w", err)
 	}
 	server.origin = "http://" + listener.Addr().String()
 
@@ -226,13 +305,56 @@ func startWorkbenchServer(
 		Handler:           mux,
 		ReadHeaderTimeout: 5 * time.Second,
 	}
+	serveDone := make(chan error, 1)
 	go func() {
-		if err := httpServer.Serve(listener); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		err := httpServer.Serve(listener)
+		if errors.Is(err, http.ErrServerClosed) {
+			err = nil
+		}
+		if err != nil {
 			log.Printf("workbench server stopped: %v", err)
 		}
+		serveDone <- err
 	}()
 
-	return server.origin + "/", nil
+	return &runningWorkbenchServer{
+		URL:         server.origin + "/",
+		AutoReports: server.autoReports,
+		httpServer:  httpServer,
+		serveDone:   serveDone,
+	}, nil
+}
+
+func (running *runningWorkbenchServer) Close() error {
+	if running == nil || running.httpServer == nil {
+		return nil
+	}
+	closeErr := running.httpServer.Close()
+	if errors.Is(closeErr, http.ErrServerClosed) {
+		closeErr = nil
+	}
+	serveErr := <-running.serveDone
+	if err := errors.Join(closeErr, serveErr); err != nil {
+		return fmt.Errorf("closing workbench server: %w", err)
+	}
+	return nil
+}
+
+func (server *workbenchServer) routes() http.Handler {
+	mux := http.NewServeMux()
+	mux.HandleFunc("GET /", server.serveIndex)
+	mux.HandleFunc("GET /api/meta", server.serveMeta)
+	mux.HandleFunc("POST /api/export/preflight", server.receiveExportPreflight)
+	mux.HandleFunc("POST /api/export", server.receiveExport)
+	mux.HandleFunc("POST /api/native-preview", server.receiveNativePreview)
+	if server.autoExport {
+		mux.HandleFunc("POST /api/export/result", server.receiveAutoExportReport)
+	}
+	mux.Handle(
+		"GET /assets/",
+		http.StripPrefix("/assets/", noCacheFiles(http.Dir(server.workbenchRoot))),
+	)
+	return mux
 }
 
 func (server *workbenchServer) serveIndex(response http.ResponseWriter, request *http.Request) {
@@ -269,6 +391,7 @@ func (server *workbenchServer) serveIndex(response http.ResponseWriter, request 
 		"{{STATIC_VERSION}}", url.QueryEscape(version.StaticVersion),
 		"{{PAGE_VERSION_JSON}}", string(encodedVersion),
 		"{{WORKBENCH_TOKEN_JSON}}", string(encodedToken),
+		"{{AUTO_EXPORT_JSON}}", strconv.FormatBool(server.autoExport),
 	)
 	response.Header().Set("Cache-Control", "no-store")
 	response.Header().Set(
@@ -316,15 +439,21 @@ func (server *workbenchServer) receiveExportPreflight(
 		return
 	}
 
-	result, err := server.preflightExport(requested.DefaultSurface)
+	result, err := server.preflightExport(requested.DefaultSurface, requested.Version)
 	if err != nil {
 		http.Error(response, err.Error(), http.StatusBadRequest)
 		return
 	}
+	if result.UpToDate {
+		server.recordAutoExportSuccess(result)
+	}
 	writeJSON(response, result)
 }
 
-func (server *workbenchServer) preflightExport(defaultSurface string) (exportResult, error) {
+func (server *workbenchServer) preflightExport(
+	defaultSurface string,
+	clientVersion pageVersion,
+) (exportResult, error) {
 	result := exportResult{OK: true}
 	if !isMainWorkbenchSurfaceID(defaultSurface) {
 		return result, fmt.Errorf("invalid default surface %q", defaultSurface)
@@ -337,6 +466,9 @@ func (server *workbenchServer) preflightExport(defaultSurface string) (exportRes
 	if err != nil {
 		return result, err
 	}
+	if err := validateWorkbenchPageVersion(clientVersion, version); err != nil {
+		return result, err
+	}
 	manifest, err := readManifest(server.bundleRoot)
 	if err != nil || manifest.Schema != bundleSchema ||
 		manifest.Version.StaticVersion != version.StaticVersion {
@@ -345,15 +477,38 @@ func (server *workbenchServer) preflightExport(defaultSurface string) (exportRes
 	if err := validateCommittedWorkbenchBundle(server.bundleRoot, manifest); err != nil {
 		return result, nil
 	}
+	renderer, err := server.currentEdgeRendererIdentity()
+	if err != nil {
+		return result, err
+	}
+	if !manifestUsesRenderer(manifest, renderer.Fingerprint) {
+		return result, nil
+	}
+	manifestPath := filepath.Join(server.bundleRoot, "manifest.json")
+	previous, hadPrevious, err := readOptionalFile(manifestPath)
+	if err != nil {
+		return result, err
+	}
 
 	manifest.DefaultSurface = defaultSurface
 	manifest.Version = version
-	contents, err := json.MarshalIndent(manifest, "", "  ")
+	commitVersion, err := server.currentVersion()
 	if err != nil {
-		return result, fmt.Errorf("encoding unchanged bundle manifest: %w", err)
+		return result, fmt.Errorf("checking workbench source before preflight commit: %w", err)
 	}
-	contents = append(contents, '\n')
-	if err := writeAtomic(filepath.Join(server.bundleRoot, "manifest.json"), contents); err != nil {
+	if commitVersion != version {
+		return result, fmt.Errorf(
+			"workbench source changed during export preflight (%q to %q); reload and retry",
+			version.StaticVersion,
+			commitVersion.StaticVersion,
+		)
+	}
+	if err := commitValidatedWorkbenchManifest(
+		server.bundleRoot,
+		manifest,
+		previous,
+		hadPrevious,
+	); err != nil {
 		return result, err
 	}
 
@@ -387,7 +542,91 @@ func (server *workbenchServer) receiveExport(response http.ResponseWriter, reque
 		http.Error(response, err.Error(), http.StatusBadRequest)
 		return
 	}
+	server.recordAutoExportSuccess(result)
 	writeJSON(response, result)
+}
+
+func (server *workbenchServer) recordAutoExportSuccess(result exportResult) {
+	if !server.autoExport || server.autoReports == nil {
+		return
+	}
+	server.autoReportMu.Lock()
+	defer server.autoReportMu.Unlock()
+	if server.autoReported {
+		return
+	}
+	copy := result
+	server.autoSuccess = &copy
+}
+
+func (server *workbenchServer) receiveAutoExportReport(
+	response http.ResponseWriter,
+	request *http.Request,
+) {
+	if !server.autoExport || server.autoReports == nil {
+		http.NotFound(response, request)
+		return
+	}
+	if err := server.authorizeExport(request); err != nil {
+		http.Error(response, err.Error(), http.StatusForbidden)
+		return
+	}
+	request.Body = http.MaxBytesReader(response, request.Body, maxAutoExportReportSize)
+	decoder := json.NewDecoder(request.Body)
+	decoder.DisallowUnknownFields()
+	var reported autoExportReport
+	if err := decoder.Decode(&reported); err != nil {
+		http.Error(response, "invalid automatic export report: "+err.Error(), http.StatusBadRequest)
+		return
+	}
+	if err := decoder.Decode(&struct{}{}); !errors.Is(err, io.EOF) {
+		http.Error(
+			response,
+			"invalid automatic export report: request contains trailing data",
+			http.StatusBadRequest,
+		)
+		return
+	}
+
+	server.autoReportMu.Lock()
+	defer server.autoReportMu.Unlock()
+	if server.autoReported {
+		http.Error(response, "automatic export already reported a terminal result", http.StatusConflict)
+		return
+	}
+	if err := validateAutoExportReport(reported, server.autoSuccess); err != nil {
+		http.Error(response, err.Error(), http.StatusBadRequest)
+		return
+	}
+	server.autoReported = true
+	server.autoReports <- reported
+	writeJSON(response, struct {
+		OK bool `json:"ok"`
+	}{OK: true})
+}
+
+func validateAutoExportReport(reported autoExportReport, success *exportResult) error {
+	if reported.OK {
+		if strings.TrimSpace(reported.Error) != "" {
+			return errors.New("successful automatic export report contains an error")
+		}
+		if success == nil {
+			return errors.New("automatic export success was not verified by the server")
+		}
+		if reported.UpToDate != success.UpToDate ||
+			reported.Files != success.Files ||
+			reported.Rendered != success.Rendered ||
+			reported.Reused != success.Reused ||
+			reported.Atlases != success.Atlases ||
+			reported.Fallback != success.Fallback {
+			return errors.New("automatic export report does not match the verified server result")
+		}
+		return nil
+	}
+	if strings.TrimSpace(reported.Error) == "" {
+		return errors.New("failed automatic export report is missing an error summary")
+	}
+	return nil
 }
 
 func (server *workbenchServer) receiveNativePreview(
@@ -495,10 +734,11 @@ func validateNativePreviewPresentation(requested nativePreviewRequest) error {
 }
 
 func (server *workbenchServer) writeExport(exported exportRequest) (exportResult, error) {
-	return server.writeExportWithRasterizerWorkers(
+	return server.writeExportWithRasterizerMode(
 		exported,
 		rasterizeHTMLAttempt,
 		exportRasterizerWorkers,
+		true,
 	)
 }
 
@@ -522,6 +762,23 @@ func (server *workbenchServer) writeExportWithRasterizerWorkers(
 	rasterizer func(exportFile) ([]byte, error),
 	workerLimit int,
 ) (exportResult, error) {
+	return server.writeExportWithRasterizerMode(exported, rasterizer, workerLimit, false)
+}
+
+func (server *workbenchServer) writeExportWithAtlasRasterizerResult(
+	exported exportRequest,
+	rasterizer func(exportFile) ([]byte, error),
+	workerLimit int,
+) (exportResult, error) {
+	return server.writeExportWithRasterizerMode(exported, rasterizer, workerLimit, true)
+}
+
+func (server *workbenchServer) writeExportWithRasterizerMode(
+	exported exportRequest,
+	rasterizer func(exportFile) ([]byte, error),
+	workerLimit int,
+	useAtlases bool,
+) (exportResult, error) {
 	result := exportResult{OK: true}
 	server.exportMu.Lock()
 	defer server.exportMu.Unlock()
@@ -530,11 +787,30 @@ func (server *workbenchServer) writeExportWithRasterizerWorkers(
 		return result, err
 	}
 
-	version, err := server.currentVersion()
+	entryVersion, err := server.currentVersion()
 	if err != nil {
 		return result, err
 	}
-	exported.Manifest.Version = version
+	if err := validateWorkbenchPageVersion(exported.Manifest.Version, entryVersion); err != nil {
+		return result, err
+	}
+	entryRenderer, err := server.currentEdgeRendererIdentity()
+	if err != nil {
+		return result, err
+	}
+	if exported.Renderer != entryRenderer.Version {
+		return result, fmt.Errorf(
+			"workbench browser Edge %q does not match export renderer Edge %q; open this workbench in the same Microsoft Edge installation and retry",
+			exported.Renderer,
+			entryRenderer.Version,
+		)
+	}
+	manifestPath := filepath.Join(server.bundleRoot, "manifest.json")
+	previousManifest, hadPreviousManifest, err := readOptionalFile(manifestPath)
+	if err != nil {
+		return result, err
+	}
+	previousGenerations := referencedGenerationsFromContents(previousManifest)
 	cachedAssets := server.loadCachedExportAssets()
 
 	if err := os.MkdirAll(server.bundleRoot, 0o755); err != nil {
@@ -555,7 +831,7 @@ func (server *workbenchServer) writeExportWithRasterizerWorkers(
 			return result, err
 		}
 		stagingPaths[fileIndex] = path
-		sourceHash := exportSourceHash(file)
+		sourceHash := exportSourceHashForRenderer(file, entryRenderer.Fingerprint)
 		sourceHashes[file.Name] = sourceHash
 		contents, reused := reuseCachedExportAsset(
 			cachedAssets[file.Name],
@@ -579,7 +855,21 @@ func (server *workbenchServer) writeExportWithRasterizerWorkers(
 		})
 	}
 
-	rendered, err := rasterizeExportJobs(renderJobs, rasterizer, workerLimit)
+	var rendered []exportRenderOutcome
+	if useAtlases {
+		var atlases int
+		var fallback int
+		rendered, atlases, fallback, err = rasterizeExportAtlases(
+			renderJobs,
+			exported.Manifest,
+			rasterizer,
+			workerLimit,
+		)
+		result.Atlases = atlases
+		result.Fallback = fallback
+	} else {
+		rendered, err = rasterizeExportJobs(renderJobs, rasterizer, workerLimit)
+	}
 	if err != nil {
 		return result, err
 	}
@@ -610,6 +900,7 @@ func (server *workbenchServer) writeExportWithRasterizerWorkers(
 		)
 	}
 	assetRoot := filepath.Join(server.bundleRoot, "assets", generation)
+	createdGeneration := false
 	if _, err := os.Stat(assetRoot); errors.Is(err, os.ErrNotExist) {
 		if err := os.MkdirAll(filepath.Dir(assetRoot), 0o755); err != nil {
 			return result, fmt.Errorf("creating export asset directory: %w", err)
@@ -617,9 +908,20 @@ func (server *workbenchServer) writeExportWithRasterizerWorkers(
 		if err := os.Rename(stagingRoot, assetRoot); err != nil {
 			return result, fmt.Errorf("committing export assets: %w", err)
 		}
+		createdGeneration = true
 	} else if err != nil {
 		return result, fmt.Errorf("checking export asset generation: %w", err)
+	} else if err := validateExistingExportGeneration(assetRoot, renderedFiles); err != nil {
+		return result, fmt.Errorf("validating existing export generation %q: %w", generation, err)
 	}
+	generationCommitted := false
+	defer func() {
+		if createdGeneration && !generationCommitted {
+			if err := os.RemoveAll(assetRoot); err != nil {
+				log.Printf("warning: rolling back uncommitted UI generation: %v", err)
+			}
+		}
+	}()
 	for surfaceIndex := range exported.Manifest.Surfaces {
 		surface := &exported.Manifest.Surfaces[surfaceIndex]
 		for variantIndex := range surface.Variants {
@@ -628,16 +930,42 @@ func (server *workbenchServer) writeExportWithRasterizerWorkers(
 			variant.File = assetNames[variant.File]
 		}
 	}
-
-	manifest, err := json.MarshalIndent(exported.Manifest, "", "  ")
+	commitVersion, err := server.currentVersion()
 	if err != nil {
-		return result, fmt.Errorf("encoding bundle manifest: %w", err)
+		return result, fmt.Errorf("checking workbench source before manifest switch: %w", err)
 	}
-	manifest = append(manifest, '\n')
-	if err := writeAtomic(filepath.Join(server.bundleRoot, "manifest.json"), manifest); err != nil {
+	if commitVersion != entryVersion {
+		return result, fmt.Errorf(
+			"workbench source changed during export (%q to %q); reload and retry",
+			entryVersion.StaticVersion,
+			commitVersion.StaticVersion,
+		)
+	}
+	commitRenderer, err := server.currentEdgeRendererIdentity()
+	if err != nil {
+		return result, fmt.Errorf("checking Edge renderer before manifest switch: %w", err)
+	}
+	if commitRenderer != entryRenderer {
+		return result, fmt.Errorf(
+			"Edge renderer changed during export (%q to %q); reload and retry",
+			entryRenderer.Version,
+			commitRenderer.Version,
+		)
+	}
+
+	if err := commitValidatedWorkbenchManifest(
+		server.bundleRoot,
+		exported.Manifest,
+		previousManifest,
+		hadPreviousManifest,
+	); err != nil {
 		return result, err
 	}
-	if err := cleanupCommittedExportArtifacts(server.bundleRoot); err != nil {
+	generationCommitted = true
+	if err := cleanupCommittedExportArtifactsKeeping(
+		server.bundleRoot,
+		previousGenerations,
+	); err != nil {
 		log.Printf("warning: cleaning stale UI export artifacts: %v", err)
 	}
 	result.Surfaces = len(exported.Manifest.Surfaces)
@@ -728,9 +1056,370 @@ func rasterizeExportJobs(
 	return outcomes, nil
 }
 
+func rasterizeExportAtlases(
+	jobs []exportRenderJob,
+	manifest bundleManifest,
+	rasterizer func(exportFile) ([]byte, error),
+	workerLimit int,
+) ([]exportRenderOutcome, int, int, error) {
+	if len(jobs) == 0 {
+		return []exportRenderOutcome{}, 0, 0, nil
+	}
+
+	scaleByFile := make(map[string]int, len(jobs))
+	for _, surface := range manifest.Surfaces {
+		for _, variant := range surface.Variants {
+			scaleIndex, ok := workbenchScaleIndex(variant.Scale)
+			if ok {
+				scaleByFile[variant.File] = scaleIndex
+			}
+		}
+	}
+	jobsByScale := make([][]exportRenderJob, len(workbenchVariantScales))
+	for _, job := range jobs {
+		scaleIndex, ok := scaleByFile[job.file.Name]
+		if !ok {
+			return nil, 0, 0, fmt.Errorf(
+				"finding atlas scale for export asset %q",
+				job.file.Name,
+			)
+		}
+		jobsByScale[scaleIndex] = append(jobsByScale[scaleIndex], job)
+	}
+
+	atlases := make([]exportAtlas, 0, len(workbenchVariantScales))
+	fallbackGroups := make([][]exportRenderJob, 0, len(workbenchVariantScales))
+	atlasFailures := make([]error, 0, len(workbenchVariantScales))
+	for scaleIndex, scaleJobs := range jobsByScale {
+		if len(scaleJobs) == 0 {
+			continue
+		}
+		atlas, err := buildExportAtlas(scaleIndex, scaleJobs)
+		if err != nil {
+			fallbackGroups = append(fallbackGroups, scaleJobs)
+			atlasFailures = append(atlasFailures, err)
+			continue
+		}
+		atlases = append(atlases, atlas)
+	}
+
+	atlasOutcomes := rasterizeAtlasJobs(atlases, rasterizer, workerLimit)
+	completed := make([]exportRenderOutcome, 0, len(jobs))
+	successfulAtlases := 0
+	for _, outcome := range atlasOutcomes {
+		if outcome.err != nil {
+			scaleJobs := make([]exportRenderJob, 0, len(outcome.atlas.placements))
+			for _, placement := range outcome.atlas.placements {
+				scaleJobs = append(scaleJobs, placement.job)
+			}
+			fallbackGroups = append(fallbackGroups, scaleJobs)
+			atlasFailures = append(atlasFailures, fmt.Errorf(
+				"scale %.4g atlas: %w",
+				workbenchVariantScales[outcome.atlas.scaleIndex],
+				outcome.err,
+			))
+			continue
+		}
+		successfulAtlases++
+		completed = append(completed, outcome.contents...)
+	}
+
+	fallbackFiles := 0
+	for index, fallbackJobs := range fallbackGroups {
+		fallbackFiles += len(fallbackJobs)
+		log.Printf(
+			"warning: Edge atlas export fell back to %d individual assets: %v",
+			len(fallbackJobs),
+			atlasFailures[index],
+		)
+		fallbackOutcomes, err := rasterizeExportJobSubset(
+			fallbackJobs,
+			rasterizer,
+			workerLimit,
+		)
+		if err != nil {
+			return nil, successfulAtlases, fallbackFiles, fmt.Errorf(
+				"atlas export failed (%v) and individual fallback failed: %w",
+				atlasFailures[index],
+				err,
+			)
+		}
+		completed = append(completed, fallbackOutcomes...)
+	}
+
+	slices.SortFunc(completed, func(left, right exportRenderOutcome) int {
+		return left.job.order - right.job.order
+	})
+	if len(completed) != len(jobs) {
+		return nil, successfulAtlases, fallbackFiles, fmt.Errorf(
+			"atlas export completed %d assets, want %d",
+			len(completed),
+			len(jobs),
+		)
+	}
+	return completed, successfulAtlases, fallbackFiles, nil
+}
+
+func rasterizeExportJobSubset(
+	jobs []exportRenderJob,
+	rasterizer func(exportFile) ([]byte, error),
+	workerLimit int,
+) ([]exportRenderOutcome, error) {
+	localJobs := make([]exportRenderJob, len(jobs))
+	for index, job := range jobs {
+		localJobs[index] = job
+		localJobs[index].order = index
+	}
+	outcomes, err := rasterizeExportJobs(localJobs, rasterizer, workerLimit)
+	if err != nil {
+		return nil, err
+	}
+	for index := range outcomes {
+		outcomes[index].job = jobs[index]
+	}
+	return outcomes, nil
+}
+
+func buildExportAtlas(scaleIndex int, jobs []exportRenderJob) (exportAtlas, error) {
+	ordered := append([]exportRenderJob(nil), jobs...)
+	slices.SortFunc(ordered, func(left, right exportRenderJob) int {
+		return strings.Compare(left.file.Name, right.file.Name)
+	})
+	totalArea := 0
+	maximumWidth := 0
+	for _, job := range ordered {
+		totalArea += job.file.Width * job.file.Height
+		maximumWidth = max(maximumWidth, job.file.Width)
+	}
+	targetWidth := max(maximumWidth, int(math.Ceil(math.Sqrt(float64(totalArea)))))
+	targetWidth = min(targetWidth+exportAtlasGutter*2, maxExportAtlasDimension)
+
+	x := exportAtlasGutter
+	y := exportAtlasGutter
+	rowHeight := 0
+	usedWidth := 0
+	placements := make([]exportAtlasPlacement, 0, len(ordered))
+	for _, job := range ordered {
+		if x > exportAtlasGutter && x+job.file.Width+exportAtlasGutter > targetWidth {
+			x = exportAtlasGutter
+			y += rowHeight + exportAtlasGutter
+			rowHeight = 0
+		}
+		rect := image.Rect(x, y, x+job.file.Width, y+job.file.Height)
+		placements = append(placements, exportAtlasPlacement{job: job, rect: rect})
+		x = rect.Max.X + exportAtlasGutter
+		rowHeight = max(rowHeight, job.file.Height)
+		usedWidth = max(usedWidth, rect.Max.X)
+	}
+	atlasWidth := usedWidth + exportAtlasGutter
+	atlasHeight := y + rowHeight + exportAtlasGutter
+	if atlasWidth <= 0 || atlasHeight <= 0 ||
+		atlasWidth > maxExportAtlasDimension || atlasHeight > maxExportAtlasDimension ||
+		atlasWidth*atlasHeight > maxExportPixels {
+		return exportAtlas{}, fmt.Errorf(
+			"scale %.4g atlas dimensions %dx%d exceed the exporter limit",
+			workbenchVariantScales[scaleIndex],
+			atlasWidth,
+			atlasHeight,
+		)
+	}
+
+	var snapshot strings.Builder
+	_, _ = fmt.Fprintf(
+		&snapshot,
+		"<!doctype html><html><head><meta charset=\"utf-8\"><style>"+
+			"html,body{width:%dpx;height:%dpx;min-width:0;min-height:0;margin:0;"+
+			"padding:0;overflow:hidden;background:transparent}"+
+			"iframe{position:absolute;display:block;border:0;margin:0;padding:0;"+
+			"overflow:hidden;background:transparent}</style></head><body>",
+		atlasWidth,
+		atlasHeight,
+	)
+	for _, placement := range placements {
+		_, _ = fmt.Fprintf(
+			&snapshot,
+			"<iframe title=\"%s\" sandbox=\"\" scrolling=\"no\" "+
+				"style=\"left:%dpx;top:%dpx;width:%dpx;height:%dpx\" srcdoc=\"%s\"></iframe>",
+			stdhtml.EscapeString(placement.job.file.Name),
+			placement.rect.Min.X,
+			placement.rect.Min.Y,
+			placement.rect.Dx(),
+			placement.rect.Dy(),
+			stdhtml.EscapeString(placement.job.file.HTML),
+		)
+		if snapshot.Len() > maxExportAtlasHTML {
+			return exportAtlas{}, fmt.Errorf(
+				"scale %.4g atlas HTML exceeds %d bytes",
+				workbenchVariantScales[scaleIndex],
+				maxExportAtlasHTML,
+			)
+		}
+	}
+	_, _ = snapshot.WriteString("</body></html>")
+	return exportAtlas{
+		scaleIndex: scaleIndex,
+		file: exportFile{
+			Name:   fmt.Sprintf("atlas@%d.png", int(math.Round(workbenchVariantScales[scaleIndex]*100))),
+			HTML:   snapshot.String(),
+			Width:  atlasWidth,
+			Height: atlasHeight,
+		},
+		placements: placements,
+	}, nil
+}
+
+func rasterizeAtlasJobs(
+	atlases []exportAtlas,
+	rasterizer func(exportFile) ([]byte, error),
+	workerLimit int,
+) []exportAtlasOutcome {
+	if len(atlases) == 0 {
+		return []exportAtlasOutcome{}
+	}
+	workerCount := min(max(workerLimit, 1), len(atlases))
+	jobs := make(chan exportAtlas)
+	outcomes := make(chan exportAtlasOutcome, len(atlases))
+	var workers sync.WaitGroup
+	workers.Add(workerCount)
+	for range workerCount {
+		go func() {
+			defer workers.Done()
+			for atlas := range jobs {
+				contents, err := rasterizeAtlasFile(atlas.file, rasterizer)
+				var cropped []exportRenderOutcome
+				if err == nil {
+					cropped, err = cropExportAtlas(atlas, contents)
+				}
+				outcomes <- exportAtlasOutcome{
+					atlas:    atlas,
+					contents: cropped,
+					err:      err,
+				}
+			}
+		}()
+	}
+	go func() {
+		for _, atlas := range atlases {
+			jobs <- atlas
+		}
+		close(jobs)
+		workers.Wait()
+		close(outcomes)
+	}()
+
+	ordered := make([]exportAtlasOutcome, 0, len(atlases))
+	for outcome := range outcomes {
+		ordered = append(ordered, outcome)
+	}
+	slices.SortFunc(ordered, func(left, right exportAtlasOutcome) int {
+		return left.atlas.scaleIndex - right.atlas.scaleIndex
+	})
+	return ordered
+}
+
+func rasterizeAtlasFile(
+	file exportFile,
+	rasterizer func(exportFile) ([]byte, error),
+) ([]byte, error) {
+	failures := make([]error, 0, rasterizeAttempts)
+	for attempt := 1; attempt <= rasterizeAttempts; attempt++ {
+		contents, err := rasterizer(file)
+		if err == nil {
+			contents, err = normalizeAtlasPNG(contents, file.Width, file.Height)
+		}
+		if err == nil {
+			return contents, nil
+		}
+		failures = append(failures, fmt.Errorf("attempt %d: %w", attempt, err))
+	}
+	return nil, fmt.Errorf(
+		"atlas rasterizer failed after %d attempts: %w",
+		rasterizeAttempts,
+		errors.Join(failures...),
+	)
+}
+
+func normalizeAtlasPNG(contents []byte, width int, height int) ([]byte, error) {
+	rendered, format, err := image.Decode(bytes.NewReader(contents))
+	if err != nil {
+		return nil, fmt.Errorf("decoding Edge atlas screenshot: %w", err)
+	}
+	if format != "png" {
+		return nil, fmt.Errorf("Edge atlas screenshot format is %q, want PNG", format)
+	}
+	bounds := rendered.Bounds()
+	if bounds.Dx() != width || bounds.Dy() < height {
+		return nil, fmt.Errorf(
+			"Edge produced atlas %dx%d, expected width %d and height at least %d",
+			bounds.Dx(),
+			bounds.Dy(),
+			width,
+			height,
+		)
+	}
+	normalized := image.NewNRGBA(image.Rect(0, 0, width, height))
+	draw.Draw(normalized, normalized.Bounds(), rendered, bounds.Min, draw.Src)
+	if metrics := measureRenderedAlpha(normalized); metrics.maxAlpha < 0x8000 {
+		return nil, errors.New("Edge atlas screenshot contains no strongly visible pixel")
+	}
+	var encoded bytes.Buffer
+	if err := png.Encode(&encoded, normalized); err != nil {
+		return nil, fmt.Errorf("encoding validated Edge atlas screenshot: %w", err)
+	}
+	return encoded.Bytes(), nil
+}
+
+func cropExportAtlas(
+	atlas exportAtlas,
+	contents []byte,
+) ([]exportRenderOutcome, error) {
+	rendered, err := png.Decode(bytes.NewReader(contents))
+	if err != nil {
+		return nil, fmt.Errorf("decoding validated Edge atlas: %w", err)
+	}
+	outcomes := make([]exportRenderOutcome, 0, len(atlas.placements))
+	for _, placement := range atlas.placements {
+		if !placement.rect.In(rendered.Bounds()) {
+			return nil, fmt.Errorf(
+				"atlas crop for %q is outside %v",
+				placement.job.file.Name,
+				rendered.Bounds(),
+			)
+		}
+		cropped := image.NewNRGBA(image.Rect(
+			0,
+			0,
+			placement.rect.Dx(),
+			placement.rect.Dy(),
+		))
+		draw.Draw(cropped, cropped.Bounds(), rendered, placement.rect.Min, draw.Src)
+		var encoded bytes.Buffer
+		if err := png.Encode(&encoded, cropped); err != nil {
+			return nil, fmt.Errorf("encoding atlas crop %q: %w", placement.job.file.Name, err)
+		}
+		normalized, err := normalizeRenderedPNG(
+			encoded.Bytes(),
+			placement.job.file.Width,
+			placement.job.file.Height,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("validating atlas crop %q: %w", placement.job.file.Name, err)
+		}
+		outcomes = append(outcomes, exportRenderOutcome{
+			job:      placement.job,
+			contents: normalized,
+		})
+	}
+	return outcomes, nil
+}
+
 func exportGeneration(files []renderedExportFile) string {
+	ordered := append([]renderedExportFile(nil), files...)
+	slices.SortFunc(ordered, func(left, right renderedExportFile) int {
+		return strings.Compare(left.Name, right.Name)
+	})
 	hash := sha256.New()
-	for _, file := range files {
+	for _, file := range ordered {
 		_, _ = fmt.Fprintf(hash, "%s\x00%d\x00%d\x00", file.Name, file.Width, file.Height)
 		_, _ = hash.Write(file.Contents)
 		_, _ = hash.Write([]byte{0})
@@ -739,10 +1428,35 @@ func exportGeneration(files []renderedExportFile) string {
 }
 
 func exportSourceHash(file exportFile) string {
+	return exportSourceHashForRenderer(file, "")
+}
+
+func exportSourceHashForRenderer(file exportFile, rendererFingerprint string) string {
 	hash := sha256.New()
+	if rendererFingerprint != "" {
+		_, _ = fmt.Fprintf(hash, "renderer:%s\x00", rendererFingerprint)
+	}
 	_, _ = fmt.Fprintf(hash, "%s\x00%d\x00%d\x00", file.Name, file.Width, file.Height)
 	_, _ = hash.Write([]byte(file.HTML))
-	return hex.EncodeToString(hash.Sum(nil))
+	digest := hex.EncodeToString(hash.Sum(nil))
+	if rendererFingerprint == "" {
+		return digest
+	}
+	return rendererFingerprint + digest[exportRendererStampLength:]
+}
+
+func manifestUsesRenderer(manifest bundleManifest, rendererFingerprint string) bool {
+	if !isLowerHex(rendererFingerprint, exportRendererStampLength) {
+		return false
+	}
+	for _, surface := range manifest.Surfaces {
+		for _, variant := range surface.Variants {
+			if !strings.HasPrefix(variant.SourceHash, rendererFingerprint) {
+				return false
+			}
+		}
+	}
+	return len(manifest.Surfaces) > 0
 }
 
 func (server *workbenchServer) loadCachedExportAssets() map[string]cachedExportAsset {
@@ -795,6 +1509,141 @@ func reuseCachedExportAsset(
 		return nil, false
 	}
 	return normalized, true
+}
+
+func readOptionalFile(path string) ([]byte, bool, error) {
+	contents, err := os.ReadFile(path)
+	if errors.Is(err, os.ErrNotExist) {
+		return nil, false, nil
+	}
+	if err != nil {
+		return nil, false, fmt.Errorf("reading existing %q: %w", path, err)
+	}
+	return contents, true, nil
+}
+
+func referencedGenerationsFromContents(contents []byte) map[string]struct{} {
+	if len(contents) == 0 {
+		return map[string]struct{}{}
+	}
+	var manifest bundleManifest
+	if err := json.Unmarshal(contents, &manifest); err != nil {
+		return map[string]struct{}{}
+	}
+	generations, err := referencedExportGenerations(manifest)
+	if err != nil {
+		return map[string]struct{}{}
+	}
+	return generations
+}
+
+func validateExistingExportGeneration(
+	assetRoot string,
+	files []renderedExportFile,
+) error {
+	expected := make(map[string]renderedExportFile, len(files))
+	for _, file := range files {
+		expected[file.Name] = file
+	}
+	entries, err := os.ReadDir(assetRoot)
+	if err != nil {
+		return fmt.Errorf("reading generation directory: %w", err)
+	}
+	if len(entries) != len(expected) {
+		return fmt.Errorf(
+			"generation contains %d entries, want %d",
+			len(entries),
+			len(expected),
+		)
+	}
+	for _, entry := range entries {
+		file, ok := expected[entry.Name()]
+		if !ok || !entry.Type().IsRegular() {
+			return fmt.Errorf("generation contains unexpected entry %q", entry.Name())
+		}
+		path, err := cleanupDirectChildPath(assetRoot, entry.Name())
+		if err != nil {
+			return err
+		}
+		contents, err := os.ReadFile(path)
+		if err != nil {
+			return fmt.Errorf("reading generation asset %q: %w", entry.Name(), err)
+		}
+		normalized, err := normalizeRenderedPNG(contents, file.Width, file.Height)
+		if err != nil {
+			return fmt.Errorf("validating generation asset %q: %w", entry.Name(), err)
+		}
+		if !bytes.Equal(normalized, file.Contents) {
+			return fmt.Errorf("generation asset %q does not match its content hash", entry.Name())
+		}
+	}
+	return nil
+}
+
+func commitValidatedWorkbenchManifest(
+	bundleRoot string,
+	manifest bundleManifest,
+	previous []byte,
+	hadPrevious bool,
+) error {
+	return commitWorkbenchManifestWithOperations(
+		bundleRoot,
+		manifest,
+		previous,
+		hadPrevious,
+		writeAtomic,
+		func() error {
+			committed, err := readManifest(bundleRoot)
+			if err != nil {
+				return err
+			}
+			return validateCommittedWorkbenchBundle(bundleRoot, committed)
+		},
+	)
+}
+
+func commitWorkbenchManifestWithOperations(
+	bundleRoot string,
+	manifest bundleManifest,
+	previous []byte,
+	hadPrevious bool,
+	write func(string, []byte) error,
+	validateAfterWrite func() error,
+) error {
+	if err := validateCommittedWorkbenchBundle(bundleRoot, manifest); err != nil {
+		return fmt.Errorf("validating bundle before manifest switch: %w", err)
+	}
+	contents, err := json.MarshalIndent(manifest, "", "  ")
+	if err != nil {
+		return fmt.Errorf("encoding bundle manifest: %w", err)
+	}
+	contents = append(contents, '\n')
+	manifestPath := filepath.Join(bundleRoot, "manifest.json")
+	if err := write(manifestPath, contents); err != nil {
+		return err
+	}
+	err = validateAfterWrite()
+	if err == nil {
+		return nil
+	}
+	rollbackErr := rollbackWorkbenchManifest(manifestPath, previous, hadPrevious)
+	return errors.Join(
+		fmt.Errorf("validating bundle after manifest switch: %w", err),
+		rollbackErr,
+	)
+}
+
+func rollbackWorkbenchManifest(path string, previous []byte, hadPrevious bool) error {
+	if hadPrevious {
+		if err := writeAtomic(path, previous); err != nil {
+			return fmt.Errorf("restoring previous bundle manifest: %w", err)
+		}
+		return nil
+	}
+	if err := os.Remove(path); err != nil && !errors.Is(err, os.ErrNotExist) {
+		return fmt.Errorf("removing failed bundle manifest: %w", err)
+	}
+	return nil
 }
 
 func validateCommittedWorkbenchBundle(bundleRoot string, manifest bundleManifest) error {
@@ -876,6 +1725,13 @@ func validateCommittedWorkbenchVariants(
 }
 
 func cleanupCommittedExportArtifacts(bundleRoot string) error {
+	return cleanupCommittedExportArtifactsKeeping(bundleRoot, nil)
+}
+
+func cleanupCommittedExportArtifactsKeeping(
+	bundleRoot string,
+	additionalGenerations map[string]struct{},
+) error {
 	manifest, err := readManifest(bundleRoot)
 	if err != nil {
 		return fmt.Errorf("reading committed UI manifest before cleanup: %w", err)
@@ -883,6 +1739,29 @@ func cleanupCommittedExportArtifacts(bundleRoot string) error {
 	protectedGenerations, err := referencedExportGenerations(manifest)
 	if err != nil {
 		return err
+	}
+	if len(additionalGenerations) > 0 {
+		previous, found, findErr := newestExportGeneration(
+			bundleRoot,
+			additionalGenerations,
+			protectedGenerations,
+		)
+		if findErr != nil {
+			return findErr
+		}
+		if !found {
+			previous, found, findErr = newestExportGeneration(
+				bundleRoot,
+				nil,
+				protectedGenerations,
+			)
+			if findErr != nil {
+				return findErr
+			}
+		}
+		if found {
+			protectedGenerations[previous] = struct{}{}
+		}
 	}
 
 	failures := []error{}
@@ -893,6 +1772,51 @@ func cleanupCommittedExportArtifacts(bundleRoot string) error {
 		failures = append(failures, err)
 	}
 	return errors.Join(failures...)
+}
+
+func newestExportGeneration(
+	bundleRoot string,
+	candidates map[string]struct{},
+	excluded map[string]struct{},
+) (string, bool, error) {
+	assetsRoot, err := cleanupDirectChildPath(bundleRoot, "assets")
+	if err != nil {
+		return "", false, err
+	}
+	entries, err := os.ReadDir(assetsRoot)
+	if errors.Is(err, os.ErrNotExist) {
+		return "", false, nil
+	}
+	if err != nil {
+		return "", false, fmt.Errorf("reading UI generations for retention: %w", err)
+	}
+	var selected string
+	var selectedTime time.Time
+	for _, entry := range entries {
+		name := entry.Name()
+		if entry.Type() != os.ModeDir || !isExportGenerationName(name) {
+			continue
+		}
+		if _, skip := excluded[name]; skip {
+			continue
+		}
+		if candidates != nil {
+			if _, allowed := candidates[name]; !allowed {
+				continue
+			}
+		}
+		info, err := entry.Info()
+		if err != nil {
+			return "", false, fmt.Errorf("reading UI generation %q metadata: %w", name, err)
+		}
+		modified := info.ModTime()
+		if selected == "" || modified.After(selectedTime) ||
+			(modified.Equal(selectedTime) && name > selected) {
+			selected = name
+			selectedTime = modified
+		}
+	}
+	return selected, selected != "", nil
 }
 
 func referencedExportGenerations(manifest bundleManifest) (map[string]struct{}, error) {
@@ -1497,6 +2421,26 @@ func (server *workbenchServer) currentVersion() (pageVersion, error) {
 	return newPageVersion(server.startedAt, fingerprint), nil
 }
 
+func validateWorkbenchPageVersion(client pageVersion, current pageVersion) error {
+	if client.StaticVersion != current.StaticVersion {
+		return fmt.Errorf(
+			"workbench page fingerprint %q does not match current source %q; reload and retry",
+			client.StaticVersion,
+			current.StaticVersion,
+		)
+	}
+	if client.Update != current.Update || client.Build != current.Build {
+		return fmt.Errorf(
+			"workbench page build %q/%q does not match server build %q/%q; reload and retry",
+			client.Update,
+			client.Build,
+			current.Update,
+			current.Build,
+		)
+	}
+	return nil
+}
+
 func rasterizeHTML(file exportFile) ([]byte, error) {
 	return rasterizeExportFile(file, rasterizeHTMLAttempt)
 }
@@ -1768,17 +2712,13 @@ func rasterizeHTMLAttempt(file exportFile) ([]byte, error) {
 			strings.TrimSpace(output.String()),
 		)
 	}
-	if err := waitForStableFile(pngPath, 15*time.Second, time.Second); err != nil {
+	pngContents, err := readDecodedPNGWithRetry(pngPath, 2*time.Second)
+	if err != nil {
 		return nil, fmt.Errorf(
-			"Edge produced no screenshot: %w: %s",
+			"Edge produced no decodable screenshot: %w: %s",
 			err,
 			strings.TrimSpace(output.String()),
 		)
-	}
-
-	pngContents, err := os.ReadFile(pngPath)
-	if err != nil {
-		return nil, fmt.Errorf("reading Edge screenshot: %w", err)
 	}
 	return pngContents, nil
 }
@@ -1887,29 +2827,30 @@ func validateSnapshotHTML(snapshot string) error {
 	return nil
 }
 
-func waitForStableFile(path string, timeout time.Duration, stableFor time.Duration) error {
+func readDecodedPNGWithRetry(path string, timeout time.Duration) ([]byte, error) {
 	deadline := time.Now().Add(timeout)
-	var previousSize int64
-	var previousModified time.Time
-	var stableSince time.Time
-	for time.Now().Before(deadline) {
-		info, err := os.Stat(path)
-		if err == nil && info.Size() > 0 {
-			unchanged := info.Size() == previousSize &&
-				info.ModTime().Equal(previousModified)
-			if unchanged {
-				if !stableSince.IsZero() && time.Since(stableSince) >= stableFor {
-					return nil
-				}
+	delay := 10 * time.Millisecond
+	var lastErr error
+	for {
+		contents, err := os.ReadFile(path)
+		if err == nil && len(contents) > 0 {
+			if _, decodeErr := png.Decode(bytes.NewReader(contents)); decodeErr == nil {
+				return contents, nil
 			} else {
-				previousSize = info.Size()
-				previousModified = info.ModTime()
-				stableSince = time.Now()
+				lastErr = decodeErr
 			}
+		} else if err != nil {
+			lastErr = err
+		} else {
+			lastErr = errors.New("screenshot is empty")
 		}
-		time.Sleep(50 * time.Millisecond)
+		if time.Now().Add(delay).After(deadline) {
+			break
+		}
+		time.Sleep(delay)
+		delay = min(delay*2, 160*time.Millisecond)
 	}
-	return fmt.Errorf("timed out waiting for stable file %q", path)
+	return nil, fmt.Errorf("reading and decoding %q before timeout: %w", path, lastErr)
 }
 
 func findEdge() (string, error) {
@@ -1932,6 +2873,94 @@ func findEdge() (string, error) {
 	return "", errors.New("Microsoft Edge was not found")
 }
 
+func (server *workbenchServer) currentEdgeRendererIdentity() (edgeRendererIdentity, error) {
+	resolve := server.resolveEdge
+	if resolve == nil {
+		resolve = installedEdgeRendererIdentity
+	}
+	identity, err := resolve()
+	if err != nil {
+		return edgeRendererIdentity{}, fmt.Errorf("identifying Microsoft Edge renderer: %w", err)
+	}
+	if strings.TrimSpace(identity.Version) == "" ||
+		!isLowerHex(identity.Fingerprint, exportRendererStampLength) {
+		return edgeRendererIdentity{}, errors.New("Microsoft Edge renderer identity is invalid")
+	}
+	return identity, nil
+}
+
+func installedEdgeRendererIdentity() (edgeRendererIdentity, error) {
+	edgePath, err := findEdge()
+	if err != nil {
+		return edgeRendererIdentity{}, err
+	}
+	version, err := windowsFileVersion(edgePath)
+	if err != nil {
+		return edgeRendererIdentity{}, err
+	}
+	info, err := os.Stat(edgePath)
+	if err != nil {
+		return edgeRendererIdentity{}, fmt.Errorf("stat Edge executable: %w", err)
+	}
+	absolutePath, err := filepath.Abs(edgePath)
+	if err != nil {
+		return edgeRendererIdentity{}, fmt.Errorf("resolve Edge executable path: %w", err)
+	}
+	hash := sha256.New()
+	_, _ = fmt.Fprintf(
+		hash,
+		"%s\x00%s\x00%d\x00%d",
+		strings.ToLower(filepath.Clean(absolutePath)),
+		version,
+		info.Size(),
+		info.ModTime().UTC().UnixNano(),
+	)
+	return edgeRendererIdentity{
+		Version:     version,
+		Fingerprint: hex.EncodeToString(hash.Sum(nil))[:exportRendererStampLength],
+	}, nil
+}
+
+func windowsFileVersion(path string) (string, error) {
+	var zero windows.Handle
+	size, err := windows.GetFileVersionInfoSize(path, &zero)
+	if err != nil {
+		return "", fmt.Errorf("read Edge version size: %w", err)
+	}
+	if size == 0 {
+		return "", errors.New("Edge executable has no version information")
+	}
+	contents := make([]byte, size)
+	if err := windows.GetFileVersionInfo(
+		path,
+		0,
+		size,
+		unsafe.Pointer(&contents[0]),
+	); err != nil {
+		return "", fmt.Errorf("read Edge version information: %w", err)
+	}
+	var fixed *windows.VS_FIXEDFILEINFO
+	fixedSize := uint32(unsafe.Sizeof(windows.VS_FIXEDFILEINFO{}))
+	if err := windows.VerQueryValue(
+		unsafe.Pointer(&contents[0]),
+		`\`,
+		unsafe.Pointer(&fixed),
+		&fixedSize,
+	); err != nil {
+		return "", fmt.Errorf("query Edge version information: %w", err)
+	}
+	if fixed == nil || fixedSize < uint32(unsafe.Sizeof(*fixed)) {
+		return "", errors.New("Edge version information is incomplete")
+	}
+	return fmt.Sprintf(
+		"%d.%d.%d.%d",
+		fixed.FileVersionMS>>16,
+		fixed.FileVersionMS&0xffff,
+		fixed.FileVersionLS>>16,
+		fixed.FileVersionLS&0xffff,
+	), nil
+}
+
 func writeAtomic(path string, contents []byte) error {
 	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
 		return fmt.Errorf("creating parent directory for %q: %w", path, err)
@@ -1949,6 +2978,10 @@ func writeAtomic(path string, contents []byte) error {
 	if _, err := temporary.Write(contents); err != nil {
 		_ = temporary.Close()
 		return fmt.Errorf("writing temporary file for %q: %w", path, err)
+	}
+	if err := temporary.Sync(); err != nil {
+		_ = temporary.Close()
+		return fmt.Errorf("syncing temporary file for %q: %w", path, err)
 	}
 	if err := temporary.Close(); err != nil {
 		return fmt.Errorf("closing temporary file for %q: %w", path, err)

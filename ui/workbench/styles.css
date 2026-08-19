@@ -173,6 +173,31 @@ select {
   display: none !important;
 }
 
+.statistics-crossfade-ghost {
+  position: fixed;
+  z-index: 1000;
+  margin: 0;
+  pointer-events: none;
+  transform-origin: top left;
+}
+
+html.export-freeze *,
+html.export-freeze *::before,
+html.export-freeze *::after {
+  transition: none !important;
+  animation: none !important;
+  scroll-behavior: auto !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .surface-preview,
+  .statistics-surface,
+  .statistics-crossfade-ghost {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
 .preview-caption {
   color: #71808e;
   font-size: 10px;

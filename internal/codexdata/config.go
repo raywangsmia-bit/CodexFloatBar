@@ -2,6 +2,7 @@ package codexdata
 
 import (
 	"bufio"
+	"context"
 	"fmt"
 	"os"
 	"regexp"
@@ -20,23 +21,32 @@ var (
 )
 
 func readConfig(path string) ConfigSummary {
+	result, _ := readConfigContext(context.Background(), path, nil)
+	return result
+}
+
+func readConfigContext(
+	ctx context.Context,
+	path string,
+	metrics *ReadMetrics,
+) (ConfigSummary, error) {
 	file, err := os.Open(path)
 	if err != nil {
 		if os.IsNotExist(err) {
-			return ConfigSummary{
-				State:   SourceMissing,
-				Message: fmt.Sprintf("未找到配置文件: %s", path),
-			}
+			return missingConfigSummary(path), err
 		}
-		return ConfigSummary{
-			State:   SourceFailed,
-			Message: fmt.Sprintf("读取配置文件失败: %v", err),
-		}
+		return failedConfigSummary(err), err
 	}
 	defer file.Close()
 
 	result := ConfigSummary{State: SourceAvailable}
-	scanner := bufio.NewScanner(file)
+	reader := &contextChunkReader{
+		ctx:     ctx,
+		reader:  file,
+		metrics: metrics,
+		kind:    sourceReadConfig,
+	}
+	scanner := bufio.NewScanner(reader)
 	scanner.Buffer(make([]byte, 64*1024), 1024*1024)
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -60,12 +70,27 @@ func readConfig(path string) ConfigSummary {
 		}
 	}
 	if err := scanner.Err(); err != nil {
-		return ConfigSummary{
-			State:   SourceFailed,
-			Message: fmt.Sprintf("读取配置文件失败: %v", err),
+		failed := failedConfigSummary(err)
+		if reader.readError != nil {
+			return failed, reader.readError
 		}
+		return failed, nil
 	}
-	return result
+	return result, nil
+}
+
+func missingConfigSummary(path string) ConfigSummary {
+	return ConfigSummary{
+		State:   SourceMissing,
+		Message: fmt.Sprintf("未找到配置文件: %s", path),
+	}
+}
+
+func failedConfigSummary(err error) ConfigSummary {
+	return ConfigSummary{
+		State:   SourceFailed,
+		Message: fmt.Sprintf("读取配置文件失败: %v", err),
+	}
 }
 
 func firstMatch(pattern *regexp.Regexp, value string) string {

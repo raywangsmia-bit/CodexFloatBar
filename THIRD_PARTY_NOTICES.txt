@@ -5,23 +5,26 @@ This distribution includes software and assets from the projects listed below.
 The notices and license texts must remain with source and binary distributions.
 
 
-1. CodexFloatingBar legacy project assets and behavior contract
----------------------------------------------------------------
+1. CodexFloatingBar legacy project license and behavior contract
+-----------------------------------------------------------------
 
 Source project: https://github.com/liuguoqiang0730-svg/CodexFloatingBar
 License: MIT License
 Copyright: Copyright (c) 2026 CodexFloatingBar contributors
 
 The current project is a Go/Win32 rewrite of CodexFloatingBar. It retains the
-legacy project license, the application/tray icon, and compatibility behavior
-used to migrate settings and validate data parsing. The complete MIT license is
-provided in the accompanying LICENSE file.
+legacy project license and compatibility behavior used to migrate settings and
+validate data parsing. The complete MIT license is provided in the accompanying
+LICENSE file.
 
-Retained icon provenance:
-  Original path: src/CodexFloatingBar/Assets/app-icon.ico
-  Current path:  resources/app-icon.ico
-  Introduced by: commit 2d1c91486682d11602310b83196a23fa1fa72615
-  SHA-256:       400194ff1fe659694b53fa2e5c9821082145c8a3d63bc25b2bdaa3ebc6029cc7
+The legacy application icon is not included in this distribution. The current
+application/tray icon is a project-specific asset generated for CodexFloatBar
+using OpenAI image generation tooling. Its unmodified source image is retained
+at resources/app-icon-source.png in the source repository.
+
+Current icon provenance:
+  Source PNG SHA-256: 12e4b7645fd909b2344da11d1814876b01af0a6e7e7eeb7400a99179307efc48
+  ICO SHA-256:        f2c6748b06cf268c229ab355678490cfaa0e6c7eccd8bdda65bac363bb0d4a28
 
 
 2. golang.org/x/sys v0.43.0

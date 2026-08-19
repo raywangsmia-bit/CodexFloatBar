@@ -78,12 +78,17 @@ func TestStatusRuntimeStatisticsActionsClampMonthAndIgnoreHiddenNavigation(t *te
 		runtime.statistics.View != statisticsViewDetail || runtime.statistics.SelectedDay != 4 {
 		t.Fatalf("date selection did not open detail: %+v", runtime.statistics)
 	}
-	if !runtime.applyStatisticsAction("statistics-select-day-05") ||
-		runtime.statistics.SelectedDay != 0 || runtime.statistics.View != statisticsViewDetail {
-		t.Fatalf("second date click did not clear selection: %+v", runtime.statistics)
+	if runtime.applyStatisticsAction("statistics-select-day-05") {
+		t.Fatal("date selection was accepted outside the month view")
 	}
 	if runtime.applyStatisticsAction("statistics-unknown") {
 		t.Fatal("unknown statistics action was accepted")
+	}
+}
+
+func TestStatusCacheCheckpointIntervalAllowsExitFlushToOwnDurability(t *testing.T) {
+	if statusCacheSaveInterval != time.Minute {
+		t.Fatalf("cache save interval = %s, want 1m", statusCacheSaveInterval)
 	}
 }
 

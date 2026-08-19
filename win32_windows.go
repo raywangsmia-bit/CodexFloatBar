@@ -73,6 +73,7 @@ const (
 	wineventOutOfContext      = 0x0000
 	wineventSkipOwnProcess    = 0x0002
 
+	htTransparent             = ^uintptr(0)
 	htClient                  = 1
 	htCaption                 = 2
 	idcArrow                  = 32512
@@ -80,6 +81,8 @@ const (
 	vkEscape                  = 0x1B
 	smCXScreen                = 0
 	smCYScreen                = 1
+	smRemoteSession           = 0x1000
+	spiGetClientAreaAnimation = 0x1042
 	colorWindow               = 5
 
 	swpNoZOrder   = 0x0004
@@ -266,6 +269,7 @@ var (
 	procLoadCursorW                   = user32.NewProc("LoadCursorW")
 	procLoadIconW                     = user32.NewProc("LoadIconW")
 	procGetSystemMetrics              = user32.NewProc("GetSystemMetrics")
+	procSystemParametersInfoW         = user32.NewProc("SystemParametersInfoW")
 	procGetWindowRect                 = user32.NewProc("GetWindowRect")
 	procSetWindowPos                  = user32.NewProc("SetWindowPos")
 	procGetDC                         = user32.NewProc("GetDC")
@@ -304,6 +308,22 @@ var (
 	procShellNotifyIconW = shell32.NewProc("Shell_NotifyIconW")
 	procGetModuleHandleW = kernel32.NewProc("GetModuleHandleW")
 )
+
+func nativeAnimationsEnabled() bool {
+	remote, _, _ := procGetSystemMetrics.Call(smRemoteSession)
+	var clientAreaAnimations int32
+	result, _, _ := procSystemParametersInfoW.Call(
+		spiGetClientAreaAnimation,
+		0,
+		uintptr(unsafe.Pointer(&clientAreaAnimations)),
+		0,
+	)
+	return animationPolicyAllows(result != 0 && clientAreaAnimations != 0, remote != 0)
+}
+
+func animationPolicyAllows(clientAreaAnimations bool, remoteSession bool) bool {
+	return clientAreaAnimations && !remoteSession
+}
 
 var monitorCollector = struct {
 	sync.Mutex

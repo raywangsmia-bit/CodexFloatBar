@@ -11,6 +11,7 @@ import (
 	"image/color"
 	"image/png"
 	"math"
+	"net"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -49,6 +50,7 @@ func TestWorkbenchIndexUsesOneStartupVersion(t *testing.T) {
 		"styles.css?v=codexfloatingbar-",
 		"app.js?v=codexfloatingbar-",
 		"window.__WORKBENCH_TOKEN__ = \"test-token\"",
+		"window.__AUTO_EXPORT__ = false",
 		"id=\"statisticsSurface\"",
 		"id=\"usageToastSurface\"",
 		"data-action=\"toggle-toast\"",
@@ -75,6 +77,28 @@ func TestWorkbenchIndexUsesOneStartupVersion(t *testing.T) {
 		if strings.Contains(stage, forbidden) {
 			t.Fatalf("exportable surface stage contains %q", forbidden)
 		}
+	}
+	autoServer := &workbenchServer{
+		startedAt:     startedAt,
+		workbenchRoot: "ui/workbench",
+		bundleRoot:    t.TempDir(),
+		exportToken:   "auto-token",
+		autoExport:    true,
+		autoReports:   make(chan autoExportReport, 1),
+	}
+	autoResponse := httptest.NewRecorder()
+	autoServer.serveIndex(autoResponse, httptest.NewRequest(http.MethodGet, "/", nil))
+	if autoResponse.Code != http.StatusOK ||
+		!strings.Contains(autoResponse.Body.String(), "window.__AUTO_EXPORT__ = true") {
+		t.Fatalf("automatic workbench index = %d %q", autoResponse.Code, autoResponse.Body.String())
+	}
+	select {
+	case report := <-autoServer.autoReports:
+		t.Fatalf("GET / produced an automatic export report: %+v", report)
+	default:
+	}
+	if autoServer.autoReported || autoServer.autoSuccess != nil {
+		t.Fatal("GET / changed automatic export state")
 	}
 }
 
@@ -183,10 +207,28 @@ func TestWorkbenchExporterScopesLiveStylesToEachSurface(t *testing.T) {
 		"element.matches(selector) || element.querySelector(selector) !== null",
 		"fontFamilies = parsedFontFamilies(style.fontFamily)",
 		"fontFamilies,",
+		"requestExportPreflight(defaultSurface)",
+		"version: pageVersion",
+		"requireEdgeWorkbenchExport()",
+		"renderer,",
+		"if (autoExport)",
+		"runAutomaticExport()",
+		`fetch("/api/export/result"`,
+		"setExportFreeze(true)",
+		`class=\"export-freeze\"`,
+		"prefers-reduced-motion: reduce",
 	} {
 		if !strings.Contains(app, expected) {
 			t.Fatalf("workbench exporter does not contain %q", expected)
 		}
+	}
+	preflight := strings.Index(app, "await requestExportPreflight(defaultSurface)")
+	stylesheetCollection := strings.Index(app, "await collectStylesheets()")
+	if preflight < 0 || stylesheetCollection < 0 || preflight >= stylesheetCollection {
+		t.Fatal("export preflight does not run before HTML/style snapshot construction")
+	}
+	if strings.Contains(app, "auto-export") || strings.Contains(app, "URLSearchParams") {
+		t.Fatal("workbench still enables automatic export through a GET query parameter")
 	}
 }
 
@@ -208,6 +250,113 @@ func TestWorkbenchExportAuthorization(t *testing.T) {
 	if err := server.authorizeExport(request); err == nil {
 		t.Fatal("request without the workbench token was accepted")
 	}
+
+	makeReportRequest := func(
+		server *workbenchServer,
+		token string,
+		reported autoExportReport,
+	) (*httptest.ResponseRecorder, *http.Request) {
+		t.Helper()
+		contents, err := json.Marshal(reported)
+		if err != nil {
+			t.Fatal(err)
+		}
+		request := httptest.NewRequest(
+			http.MethodPost,
+			server.origin+"/api/export/result",
+			bytes.NewReader(contents),
+		)
+		request.RemoteAddr = "127.0.0.1:54321"
+		request.Header.Set("Content-Type", "application/json")
+		request.Header.Set("Origin", server.origin)
+		request.Header.Set("X-Codex-Workbench-Token", token)
+		return httptest.NewRecorder(), request
+	}
+	defaultResponse, defaultRequest := makeReportRequest(
+		server,
+		"secret",
+		autoExportReport{OK: false, Error: "must remain disabled"},
+	)
+	server.receiveAutoExportReport(defaultResponse, defaultRequest)
+	if defaultResponse.Code != http.StatusNotFound {
+		t.Fatalf("default automatic report status = %d, want 404", defaultResponse.Code)
+	}
+
+	newAutoServer := func() *workbenchServer {
+		return &workbenchServer{
+			origin:      "http://127.0.0.1:9315",
+			exportToken: "secret",
+			autoExport:  true,
+			autoReports: make(chan autoExportReport, 1),
+		}
+	}
+	verified := exportResult{OK: true, UpToDate: true, Files: 56, Reused: 56}
+	verifiedReport := autoExportReport{
+		OK: true, UpToDate: true, Files: 56, Reused: 56,
+	}
+	autoServer := newAutoServer()
+	autoServer.recordAutoExportSuccess(verified)
+	deniedResponse, deniedRequest := makeReportRequest(autoServer, "wrong", verifiedReport)
+	autoServer.receiveAutoExportReport(deniedResponse, deniedRequest)
+	if deniedResponse.Code != http.StatusForbidden {
+		t.Fatalf("unauthorized automatic report status = %d", deniedResponse.Code)
+	}
+	select {
+	case reported := <-autoServer.autoReports:
+		t.Fatalf("unauthorized automatic report became terminal: %+v", reported)
+	default:
+	}
+
+	successResponse, successRequest := makeReportRequest(autoServer, "secret", verifiedReport)
+	autoServer.receiveAutoExportReport(successResponse, successRequest)
+	if successResponse.Code != http.StatusOK {
+		t.Fatalf("verified automatic success status = %d: %s", successResponse.Code, successResponse.Body)
+	}
+	if reported := <-autoServer.autoReports; reported != verifiedReport {
+		t.Fatalf("automatic success report = %+v, want %+v", reported, verifiedReport)
+	}
+	duplicateResponse, duplicateRequest := makeReportRequest(autoServer, "secret", verifiedReport)
+	autoServer.receiveAutoExportReport(duplicateResponse, duplicateRequest)
+	if duplicateResponse.Code != http.StatusConflict {
+		t.Fatalf("duplicate automatic report status = %d, want 409", duplicateResponse.Code)
+	}
+	committedServer := newAutoServer()
+	committed := exportResult{OK: true, Files: 56, Rendered: 56, Atlases: 4}
+	committedReport := autoExportReport{OK: true, Files: 56, Rendered: 56, Atlases: 4}
+	committedServer.recordAutoExportSuccess(committed)
+	committedResponse, committedRequest := makeReportRequest(
+		committedServer,
+		"secret",
+		committedReport,
+	)
+	committedServer.receiveAutoExportReport(committedResponse, committedRequest)
+	if committedResponse.Code != http.StatusOK {
+		t.Fatalf(
+			"committed automatic success status = %d: %s",
+			committedResponse.Code,
+			committedResponse.Body,
+		)
+	}
+	if reported := <-committedServer.autoReports; reported != committedReport {
+		t.Fatalf("committed automatic report = %+v, want %+v", reported, committedReport)
+	}
+
+	forgedServer := newAutoServer()
+	forgedResponse, forgedRequest := makeReportRequest(forgedServer, "secret", verifiedReport)
+	forgedServer.receiveAutoExportReport(forgedResponse, forgedRequest)
+	if forgedResponse.Code != http.StatusBadRequest {
+		t.Fatalf("unverified automatic success status = %d, want 400", forgedResponse.Code)
+	}
+	failureServer := newAutoServer()
+	failureReport := autoExportReport{OK: false, Error: "client DOM measurement failed"}
+	failureResponse, failureRequest := makeReportRequest(failureServer, "secret", failureReport)
+	failureServer.receiveAutoExportReport(failureResponse, failureRequest)
+	if failureResponse.Code != http.StatusOK {
+		t.Fatalf("automatic failure status = %d: %s", failureResponse.Code, failureResponse.Body)
+	}
+	if reported := <-failureServer.autoReports; reported != failureReport {
+		t.Fatalf("automatic failure report = %+v, want %+v", reported, failureReport)
+	}
 }
 
 func TestWorkbenchAddressMustBeLoopback(t *testing.T) {
@@ -216,6 +365,113 @@ func TestWorkbenchAddressMustBeLoopback(t *testing.T) {
 	}
 	if err := requireLoopbackAddress("0.0.0.0:9315"); err == nil {
 		t.Fatal("non-loopback workbench address was accepted")
+	}
+}
+
+func TestWorkbenchExportOnceMode(t *testing.T) {
+	defaults, err := parseWorkbenchOptions(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if defaults.exportOnce || !defaults.openBrowser ||
+		defaults.listenAddress != "127.0.0.1:9315" {
+		t.Fatalf("default workbench options = %+v", defaults)
+	}
+	configured, err := parseWorkbenchOptions([]string{
+		"--export-once",
+		"--listen-address=127.0.0.1:0",
+		"--ui-root=D:\\fixture-ui",
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !configured.exportOnce || configured.openBrowser ||
+		configured.listenAddress != "127.0.0.1:0" ||
+		configured.uiRoot != `D:\fixture-ui` {
+		t.Fatalf("automatic workbench options = %+v", configured)
+	}
+	if _, err := parseWorkbenchOptions([]string{"unexpected"}); err == nil {
+		t.Fatal("unexpected positional workbench argument was accepted")
+	}
+
+	arguments := exportOnceEdgeArguments(
+		"http://127.0.0.1:12345/",
+		`D:\profile`,
+	)
+	if !slices.Contains(arguments, "--headless=new") ||
+		!slices.Contains(arguments, `--user-data-dir=D:\profile`) ||
+		arguments[len(arguments)-1] != "http://127.0.0.1:12345/" ||
+		slices.Contains(arguments, "--disable-javascript") {
+		t.Fatalf("automatic Edge arguments = %q", arguments)
+	}
+
+	successReports := make(chan autoExportReport, 1)
+	successReports <- autoExportReport{OK: true, Files: 56, Rendered: 56, Atlases: 4}
+	success := waitForExportOnceTerminal(
+		successReports,
+		make(chan error),
+		time.Second,
+	)
+	if success.kind != exportOnceReported || !success.report.OK {
+		t.Fatalf("automatic success terminal = %+v", success)
+	}
+	failureReports := make(chan autoExportReport, 1)
+	failureReports <- autoExportReport{OK: false, Error: "client failure"}
+	failure := waitForExportOnceTerminal(
+		failureReports,
+		make(chan error),
+		time.Second,
+	)
+	if failure.kind != exportOnceReported || failure.report.OK ||
+		failure.report.Error != "client failure" {
+		t.Fatalf("automatic failure terminal = %+v", failure)
+	}
+	processDone := make(chan error, 1)
+	processFailure := errors.New("injected early Edge exit")
+	processDone <- processFailure
+	exited := waitForExportOnceTerminal(
+		make(chan autoExportReport),
+		processDone,
+		time.Second,
+	)
+	if exited.kind != exportOnceEdgeExited || !errors.Is(exited.processErr, processFailure) {
+		t.Fatalf("early Edge terminal = %+v", exited)
+	}
+	expired := waitForExportOnceTerminal(
+		make(chan autoExportReport),
+		make(chan error),
+		5*time.Millisecond,
+	)
+	if expired.kind != exportOnceExpired {
+		t.Fatalf("automatic timeout terminal = %+v", expired)
+	}
+
+	running, err := startWorkbenchServerWithOptions(
+		"127.0.0.1:0",
+		time.Date(2026, 8, 19, 12, 0, 0, 0, time.Local),
+		t.TempDir(),
+		t.TempDir(),
+		workbenchServerOptions{AutoExport: true},
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if running.AutoReports == nil {
+		t.Fatal("automatic workbench server has no result channel")
+	}
+	listenAddress := strings.TrimSuffix(
+		strings.TrimPrefix(running.URL, "http://"),
+		"/",
+	)
+	if err := running.Close(); err != nil {
+		t.Fatal(err)
+	}
+	listener, err := net.Listen("tcp", listenAddress)
+	if err != nil {
+		t.Fatalf("workbench server did not release %q: %v", listenAddress, err)
+	}
+	if err := listener.Close(); err != nil {
+		t.Fatal(err)
 	}
 }
 
@@ -235,6 +491,13 @@ func TestSnapshotRejectsExternalResources(t *testing.T) {
 func TestEdgeRasterizerIntegration(t *testing.T) {
 	if os.Getenv("CODEXFLOATINGBAR_TEST_EDGE") != "1" {
 		t.Skip("set CODEXFLOATINGBAR_TEST_EDGE=1 to run the system Edge exporter")
+	}
+	identity, err := installedEdgeRendererIdentity()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if identity.Version == "" || !isLowerHex(identity.Fingerprint, exportRendererStampLength) {
+		t.Fatalf("invalid installed Edge identity: %+v", identity)
 	}
 	contents, err := rasterizeHTML(exportFile{
 		Name:   "test.png",
@@ -289,6 +552,95 @@ func TestEdgeRasterizerIntegration(t *testing.T) {
 			maxY,
 		)
 	}
+
+	exported := validWorkbenchExport()
+	jobs := make([]exportRenderJob, 0, len(exported.Files))
+	expectedColors := make(map[string]color.NRGBA, len(exported.Files))
+	for index, file := range exported.Files {
+		expected := color.NRGBA{
+			R: uint8(32 + index*37%192),
+			G: uint8(32 + index*53%192),
+			B: uint8(32 + index*71%192),
+			A: 255,
+		}
+		file.HTML = solidColorSnapshot(
+			file.Width,
+			file.Height,
+			fmt.Sprintf("#%02x%02x%02x", expected.R, expected.G, expected.B),
+		)
+		expectedColors[file.Name] = expected
+		jobs = append(jobs, exportRenderJob{
+			order: index, fileIndex: index, file: file,
+		})
+	}
+	var atlasCalls atomic.Int32
+	cropped, atlases, fallback, err := rasterizeExportAtlases(
+		jobs,
+		exported.Manifest,
+		func(file exportFile) ([]byte, error) {
+			atlasCalls.Add(1)
+			return rasterizeHTMLAttempt(file)
+		},
+		exportRasterizerWorkers,
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if atlasCalls.Load() != int32(len(workbenchVariantScales)) ||
+		atlases != len(workbenchVariantScales) || fallback != 0 ||
+		len(cropped) != len(exported.Files) {
+		t.Fatalf(
+			"real Edge atlas calls/atlases/fallback/crops = %d/%d/%d/%d",
+			atlasCalls.Load(),
+			atlases,
+			fallback,
+			len(cropped),
+		)
+	}
+	for _, outcome := range cropped {
+		rendered, err := png.Decode(bytes.NewReader(outcome.contents))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if rendered.Bounds().Dx() != outcome.job.file.Width ||
+			rendered.Bounds().Dy() != outcome.job.file.Height {
+			t.Fatalf(
+				"atlas crop %q is %v, want %dx%d",
+				outcome.job.file.Name,
+				rendered.Bounds(),
+				outcome.job.file.Width,
+				outcome.job.file.Height,
+			)
+		}
+		r, g, b, a := rendered.At(rendered.Bounds().Dx()/2, rendered.Bounds().Dy()/2).RGBA()
+		expected := expectedColors[outcome.job.file.Name]
+		if uint8(r>>8) != expected.R || uint8(g>>8) != expected.G ||
+			uint8(b>>8) != expected.B || a < 0xff00 {
+			t.Fatalf(
+				"atlas crop %q center = %d,%d,%d,%d, want %+v",
+				outcome.job.file.Name,
+				r>>8,
+				g>>8,
+				b>>8,
+				a>>8,
+				expected,
+			)
+		}
+	}
+}
+
+func solidColorSnapshot(width int, height int, color string) string {
+	return fmt.Sprintf(
+		`<!doctype html><html><head><style>`+
+			`html,body{width:%dpx;height:%dpx;margin:0;background:transparent}`+
+			`.surface{width:%dpx;height:%dpx;background:%s}`+
+			`</style></head><body><div class="surface"></div></body></html>`,
+		width,
+		height,
+		width,
+		height,
+		color,
+	)
 }
 
 func TestEdgeRasterizerArgumentsPreserveBrowserRendering(t *testing.T) {
@@ -372,7 +724,7 @@ func TestExportFailureKeepsPreviousBundle(t *testing.T) {
 		workbenchRoot: workbenchRoot,
 		bundleRoot:    bundleRoot,
 	}
-	exported := validWorkbenchExport()
+	exported := validWorkbenchExportForServer(t, server)
 	failedFile := exported.Files[1].Name
 	err := server.writeExportWithRasterizer(exported, func(file exportFile) ([]byte, error) {
 		if file.Name == failedFile {
@@ -396,6 +748,149 @@ func TestExportFailureKeepsPreviousBundle(t *testing.T) {
 	}
 	if len(assets) != 0 {
 		t.Fatalf("failed export committed %d asset generations", len(assets))
+	}
+}
+
+func TestManifestSwitchFailuresKeepPreviousManifest(t *testing.T) {
+	workbenchRoot := t.TempDir()
+	writeTestFile(t, filepath.Join(workbenchRoot, "index.html"))
+	bundleRoot := t.TempDir()
+	server := &workbenchServer{
+		startedAt:     time.Date(2026, 8, 9, 12, 0, 0, 0, time.Local),
+		workbenchRoot: workbenchRoot,
+		bundleRoot:    bundleRoot,
+	}
+	if err := server.writeExportWithRasterizer(
+		validWorkbenchExportForServer(t, server),
+		func(file exportFile) ([]byte, error) {
+			return testPNG(t, file.Width, file.Height, true), nil
+		},
+	); err != nil {
+		t.Fatal(err)
+	}
+	manifestPath := filepath.Join(bundleRoot, "manifest.json")
+	previous, err := os.ReadFile(manifestPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	manifest, err := readManifest(bundleRoot)
+	if err != nil {
+		t.Fatal(err)
+	}
+	manifest.DefaultSurface = "main-vertical-light"
+
+	writeFailure := errors.New("injected manifest write failure")
+	err = commitWorkbenchManifestWithOperations(
+		bundleRoot,
+		manifest,
+		previous,
+		true,
+		func(string, []byte) error { return writeFailure },
+		func() error {
+			t.Fatal("post-write validation ran after a failed manifest write")
+			return nil
+		},
+	)
+	if !errors.Is(err, writeFailure) {
+		t.Fatalf("manifest write failure = %v, want %v", err, writeFailure)
+	}
+	assertFileContents(t, manifestPath, previous)
+
+	readFailure := errors.New("injected manifest read failure")
+	err = commitWorkbenchManifestWithOperations(
+		bundleRoot,
+		manifest,
+		previous,
+		true,
+		writeAtomic,
+		func() error { return readFailure },
+	)
+	if !errors.Is(err, readFailure) {
+		t.Fatalf("manifest read failure = %v, want %v", err, readFailure)
+	}
+	assertFileContents(t, manifestPath, previous)
+
+	mismatchedRenderer := validWorkbenchExportForServer(t, server)
+	mismatchedRenderer.Renderer = "150.0.0.0"
+	rasterCalls := 0
+	err = server.writeExportWithRasterizer(
+		mismatchedRenderer,
+		func(file exportFile) ([]byte, error) {
+			rasterCalls++
+			return testPNG(t, file.Width, file.Height, true), nil
+		},
+	)
+	if err == nil || !strings.Contains(err.Error(), "does not match export renderer") {
+		t.Fatalf("mismatched Edge request error = %v", err)
+	}
+	if rasterCalls != 0 {
+		t.Fatalf("mismatched Edge request started %d raster jobs", rasterCalls)
+	}
+	assertFileContents(t, manifestPath, previous)
+
+	stale := validWorkbenchExportForServer(t, server)
+	if err := os.WriteFile(
+		filepath.Join(workbenchRoot, "index.html"),
+		[]byte("changed before export"),
+		0o600,
+	); err != nil {
+		t.Fatal(err)
+	}
+	rasterCalls = 0
+	err = server.writeExportWithRasterizer(
+		stale,
+		func(file exportFile) ([]byte, error) {
+			rasterCalls++
+			return testPNG(t, file.Width, file.Height, true), nil
+		},
+	)
+	if err == nil || !strings.Contains(err.Error(), "fingerprint") {
+		t.Fatalf("stale export request error = %v", err)
+	}
+	if rasterCalls != 0 {
+		t.Fatalf("stale export request started %d raster jobs", rasterCalls)
+	}
+	assertFileContents(t, manifestPath, previous)
+
+	beforeGenerations, err := os.ReadDir(filepath.Join(bundleRoot, "assets"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	racing := validWorkbenchExportForServer(t, server)
+	for index := range racing.Files {
+		racing.Files[index].HTML += "<!-- static source race -->"
+	}
+	staticChanged := false
+	err = server.writeExportWithRasterizer(
+		racing,
+		func(file exportFile) ([]byte, error) {
+			if !staticChanged {
+				staticChanged = true
+				if err := os.WriteFile(
+					filepath.Join(workbenchRoot, "index.html"),
+					[]byte("changed during export"),
+					0o600,
+				); err != nil {
+					return nil, err
+				}
+			}
+			return testPNGWithCoverage(t, file.Width, file.Height, 1, 254), nil
+		},
+	)
+	if err == nil || !strings.Contains(err.Error(), "source changed during export") {
+		t.Fatalf("static source race error = %v", err)
+	}
+	assertFileContents(t, manifestPath, previous)
+	afterGenerations, err := os.ReadDir(filepath.Join(bundleRoot, "assets"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(afterGenerations) != len(beforeGenerations) {
+		t.Fatalf(
+			"static source race left %d generations, want %d",
+			len(afterGenerations),
+			len(beforeGenerations),
+		)
 	}
 }
 
@@ -633,14 +1128,20 @@ func TestRasterizeExportFileStopsAfterFiniteFailures(t *testing.T) {
 }
 
 func TestExportGenerationChangesWithRenderedAsset(t *testing.T) {
-	files := []renderedExportFile{{
-		Name: "surface.png", Width: 10, Height: 10, Contents: []byte("first"),
-	}}
+	files := []renderedExportFile{
+		{Name: "surface-b.png", Width: 10, Height: 10, Contents: []byte("first")},
+		{Name: "surface-a.png", Width: 20, Height: 5, Contents: []byte("stable")},
+	}
 	first := exportGeneration(files)
 	files[0].Contents = []byte("second")
 	second := exportGeneration(files)
 	if first == second {
 		t.Fatal("export generation did not change with the rendered asset")
+	}
+	files[0].Contents = []byte("first")
+	slices.Reverse(files)
+	if reordered := exportGeneration(files); reordered != first {
+		t.Fatalf("export generation changed with input order: %q != %q", reordered, first)
 	}
 }
 
@@ -655,7 +1156,7 @@ func TestIncrementalExportReusesUnchangedRenderedFiles(t *testing.T) {
 
 	firstCalls := 0
 	firstResult, err := server.writeExportWithRasterizerResult(
-		validWorkbenchExport(),
+		validWorkbenchExportForServer(t, server),
 		func(file exportFile) ([]byte, error) {
 			firstCalls++
 			return testPNG(t, file.Width, file.Height, true), nil
@@ -676,7 +1177,7 @@ func TestIncrementalExportReusesUnchangedRenderedFiles(t *testing.T) {
 		)
 	}
 
-	changed := validWorkbenchExport()
+	changed := validWorkbenchExportForServer(t, server)
 	changed.Files[0].HTML = `<!doctype html><html><head></head><body><div><span></span></div></body></html>`
 	secondCalls := 0
 	secondResult, err := server.writeExportWithRasterizerResult(
@@ -724,11 +1225,14 @@ func TestIncrementalExportInvalidatesOnlyStatisticsSurfaces(t *testing.T) {
 	rasterizer := func(file exportFile) ([]byte, error) {
 		return testPNG(t, file.Width, file.Height, true), nil
 	}
-	if err := server.writeExportWithRasterizer(validWorkbenchExport(), rasterizer); err != nil {
+	if err := server.writeExportWithRasterizer(
+		validWorkbenchExportForServer(t, server),
+		rasterizer,
+	); err != nil {
 		t.Fatal(err)
 	}
 
-	changed := validWorkbenchExport()
+	changed := validWorkbenchExportForServer(t, server)
 	for index := range changed.Files {
 		name := changed.Files[index].Name
 		isStatistics := strings.HasPrefix(name, "statistics@") ||
@@ -776,7 +1280,7 @@ func TestParallelExportUsesThreeRasterizerWorkers(t *testing.T) {
 		workbenchRoot: workbenchRoot,
 		bundleRoot:    t.TempDir(),
 	}
-	exported := validWorkbenchExport()
+	exported := validWorkbenchExportForServer(t, server)
 	pngBySize := map[string][]byte{}
 	for _, file := range exported.Files {
 		key := fmt.Sprintf("%dx%d", file.Width, file.Height)
@@ -843,6 +1347,74 @@ func TestParallelExportUsesThreeRasterizerWorkers(t *testing.T) {
 	}
 }
 
+func TestAtlasExportRendersAtMostOneScreenshotPerScale(t *testing.T) {
+	workbenchRoot := t.TempDir()
+	writeTestFile(t, filepath.Join(workbenchRoot, "index.html"))
+	server := &workbenchServer{
+		startedAt:     time.Date(2026, 8, 9, 12, 0, 0, 0, time.Local),
+		workbenchRoot: workbenchRoot,
+		bundleRoot:    t.TempDir(),
+	}
+	var calls atomic.Int32
+	result, err := server.writeExportWithAtlasRasterizerResult(
+		validWorkbenchExportForServer(t, server),
+		func(file exportFile) ([]byte, error) {
+			calls.Add(1)
+			if !strings.HasPrefix(file.Name, "atlas@") {
+				return nil, fmt.Errorf("cold atlas export rasterized individual file %q", file.Name)
+			}
+			if got := strings.Count(file.HTML, "<iframe "); got != len(workbenchSurfaceIDs) {
+				return nil, fmt.Errorf(
+					"atlas %q contains %d surfaces, want %d",
+					file.Name,
+					got,
+					len(workbenchSurfaceIDs),
+				)
+			}
+			return testPNG(t, file.Width, file.Height, true), nil
+		},
+		exportRasterizerWorkers,
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expectedFiles := len(workbenchSurfaceIDs) * len(workbenchVariantScales)
+	if calls.Load() != int32(len(workbenchVariantScales)) ||
+		result.Atlases != len(workbenchVariantScales) ||
+		result.Fallback != 0 || result.Rendered != expectedFiles {
+		t.Fatalf("atlas export calls/result = %d/%+v", calls.Load(), result)
+	}
+	t.Run("individual fallback is reported", testAtlasExportReportsIndividualFallback)
+}
+
+func testAtlasExportReportsIndividualFallback(t *testing.T) {
+	workbenchRoot := t.TempDir()
+	writeTestFile(t, filepath.Join(workbenchRoot, "index.html"))
+	server := &workbenchServer{
+		startedAt:     time.Date(2026, 8, 9, 12, 0, 0, 0, time.Local),
+		workbenchRoot: workbenchRoot,
+		bundleRoot:    t.TempDir(),
+	}
+	result, err := server.writeExportWithAtlasRasterizerResult(
+		validWorkbenchExportForServer(t, server),
+		func(file exportFile) ([]byte, error) {
+			if strings.HasPrefix(file.Name, "atlas@") {
+				return nil, errors.New("injected atlas failure")
+			}
+			return testPNG(t, file.Width, file.Height, true), nil
+		},
+		exportRasterizerWorkers,
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	expectedFiles := len(workbenchSurfaceIDs) * len(workbenchVariantScales)
+	if result.Atlases != 0 || result.Fallback != expectedFiles ||
+		result.Rendered != expectedFiles {
+		t.Fatalf("atlas fallback result = %+v", result)
+	}
+}
+
 func TestExportPreflightSkipsCurrentValidBundle(t *testing.T) {
 	workbenchRoot := t.TempDir()
 	staticPath := filepath.Join(workbenchRoot, "index.html")
@@ -853,7 +1425,7 @@ func TestExportPreflightSkipsCurrentValidBundle(t *testing.T) {
 		bundleRoot:    t.TempDir(),
 	}
 	if err := server.writeExportWithRasterizer(
-		validWorkbenchExport(),
+		validWorkbenchExportForServer(t, server),
 		func(file exportFile) ([]byte, error) {
 			return testPNG(t, file.Width, file.Height, true), nil
 		},
@@ -861,7 +1433,11 @@ func TestExportPreflightSkipsCurrentValidBundle(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	result, err := server.preflightExport("main-vertical-light")
+	clientVersion, err := server.currentVersion()
+	if err != nil {
+		t.Fatal(err)
+	}
+	result, err := server.preflightExport("main-vertical-light", clientVersion)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -876,11 +1452,33 @@ func TestExportPreflightSkipsCurrentValidBundle(t *testing.T) {
 	if manifest.DefaultSurface != "main-vertical-light" {
 		t.Fatalf("default surface = %q, want main-vertical-light", manifest.DefaultSurface)
 	}
+	server.resolveEdge = func() (edgeRendererIdentity, error) {
+		return edgeRendererIdentity{
+			Version:     "152.0.0.0",
+			Fingerprint: "fedcba9876543210",
+		}, nil
+	}
+	result, err = server.preflightExport("main-vertical-light", clientVersion)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.UpToDate {
+		t.Fatal("preflight reused pixels from a different Edge renderer")
+	}
+	server.resolveEdge = fixedTestEdgeRendererIdentity
 
 	if err := os.WriteFile(staticPath, []byte("changed"), 0o600); err != nil {
 		t.Fatal(err)
 	}
-	result, err = server.preflightExport("main-horizontal")
+	result, err = server.preflightExport("main-horizontal", clientVersion)
+	if err == nil || !strings.Contains(err.Error(), "fingerprint") {
+		t.Fatalf("preflight accepted a stale page version: result=%+v err=%v", result, err)
+	}
+	currentVersion, err := server.currentVersion()
+	if err != nil {
+		t.Fatal(err)
+	}
+	result, err = server.preflightExport("main-horizontal", currentVersion)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -902,6 +1500,136 @@ func TestExportSourceHashCoversEveryRenderInput(t *testing.T) {
 		if exportSourceHash(changed) == original {
 			t.Fatalf("source hash did not change for %+v", changed)
 		}
+	}
+	firstRenderer := exportSourceHashForRenderer(file, "0123456789abcdef")
+	secondRenderer := exportSourceHashForRenderer(file, "fedcba9876543210")
+	if firstRenderer == secondRenderer ||
+		!strings.HasPrefix(firstRenderer, "0123456789abcdef") ||
+		!strings.HasPrefix(secondRenderer, "fedcba9876543210") {
+		t.Fatal("source hash does not identify the Edge renderer")
+	}
+}
+
+func TestExistingExportGenerationIsFullyRevalidated(t *testing.T) {
+	workbenchRoot := t.TempDir()
+	writeTestFile(t, filepath.Join(workbenchRoot, "index.html"))
+	bundleRoot := t.TempDir()
+	server := &workbenchServer{
+		startedAt:     time.Date(2026, 8, 9, 12, 0, 0, 0, time.Local),
+		workbenchRoot: workbenchRoot,
+		bundleRoot:    bundleRoot,
+	}
+	exported := validWorkbenchExportForServer(t, server)
+	rendered := make([]renderedExportFile, 0, len(exported.Files))
+	for _, file := range exported.Files {
+		contents, err := normalizeRenderedPNG(
+			testPNG(t, file.Width, file.Height, true),
+			file.Width,
+			file.Height,
+		)
+		if err != nil {
+			t.Fatal(err)
+		}
+		rendered = append(rendered, renderedExportFile{
+			Name: file.Name, Width: file.Width, Height: file.Height, Contents: contents,
+		})
+	}
+	generation := exportGeneration(rendered)
+	assetRoot := filepath.Join(bundleRoot, "assets", generation)
+	for _, file := range rendered {
+		if err := os.MkdirAll(assetRoot, 0o755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.WriteFile(filepath.Join(assetRoot, file.Name), file.Contents, 0o600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := os.WriteFile(
+		filepath.Join(assetRoot, rendered[0].Name),
+		[]byte("corrupt generation collision"),
+		0o600,
+	); err != nil {
+		t.Fatal(err)
+	}
+
+	err := server.writeExportWithRasterizer(
+		exported,
+		func(file exportFile) ([]byte, error) {
+			return testPNG(t, file.Width, file.Height, true), nil
+		},
+	)
+	if err == nil || !strings.Contains(err.Error(), "validating existing export generation") {
+		t.Fatalf("corrupt existing generation error = %v", err)
+	}
+	assertPathMissing(t, filepath.Join(bundleRoot, "manifest.json"))
+}
+
+func TestSuccessfulExportsKeepCurrentAndPreviousGeneration(t *testing.T) {
+	workbenchRoot := t.TempDir()
+	writeTestFile(t, filepath.Join(workbenchRoot, "index.html"))
+	bundleRoot := t.TempDir()
+	server := &workbenchServer{
+		startedAt:     time.Date(2026, 8, 9, 12, 0, 0, 0, time.Local),
+		workbenchRoot: workbenchRoot,
+		bundleRoot:    bundleRoot,
+	}
+	exportGenerationWithAlpha := func(marker string, alpha uint8) string {
+		t.Helper()
+		exported := validWorkbenchExportForServer(t, server)
+		for index := range exported.Files {
+			exported.Files[index].HTML += "<!-- " + marker + " -->"
+		}
+		if err := server.writeExportWithRasterizer(
+			exported,
+			func(file exportFile) ([]byte, error) {
+				return testPNGWithCoverage(t, file.Width, file.Height, 1, alpha), nil
+			},
+		); err != nil {
+			t.Fatal(err)
+		}
+		manifest, err := readManifest(bundleRoot)
+		if err != nil {
+			t.Fatal(err)
+		}
+		generations, err := referencedExportGenerations(manifest)
+		if err != nil {
+			t.Fatal(err)
+		}
+		for generation := range generations {
+			return generation
+		}
+		t.Fatal("committed export references no generation")
+		return ""
+	}
+
+	first := exportGenerationWithAlpha("first", 255)
+	second := exportGenerationWithAlpha("second", 254)
+	if first == second {
+		t.Fatal("fixture exports produced the same generation")
+	}
+	assertPathExists(t, filepath.Join(bundleRoot, "assets", first))
+	assertPathExists(t, filepath.Join(bundleRoot, "assets", second))
+
+	sameSecond := exportGenerationWithAlpha("second-source-only-change", 254)
+	if sameSecond != second {
+		t.Fatalf("source-only change generation = %q, want %q", sameSecond, second)
+	}
+	assertPathExists(t, filepath.Join(bundleRoot, "assets", first))
+	assertPathExists(t, filepath.Join(bundleRoot, "assets", second))
+
+	third := exportGenerationWithAlpha("third", 253)
+	if second == third {
+		t.Fatal("fixture exports produced the same generation")
+	}
+	assertPathMissing(t, filepath.Join(bundleRoot, "assets", first))
+	assertPathExists(t, filepath.Join(bundleRoot, "assets", second))
+	assertPathExists(t, filepath.Join(bundleRoot, "assets", third))
+	entries, err := os.ReadDir(filepath.Join(bundleRoot, "assets"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(entries) != 2 {
+		t.Fatalf("asset generations = %d, want current and previous", len(entries))
 	}
 }
 
@@ -987,7 +1715,7 @@ func TestSuccessfulExportCleansOnlyStaleGeneratedArtifacts(t *testing.T) {
 		bundleRoot:    bundleRoot,
 	}
 	err := server.writeExportWithRasterizer(
-		validWorkbenchExport(),
+		validWorkbenchExportForServer(t, server),
 		func(file exportFile) ([]byte, error) {
 			return testPNG(t, file.Width, file.Height, true), nil
 		},
@@ -1344,6 +2072,35 @@ func validWorkbenchExport() exportRequest {
 	}
 }
 
+func validWorkbenchExportForServer(
+	t *testing.T,
+	server *workbenchServer,
+) exportRequest {
+	t.Helper()
+	if server.resolveEdge == nil {
+		server.resolveEdge = fixedTestEdgeRendererIdentity
+	}
+	exported := validWorkbenchExport()
+	version, err := server.currentVersion()
+	if err != nil {
+		t.Fatal(err)
+	}
+	exported.Manifest.Version = version
+	renderer, err := server.currentEdgeRendererIdentity()
+	if err != nil {
+		t.Fatal(err)
+	}
+	exported.Renderer = renderer.Version
+	return exported
+}
+
+func fixedTestEdgeRendererIdentity() (edgeRendererIdentity, error) {
+	return edgeRendererIdentity{
+		Version:     "151.0.4129.86",
+		Fingerprint: "0123456789abcdef",
+	}, nil
+}
+
 func validWorkbenchDynamicSlots(surfaceID string) dynamicSlots {
 	baseID := strings.TrimSuffix(surfaceID, "-light")
 	newTextSlots := func(bindings []string) []textSlot {
@@ -1501,6 +2258,17 @@ func assertPathMissing(t *testing.T, path string) {
 	t.Helper()
 	if _, err := os.Lstat(path); !errors.Is(err, os.ErrNotExist) {
 		t.Fatalf("expected %q to be absent, got %v", path, err)
+	}
+}
+
+func assertFileContents(t *testing.T, path string, expected []byte) {
+	t.Helper()
+	contents, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(contents, expected) {
+		t.Fatalf("file %q changed: %q", path, contents)
 	}
 }
 

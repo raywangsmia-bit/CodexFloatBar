@@ -18,6 +18,8 @@ import (
 	"golang.org/x/sys/windows"
 )
 
+const statusCacheSaveInterval = 60 * time.Second
+
 type statusRuntime struct {
 	monitor           *codexdata.Monitor
 	current           codexdata.AppSnapshot
@@ -47,7 +49,7 @@ func newStatusRuntime() *statusRuntime {
 		Paths:             paths,
 		Location:          time.Local,
 		Now:               time.Now,
-		CacheSaveInterval: 15 * time.Second,
+		CacheSaveInterval: statusCacheSaveInterval,
 	})
 	return &statusRuntime{
 		monitor: codexdata.NewMonitor(service, codexdata.MonitorOptions{}),
@@ -203,7 +205,8 @@ func (runtime *statusRuntime) statisticsDayForAction(
 	action string,
 ) (int, bool) {
 	const prefix = "statistics-select-day-"
-	if !strings.HasPrefix(action, prefix) || selection.Month.IsZero() {
+	if selection.View != statisticsViewMonth ||
+		!strings.HasPrefix(action, prefix) || selection.Month.IsZero() {
 		return 0, false
 	}
 	index, err := strconv.Atoi(strings.TrimPrefix(action, prefix))

@@ -179,7 +179,7 @@ func (test *nativeSelfTest) checkLayouts(app *nativeApp) {
 func (test *nativeSelfTest) checkCollapseAndExpand(app *nativeApp) {
 	startedAt := time.Now()
 	app.autoCollapseEnabled = false
-	procKillTimer.Call(app.window, pollTimerID)
+	app.syncAutoCollapseTimer(nativeWindowVisible(app.window))
 	app.expandImmediately()
 
 	original, geometryOK := app.currentGeometry()
@@ -221,9 +221,7 @@ func (test *nativeSelfTest) checkCollapseAndExpand(app *nativeApp) {
 		)
 
 		app.startCollapseAnimation(docked, area)
-		for range animationSteps {
-			app.advanceAnimation()
-		}
+		advanceSelfTestAnimationToEnd(app)
 		collapsed, ok := app.currentGeometry()
 		expectedCollapsed := collapsedPosition(docked, area)
 		if !ok && checkErr == nil {
@@ -243,9 +241,7 @@ func (test *nativeSelfTest) checkCollapseAndExpand(app *nativeApp) {
 		}
 
 		app.startExpandAnimation()
-		for range animationSteps {
-			app.advanceAnimation()
-		}
+		advanceSelfTestAnimationToEnd(app)
 		expanded, ok := app.currentGeometry()
 		if !ok && checkErr == nil {
 			checkErr = fmt.Errorf("iteration %d could not read expanded geometry", iteration)
@@ -282,6 +278,13 @@ func (test *nativeSelfTest) checkCollapseAndExpand(app *nativeApp) {
 		startedAt,
 		checkErr,
 	)
+}
+
+func advanceSelfTestAnimationToEnd(app *nativeApp) {
+	if app == nil || !app.animation.active {
+		return
+	}
+	app.advanceAnimationAt(app.animation.startedAt.Add(app.animation.duration))
 }
 
 func (test *nativeSelfTest) checkTraySelection(app *nativeApp, trayErr error) {
